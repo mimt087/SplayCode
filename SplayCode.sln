@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplayCode", "SplayCode\SplayCode.csproj", "{A630A5EA-4011-4A2F-AC38-DB44E33F86BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplayCode", "SplayCode\SplayCode.csproj", "{5629B9F3-8DFF-4FFB-A46E-DB43308B116E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A630A5EA-4011-4A2F-AC38-DB44E33F86BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A630A5EA-4011-4A2F-AC38-DB44E33F86BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A630A5EA-4011-4A2F-AC38-DB44E33F86BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A630A5EA-4011-4A2F-AC38-DB44E33F86BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5629B9F3-8DFF-4FFB-A46E-DB43308B116E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5629B9F3-8DFF-4FFB-A46E-DB43308B116E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5629B9F3-8DFF-4FFB-A46E-DB43308B116E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5629B9F3-8DFF-4FFB-A46E-DB43308B116E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

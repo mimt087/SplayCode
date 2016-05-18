@@ -10,9 +10,11 @@
              Name="MyToolWindow">
     <Grid>
         <StackPanel Orientation="Vertical">
-            <TextBlock Margin="10" HorizontalAlignment="Center">ToolWindow1</TextBlock>
-            <Button Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
-            <Image x:Name="image" Height="100" Margin="114,0"/>
+
+            <Canvas Name="cavRoot">
+                <!--<TextBlock Margin="10" HorizontalAlignment="Center">MyToolWindow</TextBlock>-->
+                <Image Source="/SplayCode;component/Images/cat.jpg" Canvas.Left="121" Canvas.Top="42" Name="imgSource" Height="63"/>
+            </Canvas>
         </StackPanel>
     </Grid>
 </UserControl>

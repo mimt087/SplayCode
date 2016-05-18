@@ -21,6 +21,7 @@ namespace SplayCode
         public ToolWindow1Control()
         {
             this.InitializeComponent();
+            INIT();
         }
 
         /// <summary>
@@ -36,5 +37,38 @@ namespace SplayCode
                 string.Format(System.Globalization.CultureInfo.CurrentUICulture, "Invoked '{0}'", this.ToString()),
                 "ToolWindow1");
         }
+
+        private Point firstPoint = new Point();
+
+        public void INIT()
+        {
+            imgSource.MouseLeftButtonDown += (ss, ee) =>
+            {
+                firstPoint = ee.GetPosition(this);
+                imgSource.CaptureMouse();
+            };
+
+            imgSource.MouseMove += (ss, ee) =>
+            {
+                if (ee.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                {
+                    Point temp = ee.GetPosition(this);
+                    Point res = new Point(firstPoint.X - temp.X, firstPoint.Y - temp.Y);
+
+                    if (temp.X > 0)
+                    {
+                        Canvas.SetLeft(imgSource, Canvas.GetLeft(imgSource) - res.X);
+                    }
+
+                    if (temp.Y > 0)
+                    {
+                        Canvas.SetTop(imgSource, Canvas.GetTop(imgSource) - res.Y);
+                    }
+                    firstPoint = temp;
+                }
+            };
+            imgSource.MouseUp += (ss, ee) => { imgSource.ReleaseMouseCapture(); };
+        }
+
     }
 }
