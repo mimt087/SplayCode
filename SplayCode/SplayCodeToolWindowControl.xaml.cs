@@ -6,6 +6,7 @@
 
 namespace SplayCode
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
@@ -13,42 +14,45 @@ namespace SplayCode
     /// <summary>
     /// Interaction logic for ToolWindow1Control.
     /// </summary>
-    public partial class ToolWindow1Control : UserControl
+    public partial class SplayCodeToolWindowControl : UserControl
     {
+
+        private Point firstPoint = new Point();
+        private List<ChromeControl> items = new List<ChromeControl>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolWindow1Control"/> class.
         /// </summary>
-        public ToolWindow1Control()
+        public SplayCodeToolWindowControl()
         {
             this.InitializeComponent();
-            INIT();
         }
 
-        /// <summary>
-        /// Handles click on the button by displaying a message box.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event args.</param>
-        [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void button1_Click(object sender, RoutedEventArgs e)
+        public void AddItem(ChromeControl item)
         {
-            MessageBox.Show(
-                string.Format(System.Globalization.CultureInfo.CurrentUICulture, "Invoked '{0}'", this.ToString()),
-                "ToolWindow1");
+            item.SetParent(this);
+            items.Add(item);
+            cavRoot.Children.Add(item);
+            Canvas.SetLeft(item, 200 * items.Count);
+            Canvas.SetTop(item, 50);
+            InitMouseCapture(item);
         }
 
-        private Point firstPoint = new Point();
-
-        public void INIT()
+        public void RemoveItem(ChromeControl item)
         {
-            imgSource.MouseLeftButtonDown += (ss, ee) =>
+            items.Remove(item);
+            cavRoot.Children.Remove(item);
+        }
+
+        public void InitMouseCapture(ChromeControl element)
+        {
+            element.MouseLeftButtonDown += (ss, ee) =>
             {
                 firstPoint = ee.GetPosition(this);
-                imgSource.CaptureMouse();
+                element.CaptureMouse();
             };
 
-            imgSource.MouseMove += (ss, ee) =>
+            element.MouseMove += (ss, ee) =>
             {
                 if (ee.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
                 {
@@ -57,17 +61,17 @@ namespace SplayCode
 
                     if (temp.X > 0)
                     {
-                        Canvas.SetLeft(imgSource, Canvas.GetLeft(imgSource) - res.X);
+                        Canvas.SetLeft(element, Canvas.GetLeft(element) - res.X);
                     }
 
                     if (temp.Y > 0)
                     {
-                        Canvas.SetTop(imgSource, Canvas.GetTop(imgSource) - res.Y);
+                        Canvas.SetTop(element, Canvas.GetTop(element) - res.Y);
                     }
                     firstPoint = temp;
                 }
             };
-            imgSource.MouseUp += (ss, ee) => { imgSource.ReleaseMouseCapture(); };
+            element.MouseUp += (ss, ee) => { element.ReleaseMouseCapture(); };
         }
 
     }

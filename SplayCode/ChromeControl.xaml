@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="SplayCode.ChromeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SplayCode"
+             mc:Ignorable="d" d:DesignWidth="150" Height="151.948">
+    <Grid Margin="0,0,175,175">
+        <ScrollViewer x:Name="scrollView" HorizontalAlignment="Left" Height="121" VerticalAlignment="Top" Width="150" Margin="0,29,-150,-150">
+        </ScrollViewer>
+        <Button x:Name="closeButton" HorizontalAlignment="Left" Height="18" Margin="113,6,-142,-24" VerticalAlignment="Top" Width="29" Click="closeButton_Click"/>
+        <Label x:Name="label" HorizontalAlignment="Left" Height="23" Margin="3,3,-111,-26" VerticalAlignment="Top" Width="108"/>
+
+    </Grid>
+</UserControl>

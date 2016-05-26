@@ -51,15 +51,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AddImageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToolWindow1.cs" />
     <Compile Include="ToolWindow1Command.cs" />
-    <Compile Include="ToolWindow1Control.xaml.cs">
-      <DependentUpon>ToolWindow1Control.xaml</DependentUpon>
+    <Compile Include="SplayCodeToolWindowControl.xaml.cs">
+      <DependentUpon>SplayCodeToolWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolWindow1Package.cs" />
+    <Compile Include="ChromeControl.xaml.cs">
+      <DependentUpon>ChromeControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
@@ -68,17 +73,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\cat.jpg" />
-    <Content Include="index.html" />
+    <Content Include="Resources\AddImageCommand.png" />
     <Content Include="Resources\cat.png" />
     <Content Include="Resources\ToolWindow1Command.png" />
     <Content Include="Resources\ToolWindow1Package.ico" />
-    <Content Include="stylesheet.css" />
     <VSCTCompile Include="ToolWindow1Package.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ToolWindow1Control.xaml">
+    <Page Include="SplayCodeToolWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChromeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

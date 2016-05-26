@@ -18,6 +18,7 @@ using Microsoft.Win32;
 
 namespace SplayCode
 {
+
     /// <summary>
     /// This is the class that implements the package exposed by this assembly.
     /// </summary>
@@ -48,6 +49,9 @@ namespace SplayCode
         /// </summary>
         public const string PackageGuidString = "a979e6d2-1cee-4999-9f81-91c73d33f38d";
 
+        public const string guidToolWindow1PackageCmdSet = "9da3a146-946a-4fc8-a5a4-029f780074b9";
+        public const int TWToolbar = 0x1000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolWindow1"/> class.
         /// </summary>
@@ -69,6 +73,8 @@ namespace SplayCode
         {
             ToolWindow1Command.Initialize(this);
             base.Initialize();
+            //Command1.Initialize(this);
+            AddImageCommand.Initialize(this);
         }
 
         #endregion
