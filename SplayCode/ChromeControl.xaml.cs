@@ -39,5 +39,10 @@ namespace SplayCode
         {
             splayCodeToolWindow.RemoveItem(this);
         }
+
+        private Image GetImage()
+        {
+            return (Image)scrollView.Content;
+        }
     }
 }

@@ -11,7 +11,7 @@
     <Grid>
         <StackPanel Orientation="Vertical">
 
-            <Canvas Name="cavRoot">
+            <Canvas x:Name="cavRoot">
             </Canvas>
         </StackPanel>
     </Grid>

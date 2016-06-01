@@ -75,6 +75,7 @@ namespace SplayCode
             base.Initialize();
             //Command1.Initialize(this);
             AddImageCommand.Initialize(this);
+            SaveLayoutCommand.Initialize(this);
         }
 
         #endregion

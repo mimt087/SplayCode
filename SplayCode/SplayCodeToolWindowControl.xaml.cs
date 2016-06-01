@@ -6,8 +6,10 @@
 
 namespace SplayCode
 {
+    using Microsoft.VisualStudio.Shell;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -42,6 +44,33 @@ namespace SplayCode
         {
             items.Remove(item);
             cavRoot.Children.Remove(item);
+        }
+
+        public List<Image> FetchAllImages()
+        {
+            //ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
+            List<Image> images = new List<Image>();
+            List<ChromeControl> chromes = new List<ChromeControl>();
+            foreach (UIElement element in cavRoot.Children)
+            {
+                if (element is ChromeControl)
+                {
+                    chromes.Add((ChromeControl)element);
+                }
+            }
+
+            foreach (ChromeControl cc in chromes)
+            {
+                images.Add((Image)cc.scrollView.Content);
+            }
+
+            return images;
+            //foreach (ChromeControl cc in chromes)
+            //{
+            //    images.Add(ChromeControl.)
+            //}
+            //IEnumerable<ChromeControl> images = cavRoot.Children.OfType(ChromeControl);
+            //return images;
         }
 
         public void InitMouseCapture(ChromeControl element)
