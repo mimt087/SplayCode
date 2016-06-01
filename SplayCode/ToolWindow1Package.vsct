@@ -32,7 +32,7 @@
     with command ids defined by other packages. -->
     
     <Menus>
-      <Menu guid="guidToolWindow1PackageCmdSet" id="TWToolbar" type="ToolWindowToolbar">
+      <Menu guid="guidToolWindow1PackageCmdSet" id="TWToolbar" type="Toolbar">
         <CommandFlag>DefaultDocked</CommandFlag>
         <Strings>
           <ButtonText>Test Toolbar</ButtonText>

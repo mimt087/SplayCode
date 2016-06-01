@@ -6,7 +6,9 @@
 
 namespace SplayCode
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
@@ -33,8 +35,11 @@ namespace SplayCode
             item.SetParent(this);
             items.Add(item);
             cavRoot.Children.Add(item);
-            Canvas.SetLeft(item, 200 * items.Count);
-            Canvas.SetTop(item, 50);
+            Thickness t = new Thickness();
+            t.Left = 200 * items.Count;
+            t.Top = 0;
+            item.Margin = t;
+            
             InitMouseCapture(item);
         }
 
@@ -50,10 +55,12 @@ namespace SplayCode
             {
                 firstPoint = ee.GetPosition(this);
                 element.CaptureMouse();
+                Debug.WriteLine("Mouse clicked");
             };
 
             element.MouseMove += (ss, ee) =>
             {
+                Debug.WriteLine("Mouse moved");
                 if (ee.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
                 {
                     Point temp = ee.GetPosition(this);
@@ -61,12 +68,16 @@ namespace SplayCode
 
                     if (temp.X > 0)
                     {
-                        Canvas.SetLeft(element, Canvas.GetLeft(element) - res.X);
+                        Thickness t = element.Margin;
+                        t.Left = t.Left - res.X;
+                        element.Margin = t;
                     }
 
                     if (temp.Y > 0)
                     {
-                        Canvas.SetTop(element, Canvas.GetTop(element) - res.Y);
+                        Thickness t = element.Margin;
+                        t.Top = t.Top - res.Y;
+                        element.Margin = t;
                     }
                     firstPoint = temp;
                 }

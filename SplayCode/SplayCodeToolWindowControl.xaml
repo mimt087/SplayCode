@@ -8,11 +8,8 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
-    <Grid>
-        <StackPanel Orientation="Vertical">
-
-            <Canvas Name="cavRoot">
-            </Canvas>
-        </StackPanel>
-    </Grid>
+    <ScrollViewer Name="ScrollView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid Name="cavRoot">
+        </Grid>
+    </ScrollViewer>
 </UserControl>
