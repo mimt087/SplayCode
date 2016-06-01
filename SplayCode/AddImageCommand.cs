@@ -110,7 +110,7 @@ namespace SplayCode
                 img.Source = new BitmapImage(imgPath);
                 ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length-1]);
                 ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
-                ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome);
+                ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, false, 0, 0);
             }
         }
     }

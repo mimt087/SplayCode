@@ -80,6 +80,13 @@
           <ButtonText>Save Layout</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidToolWindow1PackageCmdSet1" id="cmdidLoadLayoutCommand" priority="0x0100" type="Button">
+        <Parent guid="guidToolWindow1PackageCmdSet" id="TWToolbarGroup" />
+        <!--<Icon guid="guidImages4" id="bmpPic1" />-->
+        <Strings>
+          <ButtonText>Load Layout</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -92,6 +99,7 @@
       <Bitmap guid="guidImages" href="Resources\ToolWindow1Command.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
       <Bitmap guid="guidImages2" href="Resources\AddImageCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
       <Bitmap guid="guidImages3" href="Resources\SaveLayoutCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages4" href="Resources\LoadLayoutCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
     
     <Groups>
@@ -130,6 +138,7 @@
       <IDSymbol value="256" name="cmdidCommand1" />
       <IDSymbol value="4129" name="cmdidAddImageCommand" />
       <IDSymbol value="4130" name="cmdidSaveLayoutCommand" />
+      <IDSymbol value="4131" name="cmdidLoadLayoutCommand" />
     </GuidSymbol>
   
     <GuidSymbol value="{54ad41a4-6d28-408b-ac59-401f4e5b49cb}" name="guidImages1">
@@ -151,6 +160,15 @@
     </GuidSymbol>
   
     <GuidSymbol value="{80653733-5147-4548-9592-f4db4a9c7c08}" name="guidImages3">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{f879a5ae-1f5d-4ead-920b-4f7b6d0f6a3f}" name="guidImages4">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />

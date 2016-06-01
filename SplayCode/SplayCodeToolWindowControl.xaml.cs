@@ -30,13 +30,20 @@ namespace SplayCode
             this.InitializeComponent();
         }
 
-        public void AddItem(ChromeControl item)
+        public void AddItem(ChromeControl item, bool load, double x, double y)
         {
             item.SetParent(this);
             items.Add(item);
             cavRoot.Children.Add(item);
-            Canvas.SetLeft(item, 200 * items.Count);
-            Canvas.SetTop(item, 50);
+            if (load)
+            {
+                Canvas.SetLeft(item, x);
+                Canvas.SetTop(item, y);
+            } else
+            {
+                Canvas.SetLeft(item, 200 * items.Count);
+                Canvas.SetTop(item, 50);
+            }          
             InitMouseCapture(item);
         }
 
@@ -46,7 +53,12 @@ namespace SplayCode
             cavRoot.Children.Remove(item);
         }
 
-        public List<Image> FetchAllImages()
+        public void RemoveAll()
+        {
+            cavRoot.Children.Clear();
+        }
+
+        public List<ChromeControl> FetchAllChromes()
         {
             //ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
             List<Image> images = new List<Image>();
@@ -59,12 +71,12 @@ namespace SplayCode
                 }
             }
 
-            foreach (ChromeControl cc in chromes)
-            {
-                images.Add((Image)cc.scrollView.Content);
-            }
+            //foreach (ChromeControl cc in chromes)
+            //{
+            //    images.Add((Image)cc.scrollView.Content);
+            //}
 
-            return images;
+            return chromes;
             //foreach (ChromeControl cc in chromes)
             //{
             //    images.Add(ChromeControl.)
