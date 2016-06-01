@@ -23,6 +23,8 @@ namespace SplayCode
     /// </summary>
     public partial class ChromeControl : UserControl
     {
+        private Point firstPoint = new Point();
+        private bool isDraggingThumb = false;
         private SplayCodeToolWindowControl splayCodeToolWindow;
         private Image img;
 
@@ -32,6 +34,7 @@ namespace SplayCode
             InitializeComponent();
             baseCanvas.Children.Add(img);
             label.Content = labelString;
+            InitMouseCapture();
         }
 
         public void SetParent(SplayCodeToolWindowControl splayCodeToolWindow)
@@ -46,38 +49,93 @@ namespace SplayCode
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
         {
-            /*//Move the Thumb to the mouse position during the drag operation
-            double yadjust = baseCanvas.Height + e.VerticalChange;
-            double xadjust = baseCanvas.Width + e.HorizontalChange;
-            if ((xadjust >= 0) && (yadjust >= 0))
-            {
-                baseCanvas.Width = xadjust;
-                baseCanvas.Height = yadjust;
-                Thickness t = myThumb.Margin;
-                t.Left = t.Left + e.HorizontalChange;
-                t.Top = t.Top + e.VerticalChange;
-                myThumb.Margin = t;
-            }*/
+            Thickness t = this.Margin;
+            t.Left = t.Left + e.HorizontalChange;
+            t.Top = t.Top + e.VerticalChange;
+            this.Margin = t;
+            
         }
 
         void onDragStart(object sender, DragStartedEventArgs e)
         {
-            myThumb.Background = Brushes.Orange;
-            /*//Move the Thumb to the mouse position during the drag operation
-            double yadjust = baseCanvas.Height + e.VerticalChange;
-            double xadjust = baseCanvas.Width + e.HorizontalChange;
+            dragger.Background = Brushes.Orange;
+            isDraggingThumb = true;
+        }
+
+        void onDragComplete(object sender, DragCompletedEventArgs e)
+        {
+            dragger.Background = Brushes.Blue;
+            isDraggingThumb = false;
+        }
+
+        void onResizeDelta(object sender, DragDeltaEventArgs e)
+        {
+            //Move the Thumb to the mouse position during the drag operation
+            double yadjust = border.Height + e.VerticalChange;
+            double xadjust = border.Width + e.HorizontalChange;
+            
             if ((xadjust >= 0) && (yadjust >= 0))
             {
-                baseCanvas.Width = xadjust;
-                baseCanvas.Height = yadjust;
+                border.Width = xadjust;
+                border.Height = yadjust;
+               
                 Thickness t = myThumb.Margin;
                 t.Left = t.Left + e.HorizontalChange;
                 t.Top = t.Top + e.VerticalChange;
-                myThumb.Margin = t;*/
+                myThumb.Margin = t;
+            }
         }
+
+        void onResizeStart(object sender, DragStartedEventArgs e)
+        {
+            myThumb.Background = Brushes.Orange;
+            
+        }
+
+        void onResizeComplete(object sender, DragCompletedEventArgs e)
+        {
+            myThumb.Background = Brushes.Blue;
+        }
+
         public Image GetImage()
         {
             return img;
+        }
+
+        private void InitMouseCapture()
+        {
+            label.MouseLeftButtonDown += (ss, ee) =>
+            {
+                firstPoint = ee.GetPosition(label);
+                label.CaptureMouse();
+                Debug.WriteLine("Mouse clicked");
+            };
+
+            label.MouseMove += (ss, ee) =>
+            {
+
+                if (ee.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                {
+                    Point temp = ee.GetPosition(label);
+                    Point res = new Point(firstPoint.X - temp.X, firstPoint.Y - temp.Y);
+
+                    if (temp.X > 0)
+                    {
+                        Thickness t = this.Margin;
+                        t.Left = t.Left - res.X;
+                        this.Margin = t;
+                    }
+
+                    if (temp.Y > 0)
+                    {
+                        Thickness t = this.Margin;
+                        t.Top = t.Top - res.Y;
+                        this.Margin = t;
+                    }
+                    firstPoint = temp;
+                }
+            };
+            label.MouseUp += (ss, ee) => { label.ReleaseMouseCapture(); };
         }
     }
 }

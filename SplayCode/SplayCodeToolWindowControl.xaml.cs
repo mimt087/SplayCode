@@ -20,7 +20,6 @@ namespace SplayCode
     public partial class SplayCodeToolWindowControl : UserControl
     {
 
-        private Point firstPoint = new Point();
         private List<ChromeControl> items = new List<ChromeControl>();
 
         /// <summary>
@@ -50,7 +49,6 @@ namespace SplayCode
                 t.Top = 50;
                 item.Margin = t;
             }          
-            InitMouseCapture(item);
         }
 
         public void RemoveItem(ChromeControl item)
@@ -91,41 +89,7 @@ namespace SplayCode
             //return images;
         }
 
-        public void InitMouseCapture(ChromeControl element)
-        {
-            element.MouseLeftButtonDown += (ss, ee) =>
-            {
-                firstPoint = ee.GetPosition(this);
-                element.CaptureMouse();
-                Debug.WriteLine("Mouse clicked");
-            };
-
-            element.MouseMove += (ss, ee) =>
-            {
-                Debug.WriteLine("Mouse moved");
-                if (ee.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-                {
-                    Point temp = ee.GetPosition(this);
-                    Point res = new Point(firstPoint.X - temp.X, firstPoint.Y - temp.Y);
-
-                    if (temp.X > 0)
-                    {
-                        Thickness t = element.Margin;
-                        t.Left = t.Left - res.X;
-                        element.Margin = t;
-                    }
-
-                    if (temp.Y > 0)
-                    {
-                        Thickness t = element.Margin;
-                        t.Top = t.Top - res.Y;
-                        element.Margin = t;
-                    }
-                    firstPoint = temp;
-                }
-            };
-            element.MouseUp += (ss, ee) => { element.ReleaseMouseCapture(); };
-        }
+        
 
     }
 }

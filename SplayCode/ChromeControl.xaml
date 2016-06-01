@@ -4,14 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SplayCode"
-             mc:Ignorable="d" d:DesignWidth="150" Height="150">
+             mc:Ignorable="d" d:DesignWidth="150">
     <Grid Name="baseGrid" Margin="0,0,0,0">
+        <Thumb Name="dragger" Background="Blue" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Width="20"  DragStarted="onDragStart" DragDelta="onDragDelta" DragCompleted="onDragComplete" Panel.ZIndex="100" RenderTransformOrigin="3.888,-0.13" Margin="-20,-4,0,0" Height="20"/>
         <Button x:Name="closeButton" HorizontalAlignment="Left" Height="28" Margin="116,6,0,0" VerticalAlignment="Top" Width="29" Click="closeButton_Click" RenderTransformOrigin="2.138,0.745"/>
-        <Label x:Name="label" HorizontalAlignment="Left" Height="31" Margin="3,3,0,0" VerticalAlignment="Top" Width="108"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="111" Margin="0,39,0,0" VerticalAlignment="Top" Width="150">
+        <Label x:Name="label" HorizontalAlignment="Left" Height="31" Margin="0,3,0,0" VerticalAlignment="Top" Width="108"/>
+        <Border Name="border" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="111" Margin="0,39,0,0" VerticalAlignment="Top" Width="150">
             <Grid Name="baseCanvas">
-                <Thumb Name="myThumb" Background="Blue" 
-                Width="20" Height="20"  DragStarted="onDragStart" DragDelta="onDragDelta" 
+                <Thumb Name="myThumb" Background="Blue" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Width="20" Height="20"  DragStarted="onResizeStart" DragDelta="onResizeDelta" DragCompleted="onResizeComplete" 
                 Margin="129,89,0.0,0.0" Panel.ZIndex="100"/>
             </Grid>
         </Border>
