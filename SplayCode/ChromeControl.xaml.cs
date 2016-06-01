@@ -24,9 +24,11 @@ namespace SplayCode
     public partial class ChromeControl : UserControl
     {
         private SplayCodeToolWindowControl splayCodeToolWindow;
+        private Image img;
 
         public ChromeControl(Image img, String labelString)
         {
+            this.img = img;
             InitializeComponent();
             baseCanvas.Children.Add(img);
             label.Content = labelString;
@@ -71,8 +73,11 @@ namespace SplayCode
                 Thickness t = myThumb.Margin;
                 t.Left = t.Left + e.HorizontalChange;
                 t.Top = t.Top + e.VerticalChange;
-                myThumb.Margin = t;
-            }*/
+                myThumb.Margin = t;*/
+        }
+        public Image GetImage()
+        {
+            return img;
         }
     }
 }

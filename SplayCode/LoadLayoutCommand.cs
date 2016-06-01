@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="AddImageCommand.cs" company="Company">
+// <copyright file="LoadLayoutCommand.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -10,20 +10,25 @@ using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Xml.Serialization;
+using System.IO;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Drawing;
 
 namespace SplayCode
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class AddImageCommand
+    internal sealed class LoadLayoutCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4129;
+        public const int CommandId = 4131;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -36,11 +41,11 @@ namespace SplayCode
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddImageCommand"/> class.
+        /// Initializes a new instance of the <see cref="LoadLayoutCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private AddImageCommand(Package package)
+        private LoadLayoutCommand(Package package)
         {
             if (package == null)
             {
@@ -61,7 +66,7 @@ namespace SplayCode
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static AddImageCommand Instance
+        public static LoadLayoutCommand Instance
         {
             get;
             private set;
@@ -84,7 +89,7 @@ namespace SplayCode
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new AddImageCommand(package);
+            Instance = new LoadLayoutCommand(package);
         }
 
         /// <summary>
@@ -96,22 +101,45 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            List<Picture> pictures = new List<Picture>();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = "c:\\";
-            openFileDialog1.Filter = "Image Files(*.bmp, *.jpg, *.png) | *.bmp; *.jpg; *.png";
+            openFileDialog1.InitialDirectory = "C:\\Users\\Owner\\Uni Stuff\\YEAR 4\\PART IV\\Project\\SplayCode\\bin\\Debug";
+            openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = false;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                Image img = new Image();
-                Uri imgPath = new Uri(openFileDialog1.FileName);
-                img.Source = new BitmapImage(imgPath);
-                ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length-1]);
                 ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
-                ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, false, 0, 0);
+
+                if ((SplayCodeToolWindowControl)window.Content != null) {
+                    ((SplayCodeToolWindowControl)window.Content).RemoveAll();
+                }
+                string path = openFileDialog1.FileName;
+
+                XmlSerializer x = new XmlSerializer(typeof(List<Picture>));
+                StreamReader reader = new StreamReader(path);
+
+                pictures = (List<Picture>)x.Deserialize(reader);
+                reader.Close();
+
+                foreach (Picture pic in pictures)
+                {
+                    System.Windows.Controls.Image img = new System.Windows.Controls.Image();
+                    Uri imgPath = new Uri(pic._source);
+                    
+                    img.Source = new BitmapImage(imgPath);
+                    img.Height = pic._height;
+                    img.Width = pic._width;
+
+                    ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length - 1]);
+                    
+                    ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, true, pic._X-32, pic._Y-130);
+                }
             }
+
+
         }
     }
 }

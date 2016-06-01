@@ -6,10 +6,11 @@
 
 namespace SplayCode
 {
-    using System;
+    using Microsoft.VisualStudio.Shell;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -30,16 +31,25 @@ namespace SplayCode
             this.InitializeComponent();
         }
 
-        public void AddItem(ChromeControl item)
+        public void AddItem(ChromeControl item, bool load, double x, double y)
         {
             item.SetParent(this);
             items.Add(item);
             cavRoot.Children.Add(item);
-            Thickness t = new Thickness();
-            t.Left = 200 * items.Count;
-            t.Top = 0;
-            item.Margin = t;
-            
+
+            if (load)
+            {
+                Thickness t = new Thickness();
+                t.Left = x;
+                t.Top = y;
+                item.Margin = t;
+            } else
+            {
+                Thickness t = new Thickness();
+                t.Left = 200 * items.Count;
+                t.Top = 50;
+                item.Margin = t;
+            }          
             InitMouseCapture(item);
         }
 
@@ -47,6 +57,38 @@ namespace SplayCode
         {
             items.Remove(item);
             cavRoot.Children.Remove(item);
+        }
+
+        public void RemoveAll()
+        {
+            cavRoot.Children.Clear();
+        }
+
+        public List<ChromeControl> FetchAllChromes()
+        {
+            //ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
+            List<Image> images = new List<Image>();
+            List<ChromeControl> chromes = new List<ChromeControl>();
+            foreach (UIElement element in cavRoot.Children)
+            {
+                if (element is ChromeControl)
+                {
+                    chromes.Add((ChromeControl)element);
+                }
+            }
+
+            //foreach (ChromeControl cc in chromes)
+            //{
+            //    images.Add((Image)cc.scrollView.Content);
+            //}
+
+            return chromes;
+            //foreach (ChromeControl cc in chromes)
+            //{
+            //    images.Add(ChromeControl.)
+            //}
+            //IEnumerable<ChromeControl> images = cavRoot.Children.OfType(ChromeControl);
+            //return images;
         }
 
         public void InitMouseCapture(ChromeControl element)
