@@ -113,7 +113,7 @@ namespace SplayCode
             int i = 0;
             foreach (Image img in images)
             {
-                Picture pic = new Picture(chromes[i].PointToScreen(new Point(0, 0)).X, chromes[i].PointToScreen(new Point(0, 0)).Y,
+                Picture pic = new Picture(chromes[i].Margin.Left, chromes[i].Margin.Top,
                     img.Source.ToString(), img.ActualHeight, img.ActualWidth);
                 pictures.Add(pic);
                 i++;

@@ -135,7 +135,7 @@ namespace SplayCode
 
                     ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length - 1]);
                     
-                    ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, true, pic._X-32, pic._Y-130);
+                    ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, true, pic._X, pic._Y);
                 }
             }
 
