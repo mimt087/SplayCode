@@ -39,23 +39,20 @@ namespace SplayCode
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideToolWindow(typeof(ToolWindow1))]
-    [Guid(ToolWindow1Package.PackageGuidString)]
+    [ProvideToolWindow(typeof(SplayCodeToolWindow))]
+    [Guid(SplayCodePackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    public sealed class ToolWindow1Package : Package
+    public sealed class SplayCodePackage : Package
     {
         /// <summary>
-        /// ToolWindow1Package GUID string.
+        /// SplayCodePackage GUID string.
         /// </summary>
         public const string PackageGuidString = "a979e6d2-1cee-4999-9f81-91c73d33f38d";
 
-        public const string guidToolWindow1PackageCmdSet = "9da3a146-946a-4fc8-a5a4-029f780074b9";
-        public const int TWToolbar = 0x1000;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="ToolWindow1"/> class.
+        /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
         /// </summary>
-        public ToolWindow1Package()
+        public SplayCodePackage()
         {
             // Inside this method you can place any initialization code that does not require
             // any Visual Studio service because at this point the package object is created but
@@ -71,7 +68,7 @@ namespace SplayCode
         /// </summary>
         protected override void Initialize()
         {
-            ToolWindow1Command.Initialize(this);
+            SplayCodeCommand.Initialize(this);
             base.Initialize();
             //Command1.Initialize(this);
             AddImageCommand.Initialize(this);

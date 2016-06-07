@@ -28,7 +28,7 @@ namespace SplayCode
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("bd3a38f2-41d4-46ef-9317-ac600087ef56");
+        public static readonly Guid CommandSet = new Guid("9da3a146-946a-4fc8-a5a4-029f780074b9");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -109,7 +109,7 @@ namespace SplayCode
                 Uri imgPath = new Uri(openFileDialog1.FileName);
                 img.Source = new BitmapImage(imgPath);
                 ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length-1]);
-                ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
+                ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
                 ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, false, 0, 0);
             }
         }

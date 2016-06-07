@@ -31,7 +31,7 @@ namespace SplayCode
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("bd3a38f2-41d4-46ef-9317-ac600087ef56");
+        public static readonly Guid CommandSet = new Guid("9da3a146-946a-4fc8-a5a4-029f780074b9");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -99,7 +99,7 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
+            ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
             List<ChromeControl> chromes = ((SplayCodeToolWindowControl)window.Content).FetchAllChromes();
             List<Image> images = new List<Image>();

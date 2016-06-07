@@ -56,12 +56,12 @@
     <Compile Include="Picture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaveLayoutCommand.cs" />
-    <Compile Include="ToolWindow1.cs" />
-    <Compile Include="ToolWindow1Command.cs" />
+    <Compile Include="SplayCodeToolWindow.cs" />
+    <Compile Include="SplayCodeCommand.cs" />
     <Compile Include="SplayCodeToolWindowControl.xaml.cs">
       <DependentUpon>SplayCodeToolWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ToolWindow1Package.cs" />
+    <Compile Include="SplayCodePackage.cs" />
     <Compile Include="ChromeControl.xaml.cs">
       <DependentUpon>ChromeControl.xaml</DependentUpon>
     </Compile>
@@ -74,14 +74,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\cat.jpg" />
-    <Content Include="Resources\AddImageCommand.png" />
     <Content Include="Resources\cat.png" />
-    <Content Include="Resources\LoadLayoutCommand.png" />
-    <Content Include="Resources\SaveLayoutCommand.png" />
-    <Content Include="Resources\ToolWindow1Command.png" />
-    <Content Include="Resources\ToolWindow1Package.ico" />
-    <VSCTCompile Include="ToolWindow1Package.vsct">
+    <Content Include="Resources\SplayCodePackage.ico" />
+    <VSCTCompile Include="SplayCodePackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
     </VSCTCompile>

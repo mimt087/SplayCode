@@ -23,14 +23,14 @@ namespace SplayCode
     /// </para>
     /// </remarks>
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
-    public class ToolWindow1 : ToolWindowPane
+    public class SplayCodeToolWindow : ToolWindowPane
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ToolWindow1"/> class.
+        /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
         /// </summary>
-        public ToolWindow1() : base(null)
+        public SplayCodeToolWindow() : base(null)
         {
-            this.Caption = "ToolWindow1";
+            this.Caption = "SplayCode";
 
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
