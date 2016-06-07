@@ -104,7 +104,7 @@ namespace SplayCode
             List<Picture> pictures = new List<Picture>();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = "C:\\Users\\Owner\\Uni Stuff\\YEAR 4\\PART IV\\Project\\SplayCode\\bin\\Debug";
+            openFileDialog1.InitialDirectory = Environment.CurrentDirectory + "\\bin\\Debug";
             openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = false;
