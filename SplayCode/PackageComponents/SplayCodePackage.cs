@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
+using SplayCode.Data;
 
 namespace SplayCode
 {
@@ -58,6 +59,7 @@ namespace SplayCode
             // any Visual Studio service because at this point the package object is created but
             // not sited yet inside Visual Studio environment. The place to do all the other
             // initialization is the Initialize method.
+            DataModel.Initialize();
         }
 
         #region Package Members
@@ -70,7 +72,6 @@ namespace SplayCode
         {
             SplayCodeCommand.Initialize(this);
             base.Initialize();
-            //Command1.Initialize(this);
             AddImageCommand.Initialize(this);
             SaveLayoutCommand.Initialize(this);
             LoadLayoutCommand.Initialize(this);

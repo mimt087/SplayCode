@@ -113,8 +113,8 @@ namespace SplayCode
             {
                 ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
-                if ((SplayCodeToolWindowControl)window.Content != null) {
-                    ((SplayCodeToolWindowControl)window.Content).RemoveAll();
+                if ((VirtualSpaceControl)window.Content != null) {
+                    ((VirtualSpaceControl)window.Content).RemoveAll();
                 }
                 string path = openFileDialog1.FileName;
 
@@ -133,9 +133,9 @@ namespace SplayCode
                     img.Height = pic._height;
                     img.Width = pic._width;
 
-                    ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length - 1]);
+                    BlockControl imgChrome = new BlockControl(img, imgPath.Segments[imgPath.Segments.Length - 1]);
                     
-                    ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, true, pic._X, pic._Y);
+                    ((VirtualSpaceControl)window.Content).AddItem(imgChrome, true, pic._X, pic._Y);
                 }
             }
 

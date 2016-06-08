@@ -21,14 +21,14 @@ namespace SplayCode
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class ChromeControl : UserControl
+    public partial class BlockControl : UserControl
     {
         private Point firstPoint = new Point();
         private bool isDraggingThumb = false;
-        private SplayCodeToolWindowControl splayCodeToolWindow;
+        private VirtualSpaceControl splayCodeToolWindow;
         private Image img;
 
-        public ChromeControl(Image img, String labelString)
+        public BlockControl(Image img, String labelString)
         {
             this.img = img;
             InitializeComponent();
@@ -37,7 +37,7 @@ namespace SplayCode
             InitMouseCapture();
         }
 
-        public void SetParent(SplayCodeToolWindowControl splayCodeToolWindow)
+        public void SetParent(VirtualSpaceControl splayCodeToolWindow)
         {
             this.splayCodeToolWindow = splayCodeToolWindow;
         }

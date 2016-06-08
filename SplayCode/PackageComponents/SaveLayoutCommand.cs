@@ -101,9 +101,9 @@ namespace SplayCode
         {
             ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
-            List<ChromeControl> chromes = ((SplayCodeToolWindowControl)window.Content).FetchAllChromes();
+            List<BlockControl> chromes = ((VirtualSpaceControl)window.Content).FetchAllChromes();
             List<Image> images = new List<Image>();
-            foreach (ChromeControl cc in chromes)
+            foreach (BlockControl cc in chromes)
             {
                 images.Add(cc.GetImage());
 

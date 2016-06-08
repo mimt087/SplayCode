@@ -108,9 +108,9 @@ namespace SplayCode
                 Image img = new Image();
                 Uri imgPath = new Uri(openFileDialog1.FileName);
                 img.Source = new BitmapImage(imgPath);
-                ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length-1]);
+                BlockControl imgChrome = new BlockControl(img, imgPath.Segments[imgPath.Segments.Length-1]);
                 ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
-                ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, false, 0, 0);
+                ((VirtualSpaceControl)window.Content).AddItem(imgChrome, false, 0, 0);
             }
         }
     }

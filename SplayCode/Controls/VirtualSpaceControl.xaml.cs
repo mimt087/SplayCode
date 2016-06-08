@@ -14,23 +14,17 @@ namespace SplayCode
     using System.Windows;
     using System.Windows.Controls;
 
-    /// <summary>
-    /// Interaction logic for ToolWindow1Control.
-    /// </summary>
-    public partial class SplayCodeToolWindowControl : UserControl
+    public partial class VirtualSpaceControl : UserControl
     {
 
-        private List<ChromeControl> items = new List<ChromeControl>();
+        private List<BlockControl> items = new List<BlockControl>();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ToolWindow1Control"/> class.
-        /// </summary>
-        public SplayCodeToolWindowControl()
+        public VirtualSpaceControl()
         {
             this.InitializeComponent();
         }
 
-        public void AddItem(ChromeControl item, bool load, double x, double y)
+        public void AddItem(BlockControl item, bool load, double x, double y)
         {
             item.SetParent(this);
             items.Add(item);
@@ -51,7 +45,7 @@ namespace SplayCode
             }          
         }
 
-        public void RemoveItem(ChromeControl item)
+        public void RemoveItem(BlockControl item)
         {
             items.Remove(item);
             cavRoot.Children.Remove(item);
@@ -62,16 +56,16 @@ namespace SplayCode
             cavRoot.Children.Clear();
         }
 
-        public List<ChromeControl> FetchAllChromes()
+        public List<BlockControl> FetchAllChromes()
         {
             //ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
             List<Image> images = new List<Image>();
-            List<ChromeControl> chromes = new List<ChromeControl>();
+            List<BlockControl> chromes = new List<BlockControl>();
             foreach (UIElement element in cavRoot.Children)
             {
-                if (element is ChromeControl)
+                if (element is BlockControl)
                 {
-                    chromes.Add((ChromeControl)element);
+                    chromes.Add((BlockControl)element);
                 }
             }
 
