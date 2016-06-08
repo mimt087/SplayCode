@@ -23,7 +23,7 @@ namespace SplayCode
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4129;
+        public const int CommandId = 3;
 
         /// <summary>
         /// Command menu group (command set GUID).

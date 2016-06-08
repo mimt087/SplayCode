@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="LoadLayoutCommand.cs" company="Company">
+// <copyright file="SaveLayoutCommand.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -9,26 +9,24 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Windows.Controls;
+using System.Windows;
 using System.Xml.Serialization;
 using System.IO;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Drawing;
+using System.Xml;
 
 namespace SplayCode
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class LoadLayoutCommand
+    internal sealed class SaveLayoutCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4131;
+        public const int CommandId = 4;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -41,11 +39,11 @@ namespace SplayCode
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoadLayoutCommand"/> class.
+        /// Initializes a new instance of the <see cref="SaveLayoutCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private LoadLayoutCommand(Package package)
+        private SaveLayoutCommand(Package package)
         {
             if (package == null)
             {
@@ -66,7 +64,7 @@ namespace SplayCode
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static LoadLayoutCommand Instance
+        public static SaveLayoutCommand Instance
         {
             get;
             private set;
@@ -89,7 +87,7 @@ namespace SplayCode
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new LoadLayoutCommand(package);
+            Instance = new SaveLayoutCommand(package);
         }
 
         /// <summary>
@@ -101,45 +99,33 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            List<Picture> pictures = new List<Picture>();
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
-            openFileDialog1.InitialDirectory = Environment.CurrentDirectory + "\\bin\\Debug";
-            openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
-            openFileDialog1.FilterIndex = 2;
-            openFileDialog1.RestoreDirectory = false;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            List<ChromeControl> chromes = ((SplayCodeToolWindowControl)window.Content).FetchAllChromes();
+            List<Image> images = new List<Image>();
+            foreach (ChromeControl cc in chromes)
             {
-                ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
+                images.Add(cc.GetImage());
 
-                if ((SplayCodeToolWindowControl)window.Content != null) {
-                    ((SplayCodeToolWindowControl)window.Content).RemoveAll();
-                }
-                string path = openFileDialog1.FileName;
-
-                XmlSerializer x = new XmlSerializer(typeof(List<Picture>));
-                StreamReader reader = new StreamReader(path);
-
-                pictures = (List<Picture>)x.Deserialize(reader);
-                reader.Close();
-
-                foreach (Picture pic in pictures)
-                {
-                    System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-                    Uri imgPath = new Uri(pic._source);
-                    
-                    img.Source = new BitmapImage(imgPath);
-                    img.Height = pic._height;
-                    img.Width = pic._width;
-
-                    ChromeControl imgChrome = new ChromeControl(img, imgPath.Segments[imgPath.Segments.Length - 1]);
-                    
-                    ((SplayCodeToolWindowControl)window.Content).AddItem(imgChrome, true, pic._X, pic._Y);
-                }
             }
 
+            List<Picture> pictures = new List<Picture>();
+            int i = 0;
+            foreach (Image img in images)
+            {
+                Picture pic = new Picture(chromes[i].Margin.Left, chromes[i].Margin.Top,
+                    img.Source.ToString(), img.ActualHeight, img.ActualWidth);
+                pictures.Add(pic);
+                i++;
+            }
 
+            XmlSerializer x = new XmlSerializer(typeof(List<Picture>));
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.IndentChars = "    ";
+            var xmlwriter = XmlWriter.Create(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".xml", settings);
+
+            x.Serialize(xmlwriter, pictures);
         }
     }
 }
