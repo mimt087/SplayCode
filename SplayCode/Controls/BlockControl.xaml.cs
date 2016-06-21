@@ -18,33 +18,29 @@ using System.Windows.Shapes;
 
 namespace SplayCode
 {
-    /// <summary>
-    /// Interaction logic for UserControl1.xaml
-    /// </summary>
+    
     public partial class BlockControl : UserControl
     {
+
+        private VirtualSpaceControl virtualSpace;
+
         private Point firstPoint = new Point();
         private bool isDraggingThumb = false;
-        private VirtualSpaceControl splayCodeToolWindow;
-        private Image img;
+        private Image content;
 
-        public BlockControl(Image img, String labelString)
+        public BlockControl(string label, Image content)
         {
-            this.img = img;
             InitializeComponent();
-            baseCanvas.Children.Add(img);
-            label.Content = labelString;
+            virtualSpace = VirtualSpaceControl.Instance;
+            this.content = content;
+            baseCanvas.Children.Add(content);
+            this.label.Content = label;
             InitMouseCapture();
-        }
-
-        public void SetParent(VirtualSpaceControl splayCodeToolWindow)
-        {
-            this.splayCodeToolWindow = splayCodeToolWindow;
         }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
-            splayCodeToolWindow.RemoveItem(this);
+            virtualSpace.RemoveBlock(this);
         }
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
@@ -99,7 +95,7 @@ namespace SplayCode
 
         public Image GetImage()
         {
-            return img;
+            return content;
         }
 
         private void InitMouseCapture()

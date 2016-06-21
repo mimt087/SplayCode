@@ -99,9 +99,7 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
-
-            List<BlockControl> chromes = ((VirtualSpaceControl)window.Content).FetchAllChromes();
+            List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
             List<Image> images = new List<Image>();
             foreach (BlockControl cc in chromes)
             {

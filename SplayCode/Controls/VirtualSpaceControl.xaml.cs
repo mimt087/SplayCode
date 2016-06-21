@@ -6,84 +6,68 @@
 
 namespace SplayCode
 {
-    using Microsoft.VisualStudio.Shell;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
 
     public partial class VirtualSpaceControl : UserControl
     {
 
-        private List<BlockControl> items = new List<BlockControl>();
-
-        public VirtualSpaceControl()
+        private static VirtualSpaceControl instance;
+        public static VirtualSpaceControl Instance
         {
-            this.InitializeComponent();
-        }
-
-        public void AddItem(BlockControl item, bool load, double x, double y)
-        {
-            item.SetParent(this);
-            items.Add(item);
-            cavRoot.Children.Add(item);
-
-            if (load)
+            get
             {
-                Thickness t = new Thickness();
-                t.Left = x;
-                t.Top = y;
-                item.Margin = t;
-            } else
+                if (instance == null) {
+                    instance = new VirtualSpaceControl();
+                }
+                return instance;
+            }
+            private set
             {
-                Thickness t = new Thickness();
-                t.Left = 200 * items.Count;
-                t.Top = 50;
-                item.Margin = t;
-            }          
+                instance = value;
+            }
         }
 
-        public void RemoveItem(BlockControl item)
+        private List<BlockControl> BlockList;
+
+        private VirtualSpaceControl()
         {
-            items.Remove(item);
-            cavRoot.Children.Remove(item);
+            InitializeComponent();
+            BlockList = new List<BlockControl>();
         }
 
-        public void RemoveAll()
+        // Add a block using default positioning
+        public void AddBlock(string label, Image content)
         {
+            double xPos = 200 * BlockList.Count;
+            double yPos = 50;
+            AddBlock(label, content, xPos, yPos);
+        }
+
+        public void AddBlock(string label, Image content, double xPos, double yPos)
+        {
+            BlockControl newBlock = new BlockControl(label, content);
+            newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
+            BlockList.Add(newBlock);
+            cavRoot.Children.Add(newBlock);
+        }
+
+        public void RemoveBlock(BlockControl block)
+        {
+            BlockList.Remove(block);
+            cavRoot.Children.Remove(block);
+        }
+
+        public void RemoveAllBlocks()
+        {
+            BlockList.Clear();
             cavRoot.Children.Clear();
         }
 
-        public List<BlockControl> FetchAllChromes()
+        public List<BlockControl> FetchAllBlocks()
         {
-            //ToolWindowPane window = this.package.FindToolWindow(typeof(ToolWindow1), 0, true);
-            List<Image> images = new List<Image>();
-            List<BlockControl> chromes = new List<BlockControl>();
-            foreach (UIElement element in cavRoot.Children)
-            {
-                if (element is BlockControl)
-                {
-                    chromes.Add((BlockControl)element);
-                }
-            }
-
-            //foreach (ChromeControl cc in chromes)
-            //{
-            //    images.Add((Image)cc.scrollView.Content);
-            //}
-
-            return chromes;
-            //foreach (ChromeControl cc in chromes)
-            //{
-            //    images.Add(ChromeControl.)
-            //}
-            //IEnumerable<ChromeControl> images = cavRoot.Children.OfType(ChromeControl);
-            //return images;
+            return BlockList;            
         }
-
-        
-
     }
 }

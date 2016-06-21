@@ -114,7 +114,7 @@ namespace SplayCode
                 ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
                 if ((VirtualSpaceControl)window.Content != null) {
-                    ((VirtualSpaceControl)window.Content).RemoveAll();
+                    ((VirtualSpaceControl)window.Content).RemoveAllBlocks();
                 }
                 string path = openFileDialog1.FileName;
 
@@ -131,11 +131,8 @@ namespace SplayCode
                     
                     img.Source = new BitmapImage(imgPath);
                     img.Height = pic._height;
-                    img.Width = pic._width;
-
-                    BlockControl imgChrome = new BlockControl(img, imgPath.Segments[imgPath.Segments.Length - 1]);
-                    
-                    ((VirtualSpaceControl)window.Content).AddItem(imgChrome, true, pic._X, pic._Y);
+                    img.Width = pic._width;                    
+                    VirtualSpaceControl.Instance.AddBlock(imgPath.Segments[imgPath.Segments.Length - 1], img, pic._X, pic._Y);
                 }
             }
 
