@@ -4,17 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SplayCode"
-             mc:Ignorable="d" d:DesignWidth="150">
+             mc:Ignorable="d" Height="150" Width="150">
     <Grid Name="baseGrid" Margin="0,0,0,0">
-        <Thumb Name="dragger" Background="Blue" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Width="20"  DragStarted="onDragStart" DragDelta="onDragDelta" DragCompleted="onDragComplete" Panel.ZIndex="100" RenderTransformOrigin="3.888,-0.13" Margin="-20,-4,0,0" Height="20"/>
-        <Button x:Name="closeButton" HorizontalAlignment="Left" Height="28" Margin="116,6,0,0" VerticalAlignment="Top" Width="29" Click="closeButton_Click" RenderTransformOrigin="2.138,0.745"/>
-        <Label x:Name="label" HorizontalAlignment="Left" Height="31" Margin="0,3,0,0" VerticalAlignment="Top" Width="108"/>
-        <Border Name="border" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="111" Margin="0,39,0,0" VerticalAlignment="Top" Width="150">
-            <Grid Name="baseCanvas">
-                <Thumb Name="myThumb" Background="Blue" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Width="20" Height="20"  DragStarted="onResizeStart" DragDelta="onResizeDelta" DragCompleted="onResizeComplete" 
-                Margin="129,89,0.0,0.0" Panel.ZIndex="100"/>
+        <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Top" DragDelta="onDragDelta" Panel.ZIndex="100" 
+               Height="36" Opacity="0" Margin="0,0,40,0"/>
+        <Thumb Name="leftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+               Width="8" DragDelta="onLeftResizeDelta"
+               Panel.ZIndex="100" Opacity="0" Margin="0,36,0,8" Cursor="SizeWE"/>
+        <Thumb Name="rightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+               Width="8" DragDelta="onRightResizeDelta"
+               Panel.ZIndex="100" Opacity="0" Margin="0,36,0,8" Cursor="SizeWE"/>
+        <Thumb Name="bottomResizeThumb" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="8" DragDelta="onBottomResizeDelta" 
+               Panel.ZIndex="100" Opacity="0" Margin="8,0,8.4,0.4" Cursor="SizeNS"/>
+        <Thumb Name="bottomLeftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+               Width="8" Height="8" DragDelta="onBottomLeftResizeDelta" 
+               Panel.ZIndex="100" Opacity="0" Margin="0,146,0,0" Cursor="SizeNESW"/>
+        <Thumb Name="bottomRightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Width="8" Height="8" DragDelta="onBottomRightResizeDelta"
+               Panel.ZIndex="100" Opacity="0" Margin="0,0,0,0" Cursor="SizeNWSE"/>
+        <Border Name="chrome" BorderBrush="#FFFFF29D" BorderThickness="8" HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch">
+            <Grid Name="chromeGrid" Margin="0,0,0,0">
+                <Label x:Name="label" Height="34" Margin="-1,-6,32,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#FFFFF29D" FontSize="13.333"/>
+                <Button x:Name="closeButton" HorizontalAlignment="Right" Height="34" Margin="0,-6,-1,0" VerticalAlignment="Top" 
+                        Width="33" Click="closeButton_Click" BorderThickness="6" 
+                        Background="#FFDDDDDD" BorderBrush="#FFFFF29D"/>
+                <Grid Name="contentSpace" Margin="0,28,0,0"/>
             </Grid>
         </Border>
     </Grid>
