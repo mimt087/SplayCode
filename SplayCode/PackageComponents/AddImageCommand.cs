@@ -99,16 +99,15 @@ namespace SplayCode
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.InitialDirectory = "c:\\";
-            openFileDialog1.Filter = "Image Files(*.bmp, *.jpg, *.png) | *.bmp; *.jpg; *.png";
-            openFileDialog1.FilterIndex = 2;
+            //openFileDialog1.Filter = "Program Files(*.txt, *.cs)";
+            //openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = false;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                Image img = new Image();
-                Uri imgPath = new Uri(openFileDialog1.FileName);
-                img.Source = new BitmapImage(imgPath);
-                VirtualSpaceControl.Instance.AddBlock(imgPath.Segments[imgPath.Segments.Length - 1], img, 0, 0);
+                Uri documentPath = new Uri(openFileDialog1.FileName);
+                VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1], 
+                    openFileDialog1.FileName, 0, 0);
             }
         }
     }

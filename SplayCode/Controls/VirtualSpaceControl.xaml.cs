@@ -38,16 +38,16 @@ namespace SplayCode
         }
 
         // Add a block using default positioning
-        public void AddBlock(string label, Image content)
+        public void AddBlock(string label, string documentPath)
         {
             double xPos = 200 * BlockList.Count;
             double yPos = 50;
-            AddBlock(label, content, xPos, yPos);
+            AddBlock(label, documentPath, xPos, yPos);
         }
 
-        public void AddBlock(string label, Image content, double xPos, double yPos)
+        public void AddBlock(string label, string documentPath, double xPos, double yPos)
         {
-            BlockControl newBlock = new BlockControl(label, content);
+            BlockControl newBlock = new BlockControl(label, documentPath);
             newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
             BlockList.Add(newBlock);
             cavRoot.Children.Add(newBlock);

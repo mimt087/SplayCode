@@ -103,7 +103,7 @@ namespace SplayCode
             List<Image> images = new List<Image>();
             foreach (BlockControl cc in chromes)
             {
-                images.Add(cc.GetImage());
+                //images.Add(cc.GetImage());
 
             }
 

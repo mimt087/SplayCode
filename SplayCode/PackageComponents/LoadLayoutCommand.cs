@@ -132,7 +132,7 @@ namespace SplayCode
                     img.Source = new BitmapImage(imgPath);
                     img.Height = pic._height;
                     img.Width = pic._width;                    
-                    VirtualSpaceControl.Instance.AddBlock(imgPath.Segments[imgPath.Segments.Length - 1], img, pic._X, pic._Y);
+                    //VirtualSpaceControl.Instance.AddBlock(imgPath.Segments[imgPath.Segments.Length - 1], img, pic._X, pic._Y);
                 }
             }
 

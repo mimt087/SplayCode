@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
+using SplayCode.Controls;
 
 namespace SplayCode
 {
@@ -66,6 +67,9 @@ namespace SplayCode
             AddImageCommand.Initialize(this);
             SaveLayoutCommand.Initialize(this);
             LoadLayoutCommand.Initialize(this);
+
+            EditorControl.OLEServiceProvider = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)GetService(
+                typeof(Microsoft.VisualStudio.OLE.Interop.IServiceProvider));
         }
 
         #endregion
