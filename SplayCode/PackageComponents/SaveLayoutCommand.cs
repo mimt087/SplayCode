@@ -15,6 +15,10 @@ using System.Windows;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
+using Microsoft.VisualStudio.Text.Editor;
+using SplayCode.Controls;
+using System.Linq;
+using SplayCode.Data;
 
 namespace SplayCode
 {
@@ -100,30 +104,26 @@ namespace SplayCode
         private void MenuItemCallback(object sender, EventArgs e)
         {
             List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
-            List<Image> images = new List<Image>();
+            List<Editor> editorList = new List<Editor>();
+            IEnumerable<EditorControl> editors;
             foreach (BlockControl cc in chromes)
             {
-                //images.Add(cc.GetImage());
-
+                //IEnumerable<EditorControl> editors = 
+                editors = cc.contentSpace.Children.OfType<EditorControl>();
+                EditorControl editorControl = editors.First();
+                string filepath = editorControl.getFilePath();
+                
+                Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth);
+                editorList.Add(editor);
             }
 
-            List<Picture> pictures = new List<Picture>();
-            int i = 0;
-            foreach (Image img in images)
-            {
-                Picture pic = new Picture(chromes[i].Margin.Left, chromes[i].Margin.Top,
-                    img.Source.ToString(), img.ActualHeight, img.ActualWidth);
-                pictures.Add(pic);
-                i++;
-            }
-
-            XmlSerializer x = new XmlSerializer(typeof(List<Picture>));
+            XmlSerializer x = new XmlSerializer(typeof(List<Editor>));
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.IndentChars = "    ";
             var xmlwriter = XmlWriter.Create(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".xml", settings);
 
-            x.Serialize(xmlwriter, pictures);
+            x.Serialize(xmlwriter, editorList);
         }
     }
 }

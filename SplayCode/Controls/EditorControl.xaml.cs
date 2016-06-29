@@ -125,5 +125,10 @@ namespace SplayCode.Controls
             }
             return hr;
         }
+
+        public string getFilePath()
+        {
+            return this.filePath;
+        }
     }
 }
