@@ -124,6 +124,8 @@ namespace SplayCode
             var xmlwriter = XmlWriter.Create(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".xml", settings);
 
             x.Serialize(xmlwriter, editorList);
+
+            xmlwriter.Close();
         }
     }
 }
