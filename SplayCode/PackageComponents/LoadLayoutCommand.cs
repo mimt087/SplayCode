@@ -128,10 +128,7 @@ namespace SplayCode
                 foreach (Editor editor in editorList)
                 {
                     Uri documentPath = new Uri(editor.source);
-                    
-                    //img.Source = new BitmapImage(imgPath);
-                    //img.Height = pic._height;
-                    //img.Width = pic._width;                    
+                          
                     VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
                         editor.source, editor.X, editor.Y, editor.height, editor.width);
                 }

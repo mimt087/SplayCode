@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using SplayCode.Controls;
 using System.Linq;
 using SplayCode.Data;
+using System.Windows.Forms;
 
 namespace SplayCode
 {
@@ -103,29 +104,37 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
-            List<Editor> editorList = new List<Editor>();
-            IEnumerable<EditorControl> editors;
-            foreach (BlockControl cc in chromes)
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+            saveFileDialog1.Title = "Save a Layout File";
+            saveFileDialog1.ShowDialog();
+
+            if (saveFileDialog1.FileName != "")
             {
-                //IEnumerable<EditorControl> editors = 
-                editors = cc.contentSpace.Children.OfType<EditorControl>();
-                EditorControl editorControl = editors.First();
-                string filepath = editorControl.getFilePath();
-                
-                Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth);
-                editorList.Add(editor);
+
+                List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
+                List<Editor> editorList = new List<Editor>();
+                IEnumerable<EditorControl> editors;
+                foreach (BlockControl cc in chromes)
+                {
+                    editors = cc.contentSpace.Children.OfType<EditorControl>();
+                    EditorControl editorControl = editors.First();
+                    string filepath = editorControl.getFilePath();
+
+                    Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth);
+                    editorList.Add(editor);
+                }
+
+                XmlSerializer x = new XmlSerializer(typeof(List<Editor>));
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.IndentChars = "    ";
+                var xmlwriter = XmlWriter.Create(saveFileDialog1.FileName, settings);
+
+                x.Serialize(xmlwriter, editorList);
+
+                xmlwriter.Close();
             }
-
-            XmlSerializer x = new XmlSerializer(typeof(List<Editor>));
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.IndentChars = "    ";
-            var xmlwriter = XmlWriter.Create(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".xml", settings);
-
-            x.Serialize(xmlwriter, editorList);
-
-            xmlwriter.Close();
         }
     }
 }
