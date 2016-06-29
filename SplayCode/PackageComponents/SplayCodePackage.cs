@@ -64,7 +64,7 @@ namespace SplayCode
         {
             SplayCodeCommand.Initialize(this);
             base.Initialize();
-            AddImageCommand.Initialize(this);
+            AddFileCommand.Initialize(this);
             SaveLayoutCommand.Initialize(this);
             LoadLayoutCommand.Initialize(this);
 

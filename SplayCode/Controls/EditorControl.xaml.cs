@@ -26,9 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace SplayCode.Controls
 {
-    /// <summary>
-    /// Interaction logic for EditorControl.xaml
-    /// </summary>
+
     public partial class EditorControl : UserControl, IOleCommandTarget
     {
 
