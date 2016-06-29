@@ -17,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Drawing;
+using SplayCode.Data;
 
 namespace SplayCode
 {
@@ -101,7 +102,7 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            List<Picture> pictures = new List<Picture>();
+            List<Editor> editorList = new List<Editor>();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.InitialDirectory = Environment.CurrentDirectory + "\\bin\\Debug";
@@ -118,21 +119,21 @@ namespace SplayCode
                 }
                 string path = openFileDialog1.FileName;
 
-                XmlSerializer x = new XmlSerializer(typeof(List<Picture>));
+                XmlSerializer x = new XmlSerializer(typeof(List<Editor>));
                 StreamReader reader = new StreamReader(path);
 
-                pictures = (List<Picture>)x.Deserialize(reader);
+                editorList = (List<Editor>)x.Deserialize(reader);
                 reader.Close();
 
-                foreach (Picture pic in pictures)
+                foreach (Editor editor in editorList)
                 {
-                    System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-                    Uri imgPath = new Uri(pic._source);
+                    Uri documentPath = new Uri(editor.source);
                     
-                    img.Source = new BitmapImage(imgPath);
-                    img.Height = pic._height;
-                    img.Width = pic._width;                    
-                    //VirtualSpaceControl.Instance.AddBlock(imgPath.Segments[imgPath.Segments.Length - 1], img, pic._X, pic._Y);
+                    //img.Source = new BitmapImage(imgPath);
+                    //img.Height = pic._height;
+                    //img.Width = pic._width;                    
+                    VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                        editor.source, editor.X, editor.Y, editor.height, editor.width);
                 }
             }
 

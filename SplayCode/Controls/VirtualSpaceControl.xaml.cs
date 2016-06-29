@@ -53,6 +53,16 @@ namespace SplayCode
             cavRoot.Children.Add(newBlock);
         }
 
+        public void AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width)
+        {
+            BlockControl newBlock = new BlockControl(label, documentPath);
+            newBlock.Width = width;
+            newBlock.Height = height;
+            newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
+            BlockList.Add(newBlock);
+            cavRoot.Children.Add(newBlock);
+        }
+
         public void RemoveBlock(BlockControl block)
         {
             BlockList.Remove(block);
