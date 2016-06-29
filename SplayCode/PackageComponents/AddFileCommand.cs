@@ -18,7 +18,7 @@ namespace SplayCode
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class AddImageCommand
+    internal sealed class AddFileCommand
     {
         /// <summary>
         /// Command ID.
@@ -36,11 +36,11 @@ namespace SplayCode
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddImageCommand"/> class.
+        /// Initializes a new instance of the <see cref="AddFileCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private AddImageCommand(Package package)
+        private AddFileCommand(Package package)
         {
             if (package == null)
             {
@@ -61,7 +61,7 @@ namespace SplayCode
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static AddImageCommand Instance
+        public static AddFileCommand Instance
         {
             get;
             private set;
@@ -84,7 +84,7 @@ namespace SplayCode
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new AddImageCommand(package);
+            Instance = new AddFileCommand(package);
         }
 
         /// <summary>

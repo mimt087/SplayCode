@@ -58,10 +58,10 @@
           <ButtonText>SplayCode</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidSplayCodeCommandSet" id="SplayCodeAddImageCommand" priority="0" type="Button">
+      <Button guid="guidSplayCodeCommandSet" id="SplayCodeAddFileCommand" priority="0" type="Button">
         <Parent guid="guidSplayCodeCommandSet" id="SplayCodeToolbarGroup" />
         <Strings>
-          <ButtonText>Add image...</ButtonText>
+          <ButtonText>Add file...</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidSplayCodeCommandSet" id="SplayCodeSaveLayoutCommand" priority="1" type="Button">
@@ -95,7 +95,7 @@
       <IDSymbol name="SplayCodeMainCommand" value="0" />
       <IDSymbol name="SplayCodeToolbar" value="1" />
       <IDSymbol name="SplayCodeToolbarGroup" value="2" />
-      <IDSymbol name="SplayCodeAddImageCommand" value="3" />
+      <IDSymbol name="SplayCodeAddFileCommand" value="3" />
       <IDSymbol name="SplayCodeSaveLayoutCommand" value="4" />
       <IDSymbol name="SplayCodeLoadLayoutCommand" value="5" />
     </GuidSymbol>

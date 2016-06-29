@@ -54,7 +54,7 @@
     <Compile Include="Controls\EditorControl.xaml.cs">
       <DependentUpon>EditorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PackageComponents\AddImageCommand.cs" />
+    <Compile Include="PackageComponents\AddFileCommand.cs" />
     <Compile Include="PackageComponents\LoadLayoutCommand.cs" />
     <Compile Include="Data\Picture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
