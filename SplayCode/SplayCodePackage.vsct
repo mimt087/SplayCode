@@ -76,14 +76,19 @@
           <ButtonText>Load Layout</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidSplayCodeCommandSet" id="SplayCodeClearLayoutCommand" priority="3" type="Button">
+        <Parent guid="guidSplayCodeCommandSet" id="SplayCodeToolbarGroup" />
+        <Strings>
+          <ButtonText>Clear</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
     
     <Groups>
-      <Group guid="guidSplayCodeCommandSet" id="SplayCodeToolbarGroup" >
+      <Group guid="guidSplayCodeCommandSet" id="SplayCodeToolbarGroup">
         <Parent guid="guidSplayCodeCommandSet" id="SplayCodeToolbar" />
       </Group>
     </Groups>
-    
   </Commands>
 
   <Symbols>
@@ -98,6 +103,7 @@
       <IDSymbol name="SplayCodeAddFileCommand" value="3" />
       <IDSymbol name="SplayCodeSaveLayoutCommand" value="4" />
       <IDSymbol name="SplayCodeLoadLayoutCommand" value="5" />
+      <IDSymbol name="SplayCodeClearLayoutCommand" value="6" />
     </GuidSymbol>
   </Symbols>
   

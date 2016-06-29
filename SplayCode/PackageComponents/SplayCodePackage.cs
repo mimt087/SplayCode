@@ -67,9 +67,11 @@ namespace SplayCode
             AddFileCommand.Initialize(this);
             SaveLayoutCommand.Initialize(this);
             LoadLayoutCommand.Initialize(this);
+            ClearLayoutCommand.Initialize(this);
 
             EditorControl.OLEServiceProvider = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)GetService(
                 typeof(Microsoft.VisualStudio.OLE.Interop.IServiceProvider));
+            
         }
 
         #endregion
