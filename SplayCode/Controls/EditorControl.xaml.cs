@@ -63,6 +63,7 @@ namespace SplayCode.Controls
                 , dwFlags: (uint)_EDITORREGFLAGS.RIEF_ENABLECACHING
                 , pFactory: null
                 , ppEditor: out invisibleEditor));
+            RegisterDocument(filePath);
 
             return invisibleEditor;
         }
@@ -92,8 +93,29 @@ namespace SplayCode.Controls
             IVsTextView textView;
             ErrorHandler.ThrowOnFailure(codeWindow.GetPrimaryView(out textView));
 
+            currentlyFocusedTextView = textView;
             var textViewHost = editorAdapter.GetWpfTextViewHost(textView);
             return textViewHost;
+        }
+
+        uint RegisterDocument(string targetFile)
+        {
+            //Then when creating the IVsInvisibleEditor, find and lock the document 
+            uint itemID;
+            IntPtr docData;
+            uint docCookie;
+            IVsHierarchy hierarchy;
+            var runningDocTable = (IVsRunningDocumentTable)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(SVsRunningDocumentTable));
+
+            var result = runningDocTable.FindAndLockDocument(
+                dwRDTLockType: (uint)_VSRDTFLAGS.RDT_EditLock,
+                pszMkDocument: targetFile,
+                ppHier: out hierarchy,
+                pitemid: out itemID,
+                ppunkDocData: out docData,
+                pdwCookie: out docCookie);
+
+            return docCookie;
         }
 
         int IOleCommandTarget.Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
@@ -127,6 +149,11 @@ namespace SplayCode.Controls
         public string getFilePath()
         {
             return this.filePath;
+        }
+
+        public IVsTextView GetTextView()
+        {
+            return currentlyFocusedTextView;
         }
     }
 }

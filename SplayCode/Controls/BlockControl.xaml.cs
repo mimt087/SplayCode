@@ -30,7 +30,8 @@ namespace SplayCode
             Thickness t = this.Margin;
             t.Left = t.Left + e.HorizontalChange;
             t.Top = t.Top + e.VerticalChange;
-            this.Margin = t;           
+            this.Margin = t;
+            RefreshVirtualSpaceSize();
         }
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)
@@ -45,7 +46,7 @@ namespace SplayCode
                 // Adjust block size
                 Width = Width - e.HorizontalChange;
             }
-            
+            RefreshVirtualSpaceSize();
         }
 
         void onRightResizeDelta(object sender, DragDeltaEventArgs e)
@@ -60,6 +61,7 @@ namespace SplayCode
                 // Adjust block size
                 Width = Width + e.HorizontalChange;
             }
+            RefreshVirtualSpaceSize();
         }
 
         void onBottomResizeDelta(object sender, DragDeltaEventArgs e)
@@ -74,19 +76,31 @@ namespace SplayCode
                 // Adjust block size
                 Height = Height + e.VerticalChange;
             }
-
+            RefreshVirtualSpaceSize();
         }
 
         void onBottomRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
             onRightResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
+            RefreshVirtualSpaceSize();
         }
 
         void onBottomLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
             onLeftResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
+            RefreshVirtualSpaceSize();
+        }
+
+        void RefreshVirtualSpaceSize()
+        {
+            VirtualSpaceControl.Instance.ExpandToSize(Margin.Top + Height, Margin.Left + Width);
+        }
+
+        public EditorControl GetEditor()
+        {
+            return editor;
         }
 
     }
