@@ -35,35 +35,95 @@ namespace SplayCode
         private VirtualSpaceControl()
         {
             InitializeComponent();
-            baseGrid.Height = 200;
-            baseGrid.Width = 200;
+            this.SizeChanged += sizeChanged;
+            baseGrid.Width = this.ActualWidth;
+            baseGrid.Height = this.ActualHeight;
             BlockList = new List<BlockControl>();
+        }
+
+        public void ExpandToSize(double width, double height)
+        {
+            if (width > baseGrid.Width)
+            {
+                baseGrid.Width = width;
+            }
+            if (height > baseGrid.Height)
+            {
+                baseGrid.Height = height;
+            }
+        }
+
+        private void sizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ExpandToSize(ActualWidth, ActualHeight);
         }
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 10 >= baseGrid.Height)
-                ExpandToSize(baseGrid.Height - e.VerticalChange, 0);
-            if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 10 >= baseGrid.Width)
-                ExpandToSize(0, baseGrid.Width - e.HorizontalChange);
-
+            if (e.VerticalChange < 0)
+            {
+                Debug.Print("Up: " + e.VerticalChange);
+                if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height)
+                {
+                    ExpandToSize(0, baseGrid.Height - e.VerticalChange);
+                }
+            }
+            else
+            {
+                Debug.Print("Down: " + e.VerticalChange);
+                if (ScrollView.VerticalOffset - 2 <= 0)
+                {
+                    Thickness t = dragThumb.Margin;
+                    t.Top = t.Top + e.VerticalChange;
+                    dragThumb.Margin = t;
+                    ExpandToSize(0, baseGrid.Height + e.VerticalChange);
+                    foreach (BlockControl block in BlockList)
+                    {
+                        block.Reposition(0, e.VerticalChange);
+                    }
+                }
+            }
+            if (e.HorizontalChange < 0)
+            {
+                Debug.Print("Left: " + e.VerticalChange);
+                if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width)
+                {
+                    ExpandToSize(baseGrid.Width - e.HorizontalChange, 0);
+                }
+            }
+            else
+            {
+                Debug.Print("Right: " + e.VerticalChange);
+                if (ScrollView.HorizontalOffset - 2 <= 0)
+                {
+                    Thickness t = dragThumb.Margin;
+                    t.Left = t.Left + e.HorizontalChange;
+                    dragThumb.Margin = t;
+                    ExpandToSize(baseGrid.Width + e.HorizontalChange, 0);
+                    foreach (BlockControl block in BlockList)
+                    {
+                        block.Reposition(e.HorizontalChange, 0);
+                    }
+                }
+            }
             ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - e.VerticalChange);
             ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - e.HorizontalChange);
+
         }
 
-        public void ExpandToSize(double height, double width)
+        void onDragComplete(object sender, DragCompletedEventArgs e)
         {
-            if (height > baseGrid.Height)
-                baseGrid.Height = height;
-            if (width > baseGrid.Width)
-                baseGrid.Width = width;
+            Thickness t = dragThumb.Margin;
+            t.Left = 0;
+            t.Top = 0;
+            dragThumb.Margin = t;
         }
 
         // Add a block using default positioning
         public void AddBlock(string label, string documentPath)
         {
-            double xPos = 200 * BlockList.Count;
-            double yPos = 50;
+            double xPos = 300 * BlockList.Count + 100;
+            double yPos = 100;
             AddBlock(label, documentPath, xPos, yPos);
         }
 
@@ -73,7 +133,7 @@ namespace SplayCode
             newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
             BlockList.Add(newBlock);
             baseGrid.Children.Add(newBlock);
-            ExpandToSize(newBlock.Margin.Top + newBlock.Height, newBlock.Margin.Left + newBlock.Width);
+            ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
         }
 
         public void AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width)
@@ -84,7 +144,7 @@ namespace SplayCode
             newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
             BlockList.Add(newBlock);
             baseGrid.Children.Add(newBlock);
-            ExpandToSize(newBlock.Margin.Top + newBlock.Height, newBlock.Margin.Left + newBlock.Width);
+            ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
         }
 
         public void RemoveBlock(BlockControl block)
@@ -93,10 +153,15 @@ namespace SplayCode
             baseGrid.Children.Remove(block);
         }
 
-        public void RemoveAllBlocks()
+        public void Clear()
         {
+            foreach (BlockControl block in BlockList)
+            {
+                baseGrid.Children.Remove(block);
+            }
             BlockList.Clear();
-            baseGrid.Children.Clear();
+            baseGrid.Width = ActualWidth;
+            baseGrid.Height = ActualHeight;
         }
 
         public List<BlockControl> FetchAllBlocks()

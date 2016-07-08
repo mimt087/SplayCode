@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SplayCode"
-             mc:Ignorable="d" Height="150" Width="150">
+             mc:Ignorable="d" Height="150" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Grid Name="baseGrid" Margin="0,0,0,0">
         <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Top" DragDelta="onDragDelta" Panel.ZIndex="100" 
                Height="36" Opacity="0" Margin="0,0,40,0"/>

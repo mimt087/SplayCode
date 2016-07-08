@@ -9,7 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <ScrollViewer Name="ScrollView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid Name="baseGrid" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DragDelta="onDragDelta" Opacity="0"/>
+            <Thumb Name="dragThumb" DragDelta="onDragDelta" DragCompleted="onDragComplete" Opacity="0" Margin="0"/>
         </Grid>
     </ScrollViewer>
 

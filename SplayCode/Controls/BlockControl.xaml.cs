@@ -20,6 +20,15 @@ namespace SplayCode
             this.label.Content = label;
         }
 
+        public void Reposition (double xDelta, double yDelta)
+        {
+            Thickness t = this.Margin;
+            t.Left = t.Left + xDelta;
+            t.Top = t.Top + yDelta;
+            this.Margin = t;
+            RefreshVirtualSpaceSize();
+        }
+
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             virtualSpace.RemoveBlock(this);
@@ -27,75 +36,54 @@ namespace SplayCode
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
         {
-            Thickness t = this.Margin;
-            t.Left = t.Left + e.HorizontalChange;
-            t.Top = t.Top + e.VerticalChange;
-            this.Margin = t;
-            RefreshVirtualSpaceSize();
+            Reposition(e.HorizontalChange, e.VerticalChange);
         }
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
             if (Width - e.HorizontalChange >= 150)
             {
-                // Adjust block position
-                Thickness t = Margin;
-                t.Left = t.Left + e.HorizontalChange;
-                Margin = t;
-
                 // Adjust block size
                 Width = Width - e.HorizontalChange;
+                Reposition(e.HorizontalChange, 0);
             }
-            RefreshVirtualSpaceSize();
         }
 
         void onRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
             if (Width + e.HorizontalChange >= 150)
             {
-                // Adjust block position
-                Thickness t = Margin;
-                t.Left = t.Left + e.HorizontalChange;
-                Margin = t;
-
                 // Adjust block size
                 Width = Width + e.HorizontalChange;
+                //Reposition(e.HorizontalChange, 0);
             }
-            RefreshVirtualSpaceSize();
         }
 
         void onBottomResizeDelta(object sender, DragDeltaEventArgs e)
         {
             if (Height + e.VerticalChange >= 150)
             {
-                // Adjust block position
-                Thickness t = Margin;
-                t.Top = t.Top + e.VerticalChange;
-                Margin = t;
-
                 // Adjust block size
                 Height = Height + e.VerticalChange;
+                //Reposition(0, e.VerticalChange);
             }
-            RefreshVirtualSpaceSize();
         }
 
         void onBottomRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
             onRightResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
-            RefreshVirtualSpaceSize();
         }
 
         void onBottomLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
             onLeftResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
-            RefreshVirtualSpaceSize();
         }
 
         void RefreshVirtualSpaceSize()
         {
-            VirtualSpaceControl.Instance.ExpandToSize(Margin.Top + Height, Margin.Left + Width);
+            VirtualSpaceControl.Instance.ExpandToSize(Margin.Left + Width, Margin.Top + Height);
         }
 
         public EditorControl GetEditor()
