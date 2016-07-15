@@ -31,6 +31,7 @@ namespace SplayCode
         }
 
         private List<BlockControl> BlockList;
+        private double zoomLevel;
 
         private VirtualSpaceControl()
         {
@@ -39,6 +40,22 @@ namespace SplayCode
             baseGrid.Width = this.ActualWidth;
             baseGrid.Height = this.ActualHeight;
             BlockList = new List<BlockControl>();
+            zoomLevel = zoomSlider.Value;
+            zoomSlider.ValueChanged += zoomChanged;
+        }
+
+        private void sizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ExpandToSize(ActualWidth, ActualHeight);
+        }
+
+        private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            zoomLevel = zoomSlider.Value;
+            if (baseGrid.Width * zoomLevel < this.ActualWidth)
+                ExpandToSize(this.ActualWidth / zoomLevel, 0);
+            if (baseGrid.Height * zoomLevel < this.ActualHeight)
+                ExpandToSize(0, this.ActualHeight / zoomLevel);
         }
 
         public void ExpandToSize(double width, double height)
@@ -51,11 +68,6 @@ namespace SplayCode
             {
                 baseGrid.Height = height;
             }
-        }
-
-        private void sizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            ExpandToSize(ActualWidth, ActualHeight);
         }
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
@@ -106,8 +118,9 @@ namespace SplayCode
                     }
                 }
             }
-            ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - e.VerticalChange);
-            ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - e.HorizontalChange);
+
+            ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (e.VerticalChange * zoomLevel));
+            ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (e.HorizontalChange * zoomLevel));
 
         }
 
@@ -162,6 +175,7 @@ namespace SplayCode
             BlockList.Clear();
             baseGrid.Width = ActualWidth;
             baseGrid.Height = ActualHeight;
+            zoomSlider.Value = 1.0;
         }
 
         public List<BlockControl> FetchAllBlocks()

@@ -8,12 +8,12 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" RenderTransformOrigin="0.5,0.5">
     <Grid>
-        <Slider x:Name="zoomSlider" HorizontalAlignment="Left" Margin="100,100,0,0" VerticalAlignment="Top" 
+        <Slider x:Name="zoomSlider" HorizontalAlignment="Right" Margin="0,0,30,30" VerticalAlignment="Bottom" 
                 Orientation="Vertical" TickFrequency="0.1" TickPlacement="TopLeft" SmallChange="0.01" Value="1.0" 
                 Cursor="Arrow" Height="100" Width="24" Maximum="1.5" Minimum="0.5" LargeChange="0.1" Panel.ZIndex="300"/>
         <ScrollViewer Name="ScrollView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid Name="baseGrid" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Background="#FFEEFFF2">
-                <Grid.RenderTransform>
+            <Grid Name="baseGrid" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Background="#FFEEFFF2">
+                <Grid.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="{Binding ElementName=zoomSlider,Path=Value}" 
                                         ScaleY="{Binding ElementName=zoomSlider,Path=Value}"/>
@@ -21,7 +21,7 @@
                         <RotateTransform/>
                         <TranslateTransform/>
                     </TransformGroup>
-                </Grid.RenderTransform>
+                </Grid.LayoutTransform>
                 <Thumb Name="dragThumb" DragDelta="onDragDelta" DragCompleted="onDragComplete" Opacity="0" Margin="0"/>
             </Grid>
         </ScrollViewer>
