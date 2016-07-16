@@ -32,6 +32,8 @@ namespace SplayCode
 
         private List<BlockControl> BlockList;
         private double zoomLevel;
+        private double verticalScrollPos;
+        private double horizontalScrollPos;
 
         private VirtualSpaceControl()
         {
@@ -42,6 +44,17 @@ namespace SplayCode
             BlockList = new List<BlockControl>();
             zoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
+            verticalScrollPos = 0;
+            horizontalScrollPos = 0;
+            ScrollView.ScrollChanged += scrollChanged;
+        }
+
+        private void scrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            /*if (e.VerticalChange != 0)
+                verticalScrollPos = ScrollView.VerticalOffset / ScrollView.ExtentHeight;
+            if (e.HorizontalChange != 0)
+                horizontalScrollPos = ScrollView.HorizontalOffset / ScrollView.ExtentWidth;*/
         }
 
         private void sizeChanged(object sender, SizeChangedEventArgs e)
@@ -51,11 +64,17 @@ namespace SplayCode
 
         private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            double previousZoomLevel = zoomLevel;
             zoomLevel = zoomSlider.Value;
             if (baseGrid.Width * zoomLevel < this.ActualWidth)
                 ExpandToSize(this.ActualWidth / zoomLevel, 0);
             if (baseGrid.Height * zoomLevel < this.ActualHeight)
                 ExpandToSize(0, this.ActualHeight / zoomLevel);
+
+            ScrollView.ScrollToVerticalOffset((ScrollView.VerticalOffset * (zoomLevel / previousZoomLevel))
+                + (ScrollView.ViewportHeight * (zoomLevel / previousZoomLevel - 1) / 2));
+            ScrollView.ScrollToHorizontalOffset((ScrollView.HorizontalOffset * (zoomLevel / previousZoomLevel))
+                + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2));
         }
 
         public void ExpandToSize(double width, double height)
@@ -75,7 +94,7 @@ namespace SplayCode
             if (e.VerticalChange < 0)
             {
                 Debug.Print("Up: " + e.VerticalChange);
-                if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height)
+                if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * zoomLevel)
                 {
                     ExpandToSize(0, baseGrid.Height - e.VerticalChange);
                 }
@@ -98,7 +117,7 @@ namespace SplayCode
             if (e.HorizontalChange < 0)
             {
                 Debug.Print("Left: " + e.VerticalChange);
-                if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width)
+                if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * zoomLevel)
                 {
                     ExpandToSize(baseGrid.Width - e.HorizontalChange, 0);
                 }

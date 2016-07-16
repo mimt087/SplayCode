@@ -28,7 +28,9 @@
                 <Label x:Name="label" Height="34" Margin="-1,-6,32,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#FFFFF29D" FontSize="13.333"/>
                 <Button x:Name="closeButton" HorizontalAlignment="Right" Height="34" Margin="0,-6,-1,0" VerticalAlignment="Top" 
                         Width="33" Click="closeButton_Click" BorderThickness="6" 
-                        Background="#FFDDDDDD" BorderBrush="#FFFFF29D"/>
+                        Background="#FFDDDDDD" BorderBrush="#FFFFF29D">
+                    <Image x:Name="closeIcon" Height="20" Source="/SplayCode;component/Resources/ic_clear_black_24dp_2x.png" Width="20"/>
+                </Button>
                 <Grid Name="contentSpace" Margin="0,28,0,0"/>
             </Grid>
         </Border>
