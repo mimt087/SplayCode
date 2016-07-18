@@ -77,6 +77,16 @@ namespace SplayCode
                 + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2));
         }
 
+        void zoomIn(object sender, RoutedEventArgs e)
+        {
+            zoomSlider.Value = zoomSlider.Value + zoomSlider.LargeChange;
+        }
+
+        void zoomOut(object sender, RoutedEventArgs e)
+        {
+            zoomSlider.Value = zoomSlider.Value - zoomSlider.LargeChange;
+        }
+
         public void ExpandToSize(double width, double height)
         {
             if (width > baseGrid.Width)
@@ -212,6 +222,11 @@ namespace SplayCode
                 }
             }
             return null;
+        }
+
+        private void zoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
