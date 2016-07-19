@@ -6,11 +6,13 @@
 
 namespace SplayCode
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
+    using System.Windows.Input;
     public partial class VirtualSpaceControl : UserControl
     {
 
@@ -32,8 +34,8 @@ namespace SplayCode
 
         private List<BlockControl> BlockList;
         private double zoomLevel;
-        private double verticalScrollPos;
-        private double horizontalScrollPos;
+        private bool duringTouch;
+        private bool duringZoom;
 
         private VirtualSpaceControl()
         {
@@ -44,17 +46,8 @@ namespace SplayCode
             BlockList = new List<BlockControl>();
             zoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
-            verticalScrollPos = 0;
-            horizontalScrollPos = 0;
-            ScrollView.ScrollChanged += scrollChanged;
-        }
-
-        private void scrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            /*if (e.VerticalChange != 0)
-                verticalScrollPos = ScrollView.VerticalOffset / ScrollView.ExtentHeight;
-            if (e.HorizontalChange != 0)
-                horizontalScrollPos = ScrollView.HorizontalOffset / ScrollView.ExtentWidth;*/
+            duringTouch = false;
+            duringZoom = false;
         }
 
         private void sizeChanged(object sender, SizeChangedEventArgs e)
@@ -64,17 +57,100 @@ namespace SplayCode
 
         private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double previousZoomLevel = zoomLevel;
-            zoomLevel = zoomSlider.Value;
-            if (baseGrid.Width * zoomLevel < this.ActualWidth)
-                ExpandToSize(this.ActualWidth / zoomLevel, 0);
-            if (baseGrid.Height * zoomLevel < this.ActualHeight)
-                ExpandToSize(0, this.ActualHeight / zoomLevel);
+            {
+                double previousZoomLevel = zoomLevel;
+                zoomLevel = zoomSlider.Value;
+                if (baseGrid.Width * zoomLevel < this.ActualWidth)
+                    ExpandToSize(this.ActualWidth / zoomLevel, 0);
+                if (baseGrid.Height * zoomLevel < this.ActualHeight)
+                    ExpandToSize(0, this.ActualHeight / zoomLevel);
 
-            ScrollView.ScrollToVerticalOffset((ScrollView.VerticalOffset * (zoomLevel / previousZoomLevel))
-                + (ScrollView.ViewportHeight * (zoomLevel / previousZoomLevel - 1) / 2));
-            ScrollView.ScrollToHorizontalOffset((ScrollView.HorizontalOffset * (zoomLevel / previousZoomLevel))
-                + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2));
+                ScrollView.ScrollToVerticalOffset((ScrollView.VerticalOffset * (zoomLevel / previousZoomLevel))
+                    + (ScrollView.ViewportHeight * (zoomLevel / previousZoomLevel - 1) / 2));
+                ScrollView.ScrollToHorizontalOffset((ScrollView.HorizontalOffset * (zoomLevel / previousZoomLevel))
+                    + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2));
+                //Debug.Print("Scroll: " + ScrollView.HorizontalOffset.ToString());
+            }
+            
+        }
+
+        void manipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        {
+            if (!duringTouch)
+            {
+                if (Math.Abs(e.DeltaManipulation.Scale.X - 1) > 0.0001 || Math.Abs(e.DeltaManipulation.Scale.Y - 1) > 0.0001)
+                {
+                    zoomSlider.Value = zoomSlider.Value * e.DeltaManipulation.Scale.X;
+                    duringTouch = true;
+                }
+                else
+                {
+
+                    //Debug.Print("Scale: " + e.DeltaManipulation.Scale.X.ToString());
+                    //Debug.Print("Zoom: " + zoomSlider.Value);
+                    //Debug.Print("Translate: " + e.DeltaManipulation.Translation.X.ToString());
+
+                    if (e.DeltaManipulation.Translation.Y < 0)
+                    {
+                        if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * zoomLevel)
+                        {
+                            ExpandToSize(0, baseGrid.Height - e.DeltaManipulation.Translation.Y);
+                        }
+                    }
+                    else
+                    {
+                        if (ScrollView.VerticalOffset - 2 <= 0)
+                        {
+                            Thickness t = dragThumb.Margin;
+                            t.Top = t.Top + e.DeltaManipulation.Translation.Y;
+                            dragThumb.Margin = t;
+                            ExpandToSize(0, baseGrid.Height + e.DeltaManipulation.Translation.Y);
+                            foreach (BlockControl block in BlockList)
+                            {
+                                block.Reposition(0, e.DeltaManipulation.Translation.Y);
+                            }
+                        }
+                    }
+                    if (e.DeltaManipulation.Translation.X < 0)
+                    {
+                        if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * zoomLevel)
+                        {
+                            ExpandToSize(baseGrid.Width - e.DeltaManipulation.Translation.X, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (ScrollView.HorizontalOffset - 2 <= 0)
+                        {
+                            Thickness t = dragThumb.Margin;
+                            t.Left = t.Left + e.DeltaManipulation.Translation.X;
+                            dragThumb.Margin = t;
+                            ExpandToSize(baseGrid.Width + e.DeltaManipulation.Translation.X, 0);
+                            foreach (BlockControl block in BlockList)
+                            {
+                                block.Reposition(e.DeltaManipulation.Translation.X, 0);
+                            }
+                        }
+                    }
+
+                    duringTouch = true;
+                    ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (e.DeltaManipulation.Translation.Y * zoomLevel));
+                    ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (e.DeltaManipulation.Translation.X * zoomLevel));
+                }
+            }
+            else
+            {
+                duringTouch = false;
+            }
+            
+        }
+
+        void manipulationComplete(object sender, ManipulationCompletedEventArgs e)
+        {
+            Thickness t = dragThumb.Margin;
+            t.Left = 0;
+            t.Top = 0;
+            dragThumb.Margin = t;
         }
 
         void zoomIn(object sender, RoutedEventArgs e)
@@ -103,7 +179,6 @@ namespace SplayCode
         {
             if (e.VerticalChange < 0)
             {
-                Debug.Print("Up: " + e.VerticalChange);
                 if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * zoomLevel)
                 {
                     ExpandToSize(0, baseGrid.Height - e.VerticalChange);
@@ -111,7 +186,6 @@ namespace SplayCode
             }
             else
             {
-                Debug.Print("Down: " + e.VerticalChange);
                 if (ScrollView.VerticalOffset - 2 <= 0)
                 {
                     Thickness t = dragThumb.Margin;
@@ -126,7 +200,6 @@ namespace SplayCode
             }
             if (e.HorizontalChange < 0)
             {
-                Debug.Print("Left: " + e.VerticalChange);
                 if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * zoomLevel)
                 {
                     ExpandToSize(baseGrid.Width - e.HorizontalChange, 0);
@@ -134,7 +207,6 @@ namespace SplayCode
             }
             else
             {
-                Debug.Print("Right: " + e.VerticalChange);
                 if (ScrollView.HorizontalOffset - 2 <= 0)
                 {
                     Thickness t = dragThumb.Margin;

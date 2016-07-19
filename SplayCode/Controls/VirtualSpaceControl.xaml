@@ -14,7 +14,7 @@
         <Slider x:Name="zoomSlider" HorizontalAlignment="Right" Margin="0,0,25,50" VerticalAlignment="Bottom" 
                 Orientation="Vertical" TickFrequency="0.1" TickPlacement="TopLeft" SmallChange="0.01" Value="1.0" 
                 Cursor="Arrow" Height="100" Width="24" Maximum="1.5" Minimum="0.5" LargeChange="0.1" Panel.ZIndex="300" IsSnapToTickEnabled="True"/>
-        <ScrollViewer Name="ScrollView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Name="ScrollView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#FFDFEDEA">
             <Grid Name="baseGrid" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                 <Grid.LayoutTransform>
                     <TransformGroup>
@@ -25,7 +25,8 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </Grid.LayoutTransform>
-                <Thumb Name="dragThumb" DragDelta="onDragDelta" DragCompleted="onDragComplete" Opacity="0" Margin="0"/>
+                <Thumb Name="dragThumb" ManipulationDelta="manipulationDelta" 
+                       ManipulationCompleted="manipulationComplete" DragDelta="onDragDelta" DragCompleted="onDragComplete" Opacity="0" Margin="0" IsManipulationEnabled="True"/>
             </Grid>
         </ScrollViewer>
         <Button x:Name="zoomInButton" Click="zoomIn" HorizontalAlignment="Right" Margin="0,0,20,151" VerticalAlignment="Bottom" Width="24" Height="24" Background="#FFE5E7E7" BorderBrush="{x:Null}">
