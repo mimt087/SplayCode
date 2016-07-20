@@ -13,15 +13,18 @@ namespace SplayCode
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Input;
+
     public partial class VirtualSpaceControl : UserControl
     {
 
+        // singleton instance for retrieval
         private static VirtualSpaceControl instance;
         public static VirtualSpaceControl Instance
         {
             get
             {
-                if (instance == null) {
+                if (instance == null)
+                {
                     instance = new VirtualSpaceControl();
                 }
                 return instance;
@@ -34,125 +37,95 @@ namespace SplayCode
 
         private List<BlockControl> BlockList;
         private double zoomLevel;
+
+        // this flag is used to ignore the 'false' touch input caused by the scrollviewer moving
+        // as a counter action to actual touch input
         private bool duringTouch;
-        private bool duringZoom;
 
         private VirtualSpaceControl()
         {
             InitializeComponent();
             this.SizeChanged += sizeChanged;
+
+            // the size of the grid determines the size of the virtual space;
+            // it's initialized to the size of tool window
             baseGrid.Width = this.ActualWidth;
             baseGrid.Height = this.ActualHeight;
+
             BlockList = new List<BlockControl>();
             zoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
-            duringZoom = false;
         }
 
+        // handler to expand the space if the window size changes
         private void sizeChanged(object sender, SizeChangedEventArgs e)
         {
             ExpandToSize(ActualWidth, ActualHeight);
         }
 
+        // handler for change in the zoom slider value; zooming is already done in the xaml binding
         private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            {
-                double previousZoomLevel = zoomLevel;
-                zoomLevel = zoomSlider.Value;
-                if (baseGrid.Width * zoomLevel < this.ActualWidth)
-                    ExpandToSize(this.ActualWidth / zoomLevel, 0);
-                if (baseGrid.Height * zoomLevel < this.ActualHeight)
-                    ExpandToSize(0, this.ActualHeight / zoomLevel);
+            double previousZoomLevel = zoomLevel;
+            zoomLevel = zoomSlider.Value;
 
-                ScrollView.ScrollToVerticalOffset((ScrollView.VerticalOffset * (zoomLevel / previousZoomLevel))
-                    + (ScrollView.ViewportHeight * (zoomLevel / previousZoomLevel - 1) / 2));
-                ScrollView.ScrollToHorizontalOffset((ScrollView.HorizontalOffset * (zoomLevel / previousZoomLevel))
-                    + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2));
-                //Debug.Print("Scroll: " + ScrollView.HorizontalOffset.ToString());
+            // expand the space if zooming out makes it smaller than the window space
+            if (baseGrid.Width * zoomLevel < this.ActualWidth)
+                ExpandToSize(ActualWidth / zoomLevel, 0);
+            if (baseGrid.Height * zoomLevel < this.ActualHeight)
+                ExpandToSize(0, this.ActualHeight / zoomLevel);
+
+            // automatically adjust the position in the scrollviewer such that the centre of zoom
+            // stays at the middle of the window
+            double vertOffset = (ScrollView.VerticalOffset * (zoomLevel / previousZoomLevel))
+                + (ScrollView.ViewportHeight * (zoomLevel / previousZoomLevel - 1) / 2);
+            if (vertOffset < 0 || vertOffset + ScrollView.ViewportHeight > ScrollView.ExtentHeight)
+            {
+                ExpandToSize(0, baseGrid.Height + Math.Abs(vertOffset));
             }
-            
+            double horizOffset = (ScrollView.HorizontalOffset * (zoomLevel / previousZoomLevel))
+                + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2);
+            if (horizOffset < 0 || horizOffset + ScrollView.ViewportWidth > ScrollView.ExtentWidth)
+            {
+                ExpandToSize(baseGrid.Width + Math.Abs(horizOffset), 0);
+            }
+            ScrollView.ScrollToVerticalOffset(vertOffset);
+            ScrollView.ScrollToHorizontalOffset(horizOffset);
         }
 
+        // handler for touch input
         void manipulationDelta(object sender, ManipulationDeltaEventArgs e)
         {
             if (!duringTouch)
             {
+                // set flag to negate the next input caused by counter action
+                duringTouch = true;
+
+                // if zoom gesture detected
                 if (Math.Abs(e.DeltaManipulation.Scale.X - 1) > 0.0001 || Math.Abs(e.DeltaManipulation.Scale.Y - 1) > 0.0001)
                 {
                     zoomSlider.Value = zoomSlider.Value * e.DeltaManipulation.Scale.X;
-                    duringTouch = true;
                 }
+                // drag space if not zoom
                 else
                 {
-
-                    //Debug.Print("Scale: " + e.DeltaManipulation.Scale.X.ToString());
-                    //Debug.Print("Zoom: " + zoomSlider.Value);
-                    //Debug.Print("Translate: " + e.DeltaManipulation.Translation.X.ToString());
-
-                    if (e.DeltaManipulation.Translation.Y < 0)
-                    {
-                        if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * zoomLevel)
-                        {
-                            ExpandToSize(0, baseGrid.Height - e.DeltaManipulation.Translation.Y);
-                        }
-                    }
-                    else
-                    {
-                        if (ScrollView.VerticalOffset - 2 <= 0)
-                        {
-                            Thickness t = dragThumb.Margin;
-                            t.Top = t.Top + e.DeltaManipulation.Translation.Y;
-                            dragThumb.Margin = t;
-                            ExpandToSize(0, baseGrid.Height + e.DeltaManipulation.Translation.Y);
-                            foreach (BlockControl block in BlockList)
-                            {
-                                block.Reposition(0, e.DeltaManipulation.Translation.Y);
-                            }
-                        }
-                    }
-                    if (e.DeltaManipulation.Translation.X < 0)
-                    {
-                        if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * zoomLevel)
-                        {
-                            ExpandToSize(baseGrid.Width - e.DeltaManipulation.Translation.X, 0);
-                        }
-                    }
-                    else
-                    {
-                        if (ScrollView.HorizontalOffset - 2 <= 0)
-                        {
-                            Thickness t = dragThumb.Margin;
-                            t.Left = t.Left + e.DeltaManipulation.Translation.X;
-                            dragThumb.Margin = t;
-                            ExpandToSize(baseGrid.Width + e.DeltaManipulation.Translation.X, 0);
-                            foreach (BlockControl block in BlockList)
-                            {
-                                block.Reposition(e.DeltaManipulation.Translation.X, 0);
-                            }
-                        }
-                    }
-
-                    duringTouch = true;
-                    ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (e.DeltaManipulation.Translation.Y * zoomLevel));
-                    ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (e.DeltaManipulation.Translation.X * zoomLevel));
+                    translateVirtualSpace(e.DeltaManipulation.Translation.X, e.DeltaManipulation.Translation.Y);
                 }
             }
             else
             {
                 duringTouch = false;
             }
-            
+
         }
 
         void manipulationComplete(object sender, ManipulationCompletedEventArgs e)
         {
-            Thickness t = dragThumb.Margin;
-            t.Left = 0;
-            t.Top = 0;
-            dragThumb.Margin = t;
+            resetThumbLocation();
         }
 
+        // handlers for zoom buttons
         void zoomIn(object sender, RoutedEventArgs e)
         {
             zoomSlider.Value = zoomSlider.Value + zoomSlider.LargeChange;
@@ -163,6 +136,7 @@ namespace SplayCode
             zoomSlider.Value = zoomSlider.Value - zoomSlider.LargeChange;
         }
 
+        // expands the size of the virtual space if the given size is larger than current size
         public void ExpandToSize(double width, double height)
         {
             if (width > baseGrid.Width)
@@ -175,62 +149,79 @@ namespace SplayCode
             }
         }
 
-        void onDragDelta(object sender, DragDeltaEventArgs e)
+        // move the virtual space by the given delta values
+        private void translateVirtualSpace(double horizontalDelta, double verticalDelta)
         {
-            if (e.VerticalChange < 0)
+            // if dragging up, scroll down, expand space if needed
+            if (verticalDelta < 0)
             {
                 if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * zoomLevel)
                 {
-                    ExpandToSize(0, baseGrid.Height - e.VerticalChange);
+                    ExpandToSize(0, baseGrid.Height - verticalDelta);
                 }
             }
+            // if dragging down, scroll up, expand space if neeeded
             else
             {
                 if (ScrollView.VerticalOffset - 2 <= 0)
                 {
                     Thickness t = dragThumb.Margin;
-                    t.Top = t.Top + e.VerticalChange;
+                    t.Top = t.Top + verticalDelta;
                     dragThumb.Margin = t;
-                    ExpandToSize(0, baseGrid.Height + e.VerticalChange);
+                    ExpandToSize(0, baseGrid.Height + verticalDelta);
                     foreach (BlockControl block in BlockList)
                     {
-                        block.Reposition(0, e.VerticalChange);
+                        block.Reposition(0, verticalDelta);
                     }
                 }
             }
-            if (e.HorizontalChange < 0)
+            // if dragging left, scroll right, expand space if neeeded
+            if (horizontalDelta < 0)
             {
                 if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * zoomLevel)
                 {
-                    ExpandToSize(baseGrid.Width - e.HorizontalChange, 0);
+                    ExpandToSize(baseGrid.Width - horizontalDelta, 0);
                 }
             }
+            // if dragging right, scroll left, expand space if neeeded
             else
             {
                 if (ScrollView.HorizontalOffset - 2 <= 0)
                 {
                     Thickness t = dragThumb.Margin;
-                    t.Left = t.Left + e.HorizontalChange;
+                    t.Left = t.Left + horizontalDelta;
                     dragThumb.Margin = t;
-                    ExpandToSize(baseGrid.Width + e.HorizontalChange, 0);
+                    ExpandToSize(baseGrid.Width + horizontalDelta, 0);
                     foreach (BlockControl block in BlockList)
                     {
-                        block.Reposition(e.HorizontalChange, 0);
+                        block.Reposition(horizontalDelta, 0);
                     }
                 }
             }
 
-            ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (e.VerticalChange * zoomLevel));
-            ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (e.HorizontalChange * zoomLevel));
-
+            // perform scrolling
+            ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (verticalDelta * zoomLevel));
+            ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (horizontalDelta * zoomLevel));
         }
 
-        void onDragComplete(object sender, DragCompletedEventArgs e)
+        // resets the location of the dragging thumb after a drag
+        private void resetThumbLocation()
         {
             Thickness t = dragThumb.Margin;
             t.Left = 0;
             t.Top = 0;
             dragThumb.Margin = t;
+        }
+
+        // handles mouse input of dragging on the virtual space
+        void onDragDelta(object sender, DragDeltaEventArgs e)
+        {
+            translateVirtualSpace(e.HorizontalChange, e.VerticalChange);
+        }
+
+        void onDragComplete(object sender, DragCompletedEventArgs e)
+        {
+            resetThumbLocation();
         }
 
         // Add a block using default positioning
@@ -267,6 +258,7 @@ namespace SplayCode
             baseGrid.Children.Remove(block);
         }
 
+        // clear all blocks and resets virtual space zoom and size
         public void Clear()
         {
             foreach (BlockControl block in BlockList)
@@ -281,7 +273,7 @@ namespace SplayCode
 
         public List<BlockControl> FetchAllBlocks()
         {
-            return BlockList;            
+            return BlockList;
         }
 
         public BlockControl GetActiveBlock()
@@ -296,9 +288,5 @@ namespace SplayCode
             return null;
         }
 
-        private void zoomOutButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
