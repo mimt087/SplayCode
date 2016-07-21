@@ -41,7 +41,7 @@ namespace SplayCode
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            if (Width - e.HorizontalChange >= 150)
+            if (Width - e.HorizontalChange >= this.MinWidth)
             {
                 // Adjust block size
                 Width = Width - e.HorizontalChange;
@@ -51,21 +51,19 @@ namespace SplayCode
 
         void onRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            if (Width + e.HorizontalChange >= 150)
+            if (Width + e.HorizontalChange >= this.MinWidth)
             {
                 // Adjust block size
                 Width = Width + e.HorizontalChange;
-                //Reposition(e.HorizontalChange, 0);
             }
         }
 
         void onBottomResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            if (Height + e.VerticalChange >= 150)
+            if (Height + e.VerticalChange >= this.MinHeight)
             {
                 // Adjust block size
                 Height = Height + e.VerticalChange;
-                //Reposition(0, e.VerticalChange);
             }
         }
 

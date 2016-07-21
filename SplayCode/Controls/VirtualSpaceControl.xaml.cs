@@ -36,11 +36,19 @@ namespace SplayCode
         }
 
         private List<BlockControl> BlockList;
-        private double zoomLevel;
+        public double ZoomLevel
+        {
+            get;
+            private set;
+        }
 
         // this flag is used to ignore the 'false' touch input caused by the scrollviewer moving
         // as a counter action to actual touch input
         private bool duringTouch;
+
+        private static int MINIMUM_Z_INDEX = 50;
+        private BlockControl topmostBlock;
+        private int topmostZIndex;
 
         private VirtualSpaceControl()
         {
@@ -53,39 +61,41 @@ namespace SplayCode
             baseGrid.Height = this.ActualHeight;
 
             BlockList = new List<BlockControl>();
-            zoomLevel = zoomSlider.Value;
+            ZoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
+
+            topmostZIndex = MINIMUM_Z_INDEX;
         }
 
         // handler to expand the space if the window size changes
         private void sizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ExpandToSize(ActualWidth, ActualHeight);
+            ExpandToSize(ActualWidth / ZoomLevel, ActualHeight / ZoomLevel);
         }
 
         // handler for change in the zoom slider value; zooming is already done in the xaml binding
         private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double previousZoomLevel = zoomLevel;
-            zoomLevel = zoomSlider.Value;
+            double previousZoomLevel = ZoomLevel;
+            ZoomLevel = zoomSlider.Value;
 
             // expand the space if zooming out makes it smaller than the window space
-            if (baseGrid.Width * zoomLevel < this.ActualWidth)
-                ExpandToSize(ActualWidth / zoomLevel, 0);
-            if (baseGrid.Height * zoomLevel < this.ActualHeight)
-                ExpandToSize(0, this.ActualHeight / zoomLevel);
+            if (baseGrid.Width * ZoomLevel < this.ActualWidth)
+                ExpandToSize(ActualWidth / ZoomLevel, 0);
+            if (baseGrid.Height * ZoomLevel < this.ActualHeight)
+                ExpandToSize(0, this.ActualHeight / ZoomLevel);
 
             // automatically adjust the position in the scrollviewer such that the centre of zoom
             // stays at the middle of the window
-            double vertOffset = (ScrollView.VerticalOffset * (zoomLevel / previousZoomLevel))
-                + (ScrollView.ViewportHeight * (zoomLevel / previousZoomLevel - 1) / 2);
+            double vertOffset = (ScrollView.VerticalOffset * (ZoomLevel / previousZoomLevel))
+                + (ScrollView.ViewportHeight * (ZoomLevel / previousZoomLevel - 1) / 2);
             if (vertOffset < 0 || vertOffset + ScrollView.ViewportHeight > ScrollView.ExtentHeight)
             {
                 ExpandToSize(0, baseGrid.Height + Math.Abs(vertOffset));
             }
-            double horizOffset = (ScrollView.HorizontalOffset * (zoomLevel / previousZoomLevel))
-                + (ScrollView.ViewportWidth * (zoomLevel / previousZoomLevel - 1) / 2);
+            double horizOffset = (ScrollView.HorizontalOffset * (ZoomLevel / previousZoomLevel))
+                + (ScrollView.ViewportWidth * (ZoomLevel / previousZoomLevel - 1) / 2);
             if (horizOffset < 0 || horizOffset + ScrollView.ViewportWidth > ScrollView.ExtentWidth)
             {
                 ExpandToSize(baseGrid.Width + Math.Abs(horizOffset), 0);
@@ -155,7 +165,7 @@ namespace SplayCode
             // if dragging up, scroll down, expand space if needed
             if (verticalDelta < 0)
             {
-                if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * zoomLevel)
+                if (ScrollView.VerticalOffset + ScrollView.ViewportHeight + 2 >= baseGrid.Height * ZoomLevel)
                 {
                     ExpandToSize(0, baseGrid.Height - verticalDelta);
                 }
@@ -178,7 +188,7 @@ namespace SplayCode
             // if dragging left, scroll right, expand space if neeeded
             if (horizontalDelta < 0)
             {
-                if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * zoomLevel)
+                if (ScrollView.HorizontalOffset + ScrollView.ViewportWidth + 2 >= baseGrid.Width * ZoomLevel)
                 {
                     ExpandToSize(baseGrid.Width - horizontalDelta, 0);
                 }
@@ -200,8 +210,8 @@ namespace SplayCode
             }
 
             // perform scrolling
-            ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (verticalDelta * zoomLevel));
-            ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (horizontalDelta * zoomLevel));
+            ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (verticalDelta * ZoomLevel));
+            ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (horizontalDelta * ZoomLevel));
         }
 
         // resets the location of the dragging thumb after a drag
