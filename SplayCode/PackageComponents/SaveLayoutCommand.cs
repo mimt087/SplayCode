@@ -113,8 +113,15 @@ namespace SplayCode
             {
 
                 List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
-                List<Editor> editorList = new List<Editor>();
+                XmlFormat format = new XmlFormat();
                 IEnumerable<EditorControl> editors;
+                
+                format.VirtualSpaceX = VirtualSpaceControl.Instance.baseGrid.Width;
+                format.VirtualSpaceY = VirtualSpaceControl.Instance.baseGrid.Height;
+                format.ScrollOffsetHorizontal = VirtualSpaceControl.Instance.ScrollView.HorizontalOffset;
+                format.ScrollOffsetVertical = VirtualSpaceControl.Instance.ScrollView.VerticalOffset;
+                format.ZoomLevel = VirtualSpaceControl.Instance.ZoomLevel;
+
                 foreach (BlockControl cc in chromes)
                 {
                     editors = cc.contentSpace.Children.OfType<EditorControl>();
@@ -122,16 +129,16 @@ namespace SplayCode
                     string filepath = editorControl.getFilePath();
 
                     Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc));
-                    editorList.Add(editor);
+                    format.Editors.Add(editor);
                 }
 
-                XmlSerializer x = new XmlSerializer(typeof(List<Editor>));
+                XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
                 XmlWriterSettings settings = new XmlWriterSettings();
                 settings.Indent = true;
                 settings.IndentChars = "    ";
                 var xmlwriter = XmlWriter.Create(saveFileDialog1.FileName, settings);
 
-                x.Serialize(xmlwriter, editorList);
+                x.Serialize(xmlwriter, format);
 
                 xmlwriter.Close();
             }

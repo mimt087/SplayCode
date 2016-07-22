@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SplayCode.Data
 {
+    [Serializable()]
     public class Editor
     {
         public double X;

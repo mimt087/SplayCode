@@ -272,6 +272,15 @@ namespace SplayCode
             topmostZIndex++;
         }
 
+        public void LoadLayoutSettings(double virtualSpaceX, double virtualSpaceY, double scrollOffsetH, double scrollOffsetV, double zoomLv)
+        {
+            baseGrid.Width = virtualSpaceX;
+            baseGrid.Height = virtualSpaceY;
+            ScrollView.ScrollToHorizontalOffset(scrollOffsetH);
+            ScrollView.ScrollToVerticalOffset(scrollOffsetV);
+            zoomSlider.Value = zoomLv;
+        }
+
         public void RemoveBlock(BlockControl block)
         {
             BlockList.Remove(block);

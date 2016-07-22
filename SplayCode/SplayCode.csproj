@@ -55,6 +55,7 @@
       <DependentUpon>EditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Editor.cs" />
+    <Compile Include="Data\XmlFormat.cs" />
     <Compile Include="PackageComponents\AddFileCommand.cs" />
     <Compile Include="PackageComponents\ClearLayoutCommand.cs" />
     <Compile Include="PackageComponents\LoadLayoutCommand.cs" />

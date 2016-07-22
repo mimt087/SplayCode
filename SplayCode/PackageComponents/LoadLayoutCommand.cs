@@ -103,6 +103,7 @@ namespace SplayCode
         private void MenuItemCallback(object sender, EventArgs e)
         {
             List<Editor> editorList = new List<Editor>();
+            XmlFormat format = new XmlFormat();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.InitialDirectory = Environment.CurrentDirectory + "\\bin\\Debug";
@@ -119,12 +120,15 @@ namespace SplayCode
                 }
                 string path = openFileDialog1.FileName;
 
-                XmlSerializer x = new XmlSerializer(typeof(List<Editor>));
+                XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
                 StreamReader reader = new StreamReader(path);
 
-                editorList = (List<Editor>)x.Deserialize(reader);
+                format = (XmlFormat)x.Deserialize(reader);
                 reader.Close();
 
+                editorList = format.Editors;
+                VirtualSpaceControl.Instance.LoadLayoutSettings(format.VirtualSpaceX, format.VirtualSpaceY, format.ScrollOffsetHorizontal, format.ScrollOffsetVertical, format.ZoomLevel);
+               
                 foreach (Editor editor in editorList)
                 {
                     Uri documentPath = new Uri(editor.source);
