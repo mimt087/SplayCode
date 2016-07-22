@@ -237,29 +237,39 @@ namespace SplayCode
         // Add a block using default positioning
         public void AddBlock(string label, string documentPath)
         {
-            double xPos = 300 * BlockList.Count + 100;
+            double xPos = 900 * BlockList.Count + 100;
             double yPos = 100;
-            AddBlock(label, documentPath, xPos, yPos);
+            AddBlock(label, documentPath, xPos, yPos, 750, 750, topmostZIndex + 1);
         }
 
-        public void AddBlock(string label, string documentPath, double xPos, double yPos)
-        {
-            BlockControl newBlock = new BlockControl(label, documentPath);
-            newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
-            BlockList.Add(newBlock);
-            baseGrid.Children.Add(newBlock);
-            ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
-        }
-
-        public void AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width)
+        // Add a block with given parameters
+        public void AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex)
         {
             BlockControl newBlock = new BlockControl(label, documentPath);
             newBlock.Width = width;
             newBlock.Height = height;
             newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
+
+            // Z-indices are assumed to be unique, no checks are performed 
+            // (probably should fix in future)
+            Panel.SetZIndex(newBlock, zIndex);
+            if (zIndex > topmostZIndex)
+            {
+                topmostZIndex = zIndex;
+            }
+
             BlockList.Add(newBlock);
             baseGrid.Children.Add(newBlock);
             ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
+
+        }
+
+        // Bring the selected block to the top. There is no check for when the z-index reaches
+        // the int limit but that's unlikely to happen so we'll leave it for now :)
+        public void BringToTop(BlockControl block)
+        {
+            Panel.SetZIndex(block, topmostZIndex + 1);
+            topmostZIndex++;
         }
 
         public void RemoveBlock(BlockControl block)
@@ -279,6 +289,7 @@ namespace SplayCode
             baseGrid.Width = ActualWidth;
             baseGrid.Height = ActualHeight;
             zoomSlider.Value = 1.0;
+            topmostZIndex = MINIMUM_Z_INDEX;
         }
 
         public List<BlockControl> FetchAllBlocks()

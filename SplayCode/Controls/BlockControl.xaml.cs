@@ -18,9 +18,17 @@ namespace SplayCode
             editor = new EditorControl(documentPath);
             contentSpace.Children.Add(editor);
             this.label.Content = label;
+            this.GotFocus += BlockControl_GotFocus;
+            this.GotMouseCapture += BlockControl_GotFocus;
+            this.GotTouchCapture += BlockControl_GotFocus;
         }
 
-        public void Reposition (double xDelta, double yDelta)
+        private void BlockControl_GotFocus(object sender, RoutedEventArgs e)
+        {
+            VirtualSpaceControl.Instance.BringToTop(this);
+        }
+
+        public void Reposition(double xDelta, double yDelta)
         {
             Thickness t = this.Margin;
             t.Left = t.Left + xDelta;
