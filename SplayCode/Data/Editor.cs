@@ -13,15 +13,17 @@ namespace SplayCode.Data
         public string source;
         public double height;
         public double width;
+        public int ZIndex;
 
         public Editor() { }
-        public Editor(double dx, double dy, string dsource, double dheight, double dwidth)
+        public Editor(double dx, double dy, string dsource, double dheight, double dwidth, int dZIndex)
         {
             X = dx;
             Y = dy;
             source = dsource;
             height = dheight;
             width = dwidth;
+            ZIndex = dZIndex;
         }
     }
 }
