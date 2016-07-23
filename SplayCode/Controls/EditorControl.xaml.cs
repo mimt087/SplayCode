@@ -148,7 +148,7 @@ namespace SplayCode.Controls
 
         public string getFilePath()
         {
-            return this.filePath;
+            return filePath;
         }
 
         public IVsTextView GetTextView()

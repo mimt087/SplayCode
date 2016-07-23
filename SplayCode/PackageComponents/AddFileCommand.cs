@@ -6,12 +6,9 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System.Windows.Forms;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+using System.Windows;
 
 namespace SplayCode
 {
@@ -97,17 +94,34 @@ namespace SplayCode
         private void MenuItemCallback(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = "c:\\";
-            //openFileDialog1.Filter = "Program Files(*.txt, *.cs)";
-            //openFileDialog1.FilterIndex = 2;
+            MessageBoxResult res = new MessageBoxResult();
+            bool duplicate = false;
+            
             openFileDialog1.RestoreDirectory = false;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 Uri documentPath = new Uri(openFileDialog1.FileName);
-                VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1], 
-                    openFileDialog1.FileName);
+                foreach (BlockControl bc in VirtualSpaceControl.Instance.FetchAllBlocks())
+                {
+                    if (bc.GetEditor().getFilePath().Equals(openFileDialog1.FileName)) {
+                        res = System.Windows.MessageBox.Show("The file is already added in the layout. Proceed with adding the file?",
+                          "Duplicate file", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        duplicate = true;
+                    }
+                }
+
+                if (duplicate) {
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                            openFileDialog1.FileName);
+                    }
+                } else
+                {
+                    VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                        openFileDialog1.FileName);
+                }                
             }
         }
     }
