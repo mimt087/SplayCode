@@ -106,7 +106,7 @@ namespace SplayCode
             XmlFormat format = new XmlFormat();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = Environment.CurrentDirectory + "\\bin\\Debug";
+            openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = false;
@@ -115,24 +115,27 @@ namespace SplayCode
             {
                 ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
+                // clear the layout if it is not empty
                 if ((VirtualSpaceControl)window.Content != null) {
                     VirtualSpaceControl.Instance.Clear();
                 }
-                string path = openFileDialog1.FileName;
 
+                string path = openFileDialog1.FileName;
                 XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
                 StreamReader reader = new StreamReader(path);
 
+                // read the layout file and produce XmlFormat instance with loaded information
                 format = (XmlFormat)x.Deserialize(reader);
                 reader.Close();
 
+                // get the list of editors and restore settings from the last save
                 editorList = format.Editors;
                 VirtualSpaceControl.Instance.LoadLayoutSettings(format.VirtualSpaceX, format.VirtualSpaceY, format.ScrollOffsetHorizontal, format.ScrollOffsetVertical, format.ZoomLevel);
                
+                // recreate the editor windows
                 foreach (Editor editor in editorList)
                 {
-                    Uri documentPath = new Uri(editor.source);
-                          
+                    Uri documentPath = new Uri(editor.source);                          
                     VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
                         editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex);
                 }

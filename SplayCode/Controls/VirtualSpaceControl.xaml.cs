@@ -13,6 +13,7 @@ namespace SplayCode
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Input;
+    using System.Windows.Media;
 
     public partial class VirtualSpaceControl : UserControl
     {
@@ -270,8 +271,25 @@ namespace SplayCode
         {
             Panel.SetZIndex(block, topmostZIndex + 1);
             topmostZIndex++;
+            blockControl_Hightlight(block);
         }
 
+        // change the colour of the focused editor block
+        public void blockControl_Hightlight (BlockControl block)
+        {
+            foreach (BlockControl bc in FetchAllBlocks()) {
+                if (block.Equals(bc))
+                {
+                    block.changeColour(Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33));
+                } else
+                {
+                    bc.changeColour(Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D));
+                }
+            }
+        }
+
+        // bring all the settings such as the size of the virtual space and the scroller position
+        // and zoom level from the last saved instance
         public void LoadLayoutSettings(double virtualSpaceX, double virtualSpaceY, double scrollOffsetH, double scrollOffsetV, double zoomLv)
         {
             baseGrid.Width = virtualSpaceX;
@@ -281,6 +299,7 @@ namespace SplayCode
             zoomSlider.Value = zoomLv;
         }
 
+        // remove a selected block
         public void RemoveBlock(BlockControl block)
         {
             BlockList.Remove(block);

@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using SplayCode.Controls;
+using System.Windows.Media;
 
 namespace SplayCode
 {
@@ -26,6 +27,13 @@ namespace SplayCode
         private void BlockControl_GotFocus(object sender, RoutedEventArgs e)
         {
             VirtualSpaceControl.Instance.BringToTop(this);
+        }
+
+        public void changeColour(Color color)
+        {
+            chrome.BorderBrush = new SolidColorBrush(color);
+            label.Background = new SolidColorBrush(color);
+            closeButton.BorderBrush = new SolidColorBrush(color);
         }
 
         public void Reposition(double xDelta, double yDelta)
