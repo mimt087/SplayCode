@@ -116,7 +116,7 @@ namespace SplayCode
                 ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
                 if ((VirtualSpaceControl)window.Content != null) {
-                    ((VirtualSpaceControl)window.Content).Clear();
+                    VirtualSpaceControl.Instance.Clear();
                 }
                 string path = openFileDialog1.FileName;
 
