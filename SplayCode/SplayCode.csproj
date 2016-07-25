@@ -54,6 +54,7 @@
     <Compile Include="Controls\EditorControl.xaml.cs">
       <DependentUpon>EditorControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\ActionDone.cs" />
     <Compile Include="Data\Editor.cs" />
     <Compile Include="Data\XmlFormat.cs" />
     <Compile Include="PackageComponents\AddFileCommand.cs" />

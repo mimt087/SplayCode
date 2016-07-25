@@ -12,6 +12,9 @@ namespace SplayCode
     using Microsoft.VisualStudio.Shell.Interop;
     using System.Windows.Forms;
     using Microsoft.VisualStudio.OLE.Interop;
+    using System.Windows;
+    using Microsoft.VisualStudio;
+
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.
     /// </summary>
@@ -24,7 +27,7 @@ namespace SplayCode
     /// </para>
     /// </remarks>
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
-    public class SplayCodeToolWindow : ToolWindowPane
+    public class SplayCodeToolWindow : ToolWindowPane //, IVsWindowFrameNotify2
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
@@ -46,9 +49,10 @@ namespace SplayCode
             var cmdUi = Microsoft.VisualStudio.VSConstants.GUID_TextEditorFactory;
             windowFrame.SetGuidProperty((int)__VSFPROPID.VSFPROPID_InheritKeyBindings,
               ref cmdUi);
+
             base.OnToolWindowCreated();
         }
-
+       
         protected override bool PreProcessMessage(ref Message m)
         {
             BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
@@ -68,5 +72,29 @@ namespace SplayCode
             return base.PreProcessMessage(ref m);
         }
 
+        //public int OnClose(ref uint pgrfSaveOptions)
+        //{
+        //    // Check if your content is dirty here, then
+        //    SaveLayoutCommand.Instance.saveLayout(Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml");
+        //    //if ((Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml").GetHashCode. ==
+        //    //    VirtualSpaceControl.Instance.CurrentLayoutFileName.GetHashCode))
+        //    // Prompt a dialog
+        //    MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
+        //                  "Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+        //    // If the users wants to save
+        //    if (res == MessageBoxResult.Yes)
+        //    {
+        //        SaveLayoutCommand.Instance.saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFileName);
+        //    }
+
+        //    if (res == MessageBoxResult.Cancel)
+        //    {
+        //        // If "cancel" is clicked, abort the close
+        //        return VSConstants.E_ABORT;
+        //    }
+
+        //    // Else, exit
+        //    return VSConstants.S_OK;
+        //}
     }
 }

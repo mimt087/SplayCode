@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using SplayCode.Controls;
 using System.Windows.Media;
+using SplayCode.Data;
 
 namespace SplayCode
 {
@@ -47,16 +48,20 @@ namespace SplayCode
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
+            ActionDone action = new ActionDone(true, false, false, 0, 0, 0, 0, 0, this, ActualWidth, ActualHeight, Margin.Left, Margin.Top, VirtualSpaceControl.Instance.TopmostZIndex);
+            VirtualSpaceControl.Instance.GlobalStack.Push(action);
             virtualSpace.RemoveBlock(this);
         }
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
         {
+            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             Reposition(e.HorizontalChange, e.VerticalChange);
         }
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
+            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             if (Width - e.HorizontalChange >= this.MinWidth)
             {
                 // Adjust block size
@@ -67,6 +72,7 @@ namespace SplayCode
 
         void onRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
+            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             if (Width + e.HorizontalChange >= this.MinWidth)
             {
                 // Adjust block size
@@ -76,6 +82,7 @@ namespace SplayCode
 
         void onBottomResizeDelta(object sender, DragDeltaEventArgs e)
         {
+            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             if (Height + e.VerticalChange >= this.MinHeight)
             {
                 // Adjust block size
@@ -85,12 +92,14 @@ namespace SplayCode
 
         void onBottomRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
+            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             onRightResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
         }
 
         void onBottomLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
+            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             onLeftResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
         }
