@@ -13,6 +13,9 @@ namespace SplayCode
         private VirtualSpaceControl virtualSpace;
         private EditorControl editor;
 
+        public static double MINIMUM_BLOCK_HEIGHT = 750;
+        public static double MINIMUM_BLOCK_WIDTH = 750;
+
         public BlockControl(string label, string documentPath)
         {
             InitializeComponent();
@@ -23,6 +26,8 @@ namespace SplayCode
             this.GotFocus += BlockControl_GotFocus;
             this.GotMouseCapture += BlockControl_GotFocus;
             this.GotTouchCapture += BlockControl_GotFocus;
+            MinHeight = MINIMUM_BLOCK_HEIGHT;
+            MinWidth = MINIMUM_BLOCK_WIDTH;
         }
 
         private void BlockControl_GotFocus(object sender, RoutedEventArgs e)

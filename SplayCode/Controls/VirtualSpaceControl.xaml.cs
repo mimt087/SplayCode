@@ -38,7 +38,7 @@ namespace SplayCode
 
         private List<BlockControl> BlockList;
         public Stack<ActionDone> GlobalStack;
-        
+
         public double ZoomLevel
         {
             get;
@@ -50,7 +50,6 @@ namespace SplayCode
         private bool duringTouch;
 
         private static int MINIMUM_Z_INDEX = 50;
-        private BlockControl topmostBlock;
         private int topmostZIndex;
         public int TopmostZIndex
         {
@@ -248,7 +247,8 @@ namespace SplayCode
         {
             double xPos = 900 * BlockList.Count + 100;
             double yPos = 100;
-            AddBlock(label, documentPath, xPos, yPos, 750, 750, topmostZIndex + 1);
+            AddBlock(label, documentPath, xPos, yPos, BlockControl.MINIMUM_BLOCK_WIDTH, 
+                BlockControl.MINIMUM_BLOCK_HEIGHT, topmostZIndex + 1);
         }
 
         // Add a block with given parameters
@@ -286,13 +286,15 @@ namespace SplayCode
         }
 
         // change the colour of the focused editor block
-        public void blockControl_Hightlight (BlockControl block)
+        public void blockControl_Hightlight(BlockControl block)
         {
-            foreach (BlockControl bc in FetchAllBlocks()) {
+            foreach (BlockControl bc in FetchAllBlocks())
+            {
                 if (block.Equals(bc))
                 {
                     block.changeColour(Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33));
-                } else
+                }
+                else
                 {
                     bc.changeColour(Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D));
                 }
@@ -348,41 +350,23 @@ namespace SplayCode
             return null;
         }
 
-        public void LogEditorInteraction (BlockControl block)
+        public void LogEditorInteraction(BlockControl block)
         {
-            ActionDone action = new ActionDone(false, false, true, ZoomLevel, ActualWidth, ActualHeight,ScrollView.HorizontalOffset, ScrollView.VerticalOffset, block, 
+            ActionDone action = new ActionDone(false, false, true, ZoomLevel, ActualWidth, ActualHeight, ScrollView.HorizontalOffset, ScrollView.VerticalOffset, block,
                 block.ActualWidth, block.ActualHeight, block.Margin.Left, block.Margin.Top, topmostZIndex);
             GlobalStack.Push(action);
         }
 
-        private void panel_DragOver(object sender, DragEventArgs e)
+        /*protected override void OnDragEnter(DragEventArgs e)
         {
-            e.Effects = DragDropEffects.Copy;
-
-            if (e.Data.GetDataPresent(DataFormats.StringFormat))
-            {
-                string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                Debug.Print("panel_DragOver@@@@" + files);
-            }
-        }
-
-        protected override void OnDrop(DragEventArgs e)
-        {
-            e.Effects = DragDropEffects.Copy;
-            Debug.Print("OnDrop?!@$#$#@@@@");
-            if (e.Data.GetDataPresent(DataFormats.StringFormat))
-            {
-                string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                Debug.Print("OnDrop@@@@" + files);
-            }
-            base.OnDrop(e);
+            e.Handled = true;
+            base.OnDragEnter(e);
         }
 
         protected override void OnDragOver(DragEventArgs e)
         {
-            
+            e.Handled = true;
             e.Effects = DragDropEffects.Copy;
-
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
             {
                 string files = (string)e.Data.GetData(DataFormats.StringFormat);
@@ -391,18 +375,50 @@ namespace SplayCode
             base.OnDragOver(e);
         }
 
-        private void panel_Drop(object sender, DragEventArgs e)
+        protected override void OnDrop(DragEventArgs e)
         {
+            e.Handled = true;
             e.Effects = DragDropEffects.Copy;
-            Debug.Print("panel_Drop?!@$#$#@@@@");
-            if (e.Handled == false)
+            Debug.Print("OnDrop?!@$#$#@@@@");
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
             {
-                if (e.Data.GetDataPresent(DataFormats.StringFormat))
-                {
-                    string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                    Debug.Print("panel_Drop@@@@" + files);
-                }
+                string files = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("OnDrop@@@@" + files);
             }
+            base.OnDrop(e);
+        }*/
+
+        private void panel_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                e.Handled = true;
+                e.Effects = DragDropEffects.Copy;
+                string files = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("panel_DragOver@@@@" + files);
+            }
+        }
+
+        void panel_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                e.Handled = true;
+                string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("panel_Drop@@@@" + filePath);
+                // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
+
+                Point cursorPosition = e.GetPosition(dragThumb);
+                Debug.Print("Cursor at: " + cursorPosition.ToString());
+                AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
+                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1);
+            }
+        }
+
+        private string GetFileName(string filePath)
+        {
+            Uri pathUri = new Uri(filePath);
+            return (pathUri.Segments[pathUri.Segments.Length - 1]);
         }
     }
 }
