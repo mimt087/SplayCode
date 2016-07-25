@@ -5,17 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              Background="{DynamicResource VsBrush.Window}"
              Foreground="{DynamicResource VsBrush.WindowText}"
-             mc:Ignorable="d"
+             mc:Ignorable="d" AllowDrop="True" Drop="panel_Drop"
              d:DesignHeight="300" d:DesignWidth="300" RenderTransformOrigin="0.5,0.5">
-    <Grid>
+    <Grid AllowDrop="True" Drop="panel_Drop">
         <Label x:Name="label1" Content="100%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,89" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Label x:Name="label2" Content="50%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,45" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Label x:Name="label3" Content="150%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,133" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Slider x:Name="zoomSlider" HorizontalAlignment="Right" Margin="0,0,25,50" VerticalAlignment="Bottom" 
                 Orientation="Vertical" TickFrequency="0.1" TickPlacement="TopLeft" SmallChange="0.01" Value="1.0" 
                 Cursor="Arrow" Height="100" Width="24" Maximum="1.5" Minimum="0.5" LargeChange="0.1" Panel.ZIndex="300" IsSnapToTickEnabled="True"/>
-        <ScrollViewer Name="ScrollView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid Name="baseGrid" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+        <ScrollViewer Name="ScrollView" AllowDrop="True" Drop="panel_Drop" Background="Transparent" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid Name="baseGrid" AllowDrop="True" Drop="panel_Drop" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                 <Grid.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="{Binding ElementName=zoomSlider,Path=Value}" 

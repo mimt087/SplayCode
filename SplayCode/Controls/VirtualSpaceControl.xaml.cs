@@ -6,6 +6,7 @@
 
 namespace SplayCode
 {
+    using Data;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -17,7 +18,6 @@ namespace SplayCode
 
     public partial class VirtualSpaceControl : UserControl
     {
-
         // singleton instance for retrieval
         private static VirtualSpaceControl instance;
         public static VirtualSpaceControl Instance
@@ -37,6 +37,8 @@ namespace SplayCode
         }
 
         private List<BlockControl> BlockList;
+        public Stack<ActionDone> GlobalStack;
+        
         public double ZoomLevel
         {
             get;
@@ -50,6 +52,11 @@ namespace SplayCode
         private static int MINIMUM_Z_INDEX = 50;
         private BlockControl topmostBlock;
         private int topmostZIndex;
+        public int TopmostZIndex
+        {
+            get { return topmostZIndex; }
+            set { topmostZIndex = value; }
+        }
 
         private VirtualSpaceControl()
         {
@@ -62,6 +69,7 @@ namespace SplayCode
             baseGrid.Height = this.ActualHeight;
 
             BlockList = new List<BlockControl>();
+            GlobalStack = new Stack<ActionDone>();
             ZoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
@@ -246,6 +254,7 @@ namespace SplayCode
         // Add a block with given parameters
         public void AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex)
         {
+            ActionDone action;
             BlockControl newBlock = new BlockControl(label, documentPath);
             newBlock.Width = width;
             newBlock.Height = height;
@@ -261,6 +270,8 @@ namespace SplayCode
 
             BlockList.Add(newBlock);
             baseGrid.Children.Add(newBlock);
+            action = new ActionDone(false, true, false, 0, 0, 0, 0, 0, newBlock, 0, 0, 0, 0, zIndex);
+            GlobalStack.Push(action);
             ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
 
         }
@@ -337,5 +348,61 @@ namespace SplayCode
             return null;
         }
 
+        public void LogEditorInteraction (BlockControl block)
+        {
+            ActionDone action = new ActionDone(false, false, true, ZoomLevel, ActualWidth, ActualHeight,ScrollView.HorizontalOffset, ScrollView.VerticalOffset, block, 
+                block.ActualWidth, block.ActualHeight, block.Margin.Left, block.Margin.Top, topmostZIndex);
+            GlobalStack.Push(action);
+        }
+
+        private void panel_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                string files = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("panel_DragOver@@@@" + files);
+            }
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+            Debug.Print("OnDrop?!@$#$#@@@@");
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                string files = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("OnDrop@@@@" + files);
+            }
+            base.OnDrop(e);
+        }
+
+        protected override void OnDragOver(DragEventArgs e)
+        {
+            
+            e.Effects = DragDropEffects.Copy;
+
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                string files = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("OnDragOver@@@@" + files);
+            }
+            base.OnDragOver(e);
+        }
+
+        private void panel_Drop(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+            Debug.Print("panel_Drop?!@$#$#@@@@");
+            if (e.Handled == false)
+            {
+                if (e.Data.GetDataPresent(DataFormats.StringFormat))
+                {
+                    string files = (string)e.Data.GetData(DataFormats.StringFormat);
+                    Debug.Print("panel_Drop@@@@" + files);
+                }
+            }
+        }
     }
 }
