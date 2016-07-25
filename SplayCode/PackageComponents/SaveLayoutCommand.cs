@@ -111,37 +111,41 @@ namespace SplayCode
 
             if (saveFileDialog1.FileName != "")
             {
-
-                List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
-                XmlFormat format = new XmlFormat();
-                IEnumerable<EditorControl> editors;
-                
-                format.VirtualSpaceX = VirtualSpaceControl.Instance.baseGrid.Width;
-                format.VirtualSpaceY = VirtualSpaceControl.Instance.baseGrid.Height;
-                format.ScrollOffsetHorizontal = VirtualSpaceControl.Instance.ScrollView.HorizontalOffset;
-                format.ScrollOffsetVertical = VirtualSpaceControl.Instance.ScrollView.VerticalOffset;
-                format.ZoomLevel = VirtualSpaceControl.Instance.ZoomLevel;
-
-                foreach (BlockControl cc in chromes)
-                {
-                    editors = cc.contentSpace.Children.OfType<EditorControl>();
-                    EditorControl editorControl = editors.First();
-                    string filepath = editorControl.getFilePath();
-
-                    Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc));
-                    format.Editors.Add(editor);
-                }
-
-                XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "    ";
-                var xmlwriter = XmlWriter.Create(saveFileDialog1.FileName, settings);
-
-                x.Serialize(xmlwriter, format);
-
-                xmlwriter.Close();
+                saveLayout(saveFileDialog1.FileName);                
             }
+        }
+
+        public void saveLayout (string fileName)
+        {
+            List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
+            XmlFormat format = new XmlFormat();
+            IEnumerable<EditorControl> editors;
+
+            format.VirtualSpaceX = VirtualSpaceControl.Instance.baseGrid.Width;
+            format.VirtualSpaceY = VirtualSpaceControl.Instance.baseGrid.Height;
+            format.ScrollOffsetHorizontal = VirtualSpaceControl.Instance.ScrollView.HorizontalOffset;
+            format.ScrollOffsetVertical = VirtualSpaceControl.Instance.ScrollView.VerticalOffset;
+            format.ZoomLevel = VirtualSpaceControl.Instance.ZoomLevel;
+
+            foreach (BlockControl cc in chromes)
+            {
+                editors = cc.contentSpace.Children.OfType<EditorControl>();
+                EditorControl editorControl = editors.First();
+                string filepath = editorControl.getFilePath();
+
+                Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc));
+                format.Editors.Add(editor);
+            }
+
+            XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.IndentChars = "    ";
+            var xmlwriter = XmlWriter.Create(fileName, settings);
+
+            x.Serialize(xmlwriter, format);
+
+            xmlwriter.Close();
         }
     }
 }
