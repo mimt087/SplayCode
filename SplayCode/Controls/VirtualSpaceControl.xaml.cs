@@ -73,8 +73,30 @@ namespace SplayCode
             ZoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
+            this.KeyDown += VirtualSpaceControl_KeyDown;
 
             topmostZIndex = MINIMUM_Z_INDEX;
+        }
+
+        private void VirtualSpaceControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.U)
+            {
+                MessageBoxResult res = MessageBox.Show("U is pressed!", "Key Press Event", MessageBoxButton.OK);
+                ActionDone action = null;
+                if (GlobalStack.Count != 0)
+                {
+                    Debug.Print("GlobalStack is not empty!");
+                    action = GlobalStack.Pop();
+                    Debug.Print(action.EditorClosed.ToString());
+
+                    if (action.EditorClosed)
+                    {
+                        AddBlock(new Uri(action.MovedBlock.GetEditor().getFilePath()).Segments[new Uri(action.MovedBlock.GetEditor().getFilePath()).Segments.Length - 1], action.MovedBlock.GetEditor().getFilePath(),
+                            action.BlockPositionX, action.BlockPositionY, action.BlockSizeY, action.BlockSizeX, action.ZIndex);
+                    }
+                }
+            }
         }
 
         // handler to expand the space if the window size changes
@@ -329,6 +351,7 @@ namespace SplayCode
             baseGrid.Height = ActualHeight;
             zoomSlider.Value = 1.0;
             topmostZIndex = MINIMUM_Z_INDEX;
+            GlobalStack.Clear();
         }
 
         public List<BlockControl> FetchAllBlocks()
@@ -403,6 +426,11 @@ namespace SplayCode
                     Debug.Print("panel_Drop@@@@" + files);
                 }
             }
+        }
+
+        private void UndoHandler(object sender, KeyEventArgs e)
+        {
+            
         }
     }
 }
