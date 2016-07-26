@@ -27,7 +27,7 @@
                 </Grid.LayoutTransform>
                 <Thumb Name="dragThumb" ManipulationDelta="manipulationDelta" 
                        ManipulationCompleted="manipulationComplete" DragDelta="onDragDelta" DragCompleted="onDragComplete" Opacity="0" Margin="0" IsManipulationEnabled="True" Background="{x:Null}" 
-                       DragOver="panel_DragOver" Drop="panel_Drop" AllowDrop="True"/>
+                       AllowDrop="True"/>
             </Grid>
         </ScrollViewer>
         <Button x:Name="zoomInButton" Click="zoomIn" HorizontalAlignment="Right" Margin="0,0,20,151" VerticalAlignment="Bottom" Width="24" Height="24" Background="#FFE5E7E7" BorderBrush="{x:Null}">

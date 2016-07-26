@@ -13,8 +13,8 @@ namespace SplayCode
         private VirtualSpaceControl virtualSpace;
         private EditorControl editor;
 
-        public static double MINIMUM_BLOCK_HEIGHT = 750;
-        public static double MINIMUM_BLOCK_WIDTH = 750;
+        public static double MINIMUM_BLOCK_HEIGHT = 600;
+        public static double MINIMUM_BLOCK_WIDTH = 600;
 
         public BlockControl(string label, string documentPath)
         {

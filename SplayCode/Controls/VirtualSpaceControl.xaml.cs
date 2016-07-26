@@ -252,7 +252,7 @@ namespace SplayCode
         }
 
         // Add a block with given parameters
-        public void AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex)
+        public BlockControl AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex)
         {
             ActionDone action;
             BlockControl newBlock = new BlockControl(label, documentPath);
@@ -274,6 +274,7 @@ namespace SplayCode
             GlobalStack.Push(action);
             ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
 
+            return newBlock;
         }
 
         // Bring the selected block to the top. There is no check for when the z-index reaches
@@ -357,7 +358,7 @@ namespace SplayCode
             GlobalStack.Push(action);
         }
 
-        /*protected override void OnDragEnter(DragEventArgs e)
+        protected override void OnDragEnter(DragEventArgs e)
         {
             e.Handled = true;
             base.OnDragEnter(e);
@@ -365,30 +366,35 @@ namespace SplayCode
 
         protected override void OnDragOver(DragEventArgs e)
         {
-            e.Handled = true;
-            e.Effects = DragDropEffects.Copy;
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
             {
+                e.Handled = true;
+                e.Effects = DragDropEffects.Copy;
                 string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                Debug.Print("OnDragOver@@@@" + files);
+                Debug.Print("panel_DragOver@@@@" + files);
             }
             base.OnDragOver(e);
         }
 
         protected override void OnDrop(DragEventArgs e)
         {
-            e.Handled = true;
-            e.Effects = DragDropEffects.Copy;
-            Debug.Print("OnDrop?!@$#$#@@@@");
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
             {
-                string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                Debug.Print("OnDrop@@@@" + files);
+                e.Handled = true;
+                string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
+                Debug.Print("panel_Drop@@@@" + filePath);
+                // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
+
+                Point cursorPosition = e.GetPosition(dragThumb);
+                Debug.Print("Cursor at: " + cursorPosition.ToString());
+                BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
+                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1);
+                BringToTop(newBlock);
             }
             base.OnDrop(e);
-        }*/
+        }
 
-        private void panel_DragOver(object sender, DragEventArgs e)
+        /*private void panel_DragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
             {
@@ -410,10 +416,11 @@ namespace SplayCode
 
                 Point cursorPosition = e.GetPosition(dragThumb);
                 Debug.Print("Cursor at: " + cursorPosition.ToString());
-                AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
+                BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
                     BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1);
+                BringToTop(newBlock);
             }
-        }
+        }*/
 
         private string GetFileName(string filePath)
         {
