@@ -93,9 +93,6 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            //VirtualSpaceControl vsc = VirtualSpaceControl.Instance;
-            //vsc.cavRoot.Children.Clear();
-
             ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
 
                 if ((VirtualSpaceControl)window.Content != null) {
