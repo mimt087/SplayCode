@@ -82,6 +82,12 @@
           <ButtonText>Clear</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidSplayCodeCommandSet" id="SplayCodeLayoutUndoCommand" priority="4" type="Button">
+        <Parent guid="guidSplayCodeCommandSet" id="SplayCodeToolbarGroup" />
+        <Strings>
+          <ButtonText>Undo</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
     
     <Groups>
@@ -104,6 +110,7 @@
       <IDSymbol name="SplayCodeSaveLayoutCommand" value="4" />
       <IDSymbol name="SplayCodeLoadLayoutCommand" value="5" />
       <IDSymbol name="SplayCodeClearLayoutCommand" value="6" />
+      <IDSymbol name="SplayCodeLayoutUndoCommand" value="7" />
     </GuidSymbol>
   </Symbols>
   

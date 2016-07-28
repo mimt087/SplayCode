@@ -32,7 +32,10 @@ namespace SplayCode
 
         private void BlockControl_GotFocus(object sender, RoutedEventArgs e)
         {
-            VirtualSpaceControl.Instance.BringToTop(this);
+            if ((e.OriginalSource != closeButton) && (e.OriginalSource != closeIcon))
+            {
+                virtualSpace.BringToTop(this);
+            }
         }
 
         public void changeColour(Color color)
@@ -53,20 +56,18 @@ namespace SplayCode
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
-            ActionDone action = new ActionDone(true, false, false, 0, 0, 0, 0, 0, this, ActualWidth, ActualHeight, Margin.Left, Margin.Top, VirtualSpaceControl.Instance.TopmostZIndex);
-            VirtualSpaceControl.Instance.GlobalStack.Push(action);
+            ActionDone action = new ActionDone(true, false, false, 0, 0, 0, 0, 0, this, ActualWidth, ActualHeight, Margin.Left, Margin.Top, Panel.GetZIndex(this));
+            virtualSpace.GlobalStack.Push(action);
             virtualSpace.RemoveBlock(this);
         }
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
-        {
-            VirtualSpaceControl.Instance.LogEditorInteraction(this);
+        {            
             Reposition(e.HorizontalChange, e.VerticalChange);
         }
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             if (Width - e.HorizontalChange >= this.MinWidth)
             {
                 // Adjust block size
@@ -77,7 +78,6 @@ namespace SplayCode
 
         void onRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             if (Width + e.HorizontalChange >= this.MinWidth)
             {
                 // Adjust block size
@@ -87,7 +87,6 @@ namespace SplayCode
 
         void onBottomResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             if (Height + e.VerticalChange >= this.MinHeight)
             {
                 // Adjust block size
@@ -97,21 +96,19 @@ namespace SplayCode
 
         void onBottomRightResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             onRightResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
         }
 
         void onBottomLeftResizeDelta(object sender, DragDeltaEventArgs e)
         {
-            VirtualSpaceControl.Instance.LogEditorInteraction(this);
             onLeftResizeDelta(sender, e);
             onBottomResizeDelta(sender, e);
         }
 
         void RefreshVirtualSpaceSize()
         {
-            VirtualSpaceControl.Instance.ExpandToSize(Margin.Left + Width, Margin.Top + Height);
+            virtualSpace.ExpandToSize(Margin.Left + Width, Margin.Top + Height);
         }
 
         public EditorControl GetEditor()
@@ -119,5 +116,9 @@ namespace SplayCode
             return editor;
         }
 
+        private void onDragStarted(object sender, DragStartedEventArgs e)
+        {
+            virtualSpace.LogEditorInteraction(this);
+        }
     }
 }

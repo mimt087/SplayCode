@@ -6,21 +6,21 @@
              xmlns:local="clr-namespace:SplayCode"
              mc:Ignorable="d" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Grid Name="baseGrid" Margin="0,0,0,0">
-        <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Top" DragDelta="onDragDelta" Panel.ZIndex="100" 
+        <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Top" DragDelta="onDragDelta" DragStarted="onDragStarted" Panel.ZIndex="100" 
                Height="36" Opacity="0" Margin="0,0,40,0"/>
         <Thumb Name="leftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Stretch"
-               Width="16" DragDelta="onLeftResizeDelta"
+               Width="16" DragDelta="onLeftResizeDelta" DragStarted="onDragStarted"
                Panel.ZIndex="100" Opacity="0" Margin="-4,36,0,13.4" Cursor="SizeWE"/>
         <Thumb Name="rightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Stretch"
-               Width="15" DragDelta="onRightResizeDelta"
+               Width="15" DragDelta="onRightResizeDelta" DragStarted="onDragStarted"
                Panel.ZIndex="100" Opacity="0" Margin="0,36,-3.6,13.4" Cursor="SizeWE"/>
-        <Thumb Name="bottomResizeThumb" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="16" DragDelta="onBottomResizeDelta" 
+        <Thumb Name="bottomResizeThumb" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="16" DragDelta="onBottomResizeDelta" DragStarted="onDragStarted"
                Panel.ZIndex="100" Opacity="0" Margin="12,0,11.4,-2.6" Cursor="SizeNS"/>
-        <Thumb Name="bottomLeftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+        <Thumb Name="bottomLeftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Bottom" DragStarted="onDragStarted"
                Width="16" Height="16" DragDelta="onBottomLeftResizeDelta" 
                Panel.ZIndex="100" Opacity="0" Margin="-4,0,0,-2.6" Cursor="SizeNESW"/>
         <Thumb Name="bottomRightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                Width="15" Height="16" DragDelta="onBottomRightResizeDelta"
+                Width="15" Height="16" DragDelta="onBottomRightResizeDelta" DragStarted="onDragStarted"
                Panel.ZIndex="100" Opacity="0" Margin="0,0,-3.6,-2.6" Cursor="SizeNWSE"/>
         <Border Name="chrome" BorderBrush="#FFFFF29D" BorderThickness="8" HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch">

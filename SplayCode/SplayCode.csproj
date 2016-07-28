@@ -59,6 +59,7 @@
     <Compile Include="Data\XmlFormat.cs" />
     <Compile Include="PackageComponents\AddFileCommand.cs" />
     <Compile Include="PackageComponents\ClearLayoutCommand.cs" />
+    <Compile Include="PackageComponents\LayoutUndoCommand.cs" />
     <Compile Include="PackageComponents\LoadLayoutCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PackageComponents\SaveLayoutCommand.cs" />
