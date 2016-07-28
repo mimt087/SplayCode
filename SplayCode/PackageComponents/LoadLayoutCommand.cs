@@ -137,7 +137,7 @@ namespace SplayCode
                 {
                     Uri documentPath = new Uri(editor.source);                          
                     VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex);
+                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId);
                     VirtualSpaceControl.Instance.GlobalStack.Pop();
                 }
             }

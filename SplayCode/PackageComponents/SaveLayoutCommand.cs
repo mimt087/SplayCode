@@ -133,7 +133,7 @@ namespace SplayCode
                 EditorControl editorControl = editors.First();
                 string filepath = editorControl.getFilePath();
 
-                Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc));
+                Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc), cc.BlockId);
                 format.Editors.Add(editor);
             }
 

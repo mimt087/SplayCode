@@ -22,42 +22,7 @@
             get { return editorInteracted; }
             set { editorInteracted = value; }
         }
-
-        private double zoomLevel;
-        public double ZoomLevel
-        {
-            get { return zoomLevel; }
-            set { zoomLevel = value; }
-        }
-
-        private double virtualSpaceX;
-        public double VirtualSpaceX
-        {
-            get { return virtualSpaceX; }
-            set { virtualSpaceX = value; }
-        }
-
-        private double virtualSpaceY;
-        public double VirtualSpaceY
-        {
-            get { return virtualSpaceY; }
-            set { virtualSpaceY = value; }
-        }
-
-        private double scrollOffsetX;
-        public double ScrollOffsetX
-        {
-            get { return scrollOffsetX; }
-            set { scrollOffsetX = value; }
-        }
-
-        private double scrollOffsetY;
-        public double ScrollOffsetY
-        {
-            get { return scrollOffsetY; }
-            set { scrollOffsetY = value; }
-        }
-
+                
         private BlockControl movedBlock;
         public BlockControl MovedBlock
         {
@@ -100,23 +65,26 @@
             set { zIndex = value; }
         }
 
+        private int blockID;
+        public int BlockId
+        {
+            get { return blockID; }
+            set { blockID = value; }
+        }
+
         public ActionDone() { }
-        public ActionDone(bool eClosed, bool eAdded, bool eInteracted, double zLevel, double vSX, double vSY, double sOX, double sOY, BlockControl mBlock, double bSX, double bSY, double bPX, double bPY, int zI)
+        public ActionDone(bool eClosed, bool eAdded, bool eInteracted, BlockControl mBlock, double bSX, double bSY, double bPX, double bPY, int zI, int bId)
         {
             editorClosed = eClosed;
             editorAdded = eAdded;
             editorInteracted = eInteracted;
-            zoomLevel = zLevel;
-            virtualSpaceX = vSX;
-            virtualSpaceY = vSY;
-            scrollOffsetX = sOX;
-            scrollOffsetY = sOY;
             movedBlock = mBlock;
             blockSizeX = bSX;
             blockSizeY = bSY;
             blockPositionX = bPX;
             blockPositionY = bPY;
             zIndex = zI;
+            blockID = bId;
         }
     }
 }
