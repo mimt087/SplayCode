@@ -57,6 +57,14 @@ namespace SplayCode
             set { topmostZIndex = value; }
         }
 
+        private static int MINIMUM_BLOCK_ID = 1;
+        private int minBlockId;
+        public int MinBlockId
+        {
+            get { return minBlockId; }
+            set { minBlockId = value; }
+        }
+
         private VirtualSpaceControl()
         {
             InitializeComponent();
@@ -75,28 +83,8 @@ namespace SplayCode
             //this.KeyDown += VirtualSpaceControl_KeyDown;
 
             topmostZIndex = MINIMUM_Z_INDEX;
+            minBlockId = MINIMUM_BLOCK_ID;
         }
-
-        //private void VirtualSpaceControl_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.Key == Key.U)
-        //    {
-        //        MessageBoxResult res = MessageBox.Show("U is pressed!", "Key Press Event", MessageBoxButton.OK);
-        //        ActionDone action = null;
-        //        if (GlobalStack.Count != 0)
-        //        {
-        //            Debug.Print("GlobalStack is not empty!");
-        //            action = GlobalStack.Pop();
-        //            Debug.Print(action.EditorClosed.ToString());
-
-        //            if (action.EditorClosed)
-        //            {
-        //                AddBlock(new Uri(action.MovedBlock.GetEditor().getFilePath()).Segments[new Uri(action.MovedBlock.GetEditor().getFilePath()).Segments.Length - 1], action.MovedBlock.GetEditor().getFilePath(),
-        //                    action.BlockPositionX, action.BlockPositionY, action.BlockSizeY, action.BlockSizeX, action.ZIndex);
-        //            }
-        //        }
-        //    }
-        //}
 
         // handler to expand the space if the window size changes
         private void sizeChanged(object sender, SizeChangedEventArgs e)
@@ -270,11 +258,11 @@ namespace SplayCode
             double xPos = 900 * BlockList.Count + 100;
             double yPos = 100;
             AddBlock(label, documentPath, xPos, yPos, BlockControl.MINIMUM_BLOCK_WIDTH, 
-                BlockControl.MINIMUM_BLOCK_HEIGHT, topmostZIndex + 1);
+                BlockControl.MINIMUM_BLOCK_HEIGHT, topmostZIndex + 1, minBlockId + 1);
         }
 
         // Add a block with given parameters
-        public BlockControl AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex)
+        public BlockControl AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex, int blockId)
         {
             BlockControl newBlock = new BlockControl(label, documentPath);
             newBlock.Width = width;
@@ -289,11 +277,20 @@ namespace SplayCode
                 topmostZIndex = zIndex;
             }
 
+            newBlock.BlockId = blockId;
+            if (blockId <= minBlockId)
+            {
+                // do nothing
+            } else
+            {
+                minBlockId = blockId;
+            }
+
             BlockList.Add(newBlock);
             baseGrid.Children.Add(newBlock);            
             ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
 
-            GlobalStack.Push(new ActionDone(false, true, false, 0, 0, 0, 0, 0, newBlock, 0, 0, 0, 0, 0));
+            GlobalStack.Push(new ActionDone(false, true, false, newBlock, 0, 0, 0, 0, 0, blockId));
 
             return newBlock;
         }
@@ -354,6 +351,7 @@ namespace SplayCode
             zoomSlider.Value = 1.0;
             topmostZIndex = MINIMUM_Z_INDEX;
             GlobalStack.Clear();
+            minBlockId = MINIMUM_BLOCK_ID;
         }
 
         public List<BlockControl> FetchAllBlocks()
@@ -375,8 +373,7 @@ namespace SplayCode
 
         public void LogEditorInteraction(BlockControl block)
         {
-            ActionDone action = new ActionDone(false, false, true, ZoomLevel, ActualWidth, ActualHeight, ScrollView.HorizontalOffset, ScrollView.VerticalOffset, block,
-                block.ActualWidth, block.ActualHeight, block.Margin.Left, block.Margin.Top, topmostZIndex);
+            ActionDone action = new ActionDone(false, false, true, block, block.ActualWidth, block.ActualHeight, block.Margin.Left, block.Margin.Top, topmostZIndex, block.BlockId);
             GlobalStack.Push(action);
         }
 
@@ -416,7 +413,7 @@ namespace SplayCode
                 Point cursorPosition = e.GetPosition(dragThumb);
                 //Debug.Print("Cursor at: " + cursorPosition.ToString());
                 BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
-                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1);
+                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
                 BringToTop(newBlock);
             } else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -427,7 +424,7 @@ namespace SplayCode
                 Point cursorPosition = e.GetPosition(dragThumb);
                 //Debug.Print("Cursor at: " + cursorPosition.ToString());
                 BlockControl newBlock = AddBlock(GetFileName(file), file, cursorPosition.X, cursorPosition.Y,
-                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1);
+                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
                 BringToTop(newBlock);
             }
             base.OnDrop(e);
@@ -461,7 +458,7 @@ namespace SplayCode
             }
         }*/
 
-        private string GetFileName(string filePath)
+        public string GetFileName(string filePath)
         {
             Uri pathUri = new Uri(filePath);
             return (pathUri.Segments[pathUri.Segments.Length - 1]);
