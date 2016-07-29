@@ -65,6 +65,13 @@ namespace SplayCode
             set { minBlockId = value; }
         }
 
+        private string currentLayoutFile;
+        public string CurrentLayoutFile
+        {
+            get { return currentLayoutFile; }
+            set { currentLayoutFile = value; }
+        }
+
         private VirtualSpaceControl()
         {
             InitializeComponent();
@@ -352,6 +359,7 @@ namespace SplayCode
             topmostZIndex = MINIMUM_Z_INDEX;
             GlobalStack.Clear();
             minBlockId = MINIMUM_BLOCK_ID;
+            currentLayoutFile = "";
         }
 
         public List<BlockControl> FetchAllBlocks()

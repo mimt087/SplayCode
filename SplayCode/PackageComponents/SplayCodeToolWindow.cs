@@ -14,6 +14,8 @@ namespace SplayCode
     using Microsoft.VisualStudio.OLE.Interop;
     using System.Windows;
     using Microsoft.VisualStudio;
+    using EnvDTE80;
+    using EnvDTE;
 
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.
@@ -27,8 +29,12 @@ namespace SplayCode
     /// </para>
     /// </remarks>
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
-    public class SplayCodeToolWindow : ToolWindowPane, IOleCommandTarget
+    public class SplayCodeToolWindow : ToolWindowPane, IOleCommandTarget, IVsWindowFrameNotify2
     {
+        //private DTE2 m_applicationObject = null;
+        //DTEEvents m_packageDTEEvents = null;
+        VirtualSpaceControl virtualSpace;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
         /// </summary>
@@ -49,13 +55,61 @@ namespace SplayCode
             var cmdUi = Microsoft.VisualStudio.VSConstants.GUID_TextEditorFactory;
             windowFrame.SetGuidProperty((int)__VSFPROPID.VSFPROPID_InheritKeyBindings,
               ref cmdUi);
+            virtualSpace = VirtualSpaceControl.Instance;
+            //m_packageDTEEvents = ApplicationObject.Events.DTEEvents;
+            //m_packageDTEEvents.OnBeginShutdown += new _dispDTEEvents_OnBeginShutdownEventHandler(HandleVisualStudioShutDown);
 
             base.OnToolWindowCreated();
         }
 
+        //public DTE2 ApplicationObject
+        //{
+        //    get
+        //    {
+        //        if (m_applicationObject == null)
+        //        {
+        //            // Get an instance of the currently running Visual Studio IDE
+        //            DTE dte = (DTE)GetService(typeof(DTE));
+        //            m_applicationObject = dte as DTE2;
+        //        }
+        //        return m_applicationObject;
+        //    }
+        //}
+
+        //public void HandleVisualStudioShutDown()
+        //{
+        //    if (virtualSpace.CurrentLayoutFile.Equals(""))
+        //    {
+        //        MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
+        //                  "SplayCode: Save Layout", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        //        if (res == MessageBoxResult.Yes)
+        //        {
+        //            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+        //            saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+        //            saveFileDialog1.Title = "Save a Layout File";
+        //            saveFileDialog1.ShowDialog();
+
+        //            if (saveFileDialog1.FileName != "")
+        //            {
+        //                SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
+        //                      "SplayCode: Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        //        // If the users wants to save
+        //        if (res == MessageBoxResult.Yes)
+        //        {
+        //            SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+        //        }
+        //    }
+        //}
+
         protected override bool PreProcessMessage(ref Message m)
         {
-            BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
+            BlockControl block = virtualSpace.GetActiveBlock();
             if (block != null)
             {
                 // copy the Message into a MSG[] array, so we can pass
@@ -79,7 +133,7 @@ namespace SplayCode
             var hr =
               (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
 
-            BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
+            BlockControl block = virtualSpace.GetActiveBlock();
             if (block != null)
             {
 
@@ -95,7 +149,7 @@ namespace SplayCode
         {
             var hr =
               (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
-            BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
+            BlockControl block = virtualSpace.GetActiveBlock();
             if (block != null)
             {
                 var cmdTarget = (IOleCommandTarget)(block.GetEditor().GetTextView());
@@ -104,29 +158,54 @@ namespace SplayCode
             return hr;
         }
 
-        //public int OnClose(ref uint pgrfSaveOptions)
-        //{
-        //    // Check if your content is dirty here, then
-        //    SaveLayoutCommand.Instance.saveLayout(Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml");
-        //    //if ((Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml").GetHashCode. ==
-        //    //    VirtualSpaceControl.Instance.CurrentLayoutFileName.GetHashCode))
-        //    // Prompt a dialog
-        //    MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
-        //                  "Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-        //    // If the users wants to save
-        //    if (res == MessageBoxResult.Yes)
-        //    {
-        //        SaveLayoutCommand.Instance.saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFileName);
-        //    }
+        public int OnClose(ref uint pgrfSaveOptions)
+        {
+            // Check if your content is dirty here, then
+            //SaveLayoutCommand.Instance.saveLayout(Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml");
+            //if ((Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml").GetHashCode. ==
+            //    VirtualSpaceControl.Instance.CurrentLayoutFileName.GetHashCode))
+            // Prompt a dialog
 
-        //    if (res == MessageBoxResult.Cancel)
-        //    {
-        //        // If "cancel" is clicked, abort the close
-        //        return VSConstants.E_ABORT;
-        //    }
+            if (virtualSpace.CurrentLayoutFile.Equals(""))
+            {
+                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
+                          "SplayCode: Save Layout", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                if (res == MessageBoxResult.Yes)
+                {
+                    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                    saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+                    saveFileDialog1.Title = "Save a Layout File";
+                    saveFileDialog1.ShowDialog();
 
-        //    // Else, exit
-        //    return VSConstants.S_OK;
-        //}
+                    if (saveFileDialog1.FileName != "")
+                    {
+                        SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+                    }
+                } else if (res == MessageBoxResult.Cancel)
+                {
+                    return VSConstants.E_ABORT;
+                }
+            }
+            else
+            {
+                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
+                              "SplayCode: Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                // If the users wants to save
+                if (res == MessageBoxResult.Yes)
+                {
+                    SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+
+                }
+
+                if (res == MessageBoxResult.Cancel)
+                {
+                    // If "cancel" is clicked, abort the close
+                    return VSConstants.E_ABORT;
+                }
+            }
+            virtualSpace.Clear();
+            // Else, exit
+            return VSConstants.S_OK;
+        }
     }
 }

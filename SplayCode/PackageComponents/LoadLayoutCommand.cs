@@ -121,6 +121,7 @@ namespace SplayCode
                 }
 
                 string path = openFileDialog1.FileName;
+                VirtualSpaceControl.Instance.CurrentLayoutFile = path;
                 XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
                 StreamReader reader = new StreamReader(path);
 
