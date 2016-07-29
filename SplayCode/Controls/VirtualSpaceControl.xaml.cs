@@ -65,7 +65,7 @@ namespace SplayCode
             set { minBlockId = value; }
         }
 
-        private string currentLayoutFile;
+        private string currentLayoutFile = "";
         public string CurrentLayoutFile
         {
             get { return currentLayoutFile; }

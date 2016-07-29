@@ -31,8 +31,8 @@ namespace SplayCode
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
     public class SplayCodeToolWindow : ToolWindowPane, IOleCommandTarget, IVsWindowFrameNotify2
     {
-        //private DTE2 m_applicationObject = null;
-        //DTEEvents m_packageDTEEvents = null;
+        private DTE2 m_applicationObject = null;
+        DTEEvents m_packageDTEEvents = null;
         VirtualSpaceControl virtualSpace;
 
         /// <summary>
@@ -56,56 +56,56 @@ namespace SplayCode
             windowFrame.SetGuidProperty((int)__VSFPROPID.VSFPROPID_InheritKeyBindings,
               ref cmdUi);
             virtualSpace = VirtualSpaceControl.Instance;
-            //m_packageDTEEvents = ApplicationObject.Events.DTEEvents;
-            //m_packageDTEEvents.OnBeginShutdown += new _dispDTEEvents_OnBeginShutdownEventHandler(HandleVisualStudioShutDown);
+            m_packageDTEEvents = ApplicationObject.Events.DTEEvents;
+            m_packageDTEEvents.OnBeginShutdown += new _dispDTEEvents_OnBeginShutdownEventHandler(HandleVisualStudioShutDown);
 
             base.OnToolWindowCreated();
         }
 
-        //public DTE2 ApplicationObject
-        //{
-        //    get
-        //    {
-        //        if (m_applicationObject == null)
-        //        {
-        //            // Get an instance of the currently running Visual Studio IDE
-        //            DTE dte = (DTE)GetService(typeof(DTE));
-        //            m_applicationObject = dte as DTE2;
-        //        }
-        //        return m_applicationObject;
-        //    }
-        //}
+        public DTE2 ApplicationObject
+        {
+            get
+            {
+                if (m_applicationObject == null)
+                {
+                    // Get an instance of the currently running Visual Studio IDE
+                    DTE dte = (DTE)GetService(typeof(DTE));
+                    m_applicationObject = dte as DTE2;
+                }
+                return m_applicationObject;
+            }
+        }
 
-        //public void HandleVisualStudioShutDown()
-        //{
-        //    if (virtualSpace.CurrentLayoutFile.Equals(""))
-        //    {
-        //        MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
-        //                  "SplayCode: Save Layout", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        //        if (res == MessageBoxResult.Yes)
-        //        {
-        //            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-        //            saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
-        //            saveFileDialog1.Title = "Save a Layout File";
-        //            saveFileDialog1.ShowDialog();
+        public void HandleVisualStudioShutDown()
+        {
+            if (virtualSpace.CurrentLayoutFile.Equals(""))
+            {
+                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
+                          "SplayCode: Save Layout", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (res == MessageBoxResult.Yes)
+                {
+                    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                    saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+                    saveFileDialog1.Title = "Save a Layout File";
+                    saveFileDialog1.ShowDialog();
 
-        //            if (saveFileDialog1.FileName != "")
-        //            {
-        //                SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
-        //                      "SplayCode: Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        //        // If the users wants to save
-        //        if (res == MessageBoxResult.Yes)
-        //        {
-        //            SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
-        //        }
-        //    }
-        //}
+                    if (saveFileDialog1.FileName != "")
+                    {
+                        SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
+                              "SplayCode: Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                // If the users wants to save
+                if (res == MessageBoxResult.Yes)
+                {
+                    SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+                }
+            }
+        }
 
         protected override bool PreProcessMessage(ref Message m)
         {
