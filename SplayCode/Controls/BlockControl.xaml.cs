@@ -12,6 +12,12 @@ namespace SplayCode
     {
         private VirtualSpaceControl virtualSpace;
         private EditorControl editor;
+        private int blockId;
+        public int BlockId
+        {
+            get { return blockId; }
+            set { blockId = value; }
+        }
 
         public static double MINIMUM_BLOCK_HEIGHT = 600;
         public static double MINIMUM_BLOCK_WIDTH = 600;
@@ -56,7 +62,7 @@ namespace SplayCode
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
-            ActionDone action = new ActionDone(true, false, false, 0, 0, 0, 0, 0, this, ActualWidth, ActualHeight, Margin.Left, Margin.Top, Panel.GetZIndex(this));
+            ActionDone action = new ActionDone(true, false, false, this, ActualWidth, ActualHeight, Margin.Left, Margin.Top, Panel.GetZIndex(this), BlockId);
             virtualSpace.GlobalStack.Push(action);
             virtualSpace.RemoveBlock(this);
         }

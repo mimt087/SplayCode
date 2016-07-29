@@ -15,9 +15,10 @@ namespace SplayCode.Data
         public double height;
         public double width;
         public int ZIndex;
+        public int BlockId;
 
         public Editor() { }
-        public Editor(double dx, double dy, string dsource, double dheight, double dwidth, int dZIndex)
+        public Editor(double dx, double dy, string dsource, double dheight, double dwidth, int dZIndex, int dBlockId)
         {
             X = dx;
             Y = dy;
@@ -25,6 +26,7 @@ namespace SplayCode.Data
             height = dheight;
             width = dwidth;
             ZIndex = dZIndex;
+            BlockId = dBlockId;
         }
     }
 }

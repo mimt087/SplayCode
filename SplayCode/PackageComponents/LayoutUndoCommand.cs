@@ -102,23 +102,33 @@ namespace SplayCode
             Stack<ActionDone> globalStack = virtualSpace.GlobalStack;
             
             ActionDone action = null;
+            
+            // undo can only be called when the GlobalStack is not empty            
             if (globalStack.Count != 0)
             {
-                Debug.Print("GlobalStack is not empty!");
                 action = globalStack.Pop();
-
+                // if the top action of the stack was pushed by an editor being closed, reopen it where it was
                 if (action.EditorClosed)
                 {
-                    Debug.Print("Closed Editor is being Opened!");
-                    virtualSpace.AddBlock(new Uri(action.MovedBlock.GetEditor().getFilePath()).Segments[new Uri(action.MovedBlock.GetEditor().getFilePath()).Segments.Length - 1], action.MovedBlock.GetEditor().getFilePath(),
-                        action.BlockPositionX, action.BlockPositionY, action.BlockSizeY, action.BlockSizeX, action.ZIndex);
+                    virtualSpace.AddBlock(virtualSpace.GetFileName(action.MovedBlock.GetEditor().getFilePath()), action.MovedBlock.GetEditor().getFilePath(),
+                        action.BlockPositionX, action.BlockPositionY, action.BlockSizeY, action.BlockSizeX, action.ZIndex, action.BlockId);
                     globalStack.Pop();
-                } else if (action.EditorAdded)
+                }
+                // if the top action of the stack was pushed due to addition of a new editor, close it
+                else if (action.EditorAdded)
                 {
-                    Debug.Print("Added Editor is being closed!");
-                    Debug.Print(action.MovedBlock.GetEditor().getFilePath());
-                    virtualSpace.RemoveBlock(action.MovedBlock);
-                } else
+                    List<BlockControl> bcList = virtualSpace.FetchAllBlocks();
+                    foreach (BlockControl bc in bcList)
+                    {
+                        if (bc.BlockId == action.BlockId)
+                        {
+                            virtualSpace.RemoveBlock(bc);
+                            break;
+                        }
+                    }
+                }
+                // if the top action of the stack was pushed due to repositioning or resizing of an editor, position is back to where it was
+                else
                 {
                     action.MovedBlock.Width = action.BlockSizeX;
                     action.MovedBlock.Height = action.BlockSizeY;
