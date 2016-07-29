@@ -104,14 +104,20 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
-            saveFileDialog1.Title = "Save a Layout File";
-            saveFileDialog1.ShowDialog();
-
-            if (saveFileDialog1.FileName != "")
+            if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
-                saveLayout(saveFileDialog1.FileName);                
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+                saveFileDialog1.Title = "Save a Layout File";
+                saveFileDialog1.ShowDialog();
+
+                if (saveFileDialog1.FileName != "")
+                {
+                    saveLayout(saveFileDialog1.FileName);
+                }
+            } else
+            {
+                saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFile);
             }
         }
 
