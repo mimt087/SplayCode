@@ -27,7 +27,7 @@ namespace SplayCode
     /// </para>
     /// </remarks>
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
-    public class SplayCodeToolWindow : ToolWindowPane //, IVsWindowFrameNotify2
+    public class SplayCodeToolWindow : ToolWindowPane, IOleCommandTarget
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
@@ -52,7 +52,7 @@ namespace SplayCode
 
             base.OnToolWindowCreated();
         }
-       
+
         protected override bool PreProcessMessage(ref Message m)
         {
             BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
@@ -67,9 +67,41 @@ namespace SplayCode
                 pMsg[0].lParam = m.LParam;
 
                 var vsWindowPane = (IVsWindowPane)(block.GetEditor().GetTextView());
-                 return vsWindowPane.TranslateAccelerator(pMsg) == 0;
+                return vsWindowPane.TranslateAccelerator(pMsg) == 0;
             }
             return base.PreProcessMessage(ref m);
+        }
+
+        int IOleCommandTarget.Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
+      IntPtr pvaIn, IntPtr pvaOut)
+        {
+
+            var hr =
+              (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
+
+            BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
+            if (block != null)
+            {
+
+                var cmdTarget = (IOleCommandTarget)(block.GetEditor().GetTextView());
+                hr = cmdTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+
+            }
+            return hr;
+        }
+
+        int IOleCommandTarget.QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[]
+          prgCmds, IntPtr pCmdText)
+        {
+            var hr =
+              (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
+            BlockControl block = VirtualSpaceControl.Instance.GetActiveBlock();
+            if (block != null)
+            {
+                var cmdTarget = (IOleCommandTarget)(block.GetEditor().GetTextView());
+                hr = cmdTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
+            }
+            return hr;
         }
 
         //public int OnClose(ref uint pgrfSaveOptions)
