@@ -443,5 +443,12 @@ namespace SplayCode
             Uri pathUri = new Uri(filePath);
             return (pathUri.Segments[pathUri.Segments.Length - 1]);
         }
+
+        public void focusViewOn(BlockControl block)
+        {
+            zoomSlider.Value = 1.0;
+            ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));
+            ScrollView.ScrollToVerticalOffset(block.Margin.Top - (ScrollView.ViewportHeight / 10));
+        }
     }
 }
