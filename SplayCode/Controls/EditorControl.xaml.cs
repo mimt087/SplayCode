@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 namespace SplayCode.Controls
 {
 
-    public partial class EditorControl : UserControl, IOleCommandTarget
+    public partial class EditorControl : UserControl
     {
 
         public static Microsoft.VisualStudio.OLE.Interop.IServiceProvider OLEServiceProvider;
@@ -116,34 +116,6 @@ namespace SplayCode.Controls
                 pdwCookie: out docCookie);
 
             return docCookie;
-        }
-
-        int IOleCommandTarget.Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
-          IntPtr pvaIn, IntPtr pvaOut)
-        {
-            var hr =
-              (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
-
-            if (currentlyFocusedTextView != null)
-            {
-                var cmdTarget = (IOleCommandTarget)currentlyFocusedTextView;
-                hr = cmdTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-            }
-            return hr;
-        }
-
-        int IOleCommandTarget.QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[]
-          prgCmds, IntPtr pCmdText)
-        {
-            var hr =
-              (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
-
-            if (currentlyFocusedTextView != null)
-            {
-                var cmdTarget = (IOleCommandTarget)currentlyFocusedTextView;
-                hr = cmdTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
-            }
-            return hr;
         }
 
         public string getFilePath()

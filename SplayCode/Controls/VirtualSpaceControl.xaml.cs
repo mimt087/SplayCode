@@ -438,34 +438,6 @@ namespace SplayCode
             base.OnDrop(e);
         }
 
-        /*private void panel_DragOver(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.StringFormat))
-            {
-                e.Handled = true;
-                e.Effects = DragDropEffects.Copy;
-                string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                Debug.Print("panel_DragOver@@@@" + files);
-            }
-        }
-
-        void panel_Drop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.StringFormat))
-            {
-                e.Handled = true;
-                string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
-                Debug.Print("panel_Drop@@@@" + filePath);
-                // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
-
-                Point cursorPosition = e.GetPosition(dragThumb);
-                Debug.Print("Cursor at: " + cursorPosition.ToString());
-                BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
-                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1);
-                BringToTop(newBlock);
-            }
-        }*/
-
         public string GetFileName(string filePath)
         {
             Uri pathUri = new Uri(filePath);
