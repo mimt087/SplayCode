@@ -97,12 +97,15 @@ namespace SplayCode
             }
             else
             {
-                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
-                              "SplayCode: Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                // If the users wants to save
-                if (res == MessageBoxResult.Yes)
+                if (virtualSpace.GlobalStack.Count != 0)
                 {
-                    SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+                    MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
+                                  "SplayCode: Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    // If the users wants to save
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+                    }
                 }
             }
         }
@@ -188,19 +191,22 @@ namespace SplayCode
             }
             else
             {
-                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
-                              "SplayCode: Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                // If the users wants to save
-                if (res == MessageBoxResult.Yes)
+                if (virtualSpace.GlobalStack.Count != 0)
                 {
-                    SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+                    MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
+                                  "SplayCode: Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                    // If the users wants to save
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
 
-                }
+                    }
 
-                if (res == MessageBoxResult.Cancel)
-                {
-                    // If "cancel" is clicked, abort the close
-                    return VSConstants.E_ABORT;
+                    if (res == MessageBoxResult.Cancel)
+                    {
+                        // If "cancel" is clicked, abort the close
+                        return VSConstants.E_ABORT;
+                    }
                 }
             }
             virtualSpace.Clear();
