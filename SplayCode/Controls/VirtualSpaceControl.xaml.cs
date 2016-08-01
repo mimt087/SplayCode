@@ -10,6 +10,8 @@ namespace SplayCode
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
@@ -415,25 +417,15 @@ namespace SplayCode
             {
                 e.Handled = true;
                 string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
-                //Debug.Print("panel_Drop@@@@" + filePath);
-                // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
-
                 Point cursorPosition = e.GetPosition(dragThumb);
-                //Debug.Print("Cursor at: " + cursorPosition.ToString());
-                BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
-                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
-                BringToTop(newBlock);
+                AddSingleOrMultipleFiles(filePath, cursorPosition);
             } else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Handled = true;
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 string file = files[0];
-
                 Point cursorPosition = e.GetPosition(dragThumb);
-                //Debug.Print("Cursor at: " + cursorPosition.ToString());
-                BlockControl newBlock = AddBlock(GetFileName(file), file, cursorPosition.X, cursorPosition.Y,
-                    BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
-                BringToTop(newBlock);
+                AddSingleOrMultipleFiles(file, cursorPosition);
             }
             base.OnDrop(e);
         }
@@ -442,6 +434,63 @@ namespace SplayCode
         {
             Uri pathUri = new Uri(filePath);
             return (pathUri.Segments[pathUri.Segments.Length - 1]);
+        }
+
+        public void AddSingleOrMultipleFiles(string filePath, Point cursorPosition)
+        {
+            // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
+            FileAttributes attr = File.GetAttributes(filePath);
+
+            if (attr.HasFlag(FileAttributes.Directory))
+            {
+                int increment = 0;
+                string[] extensions = { ".cs", ".xml", ".xaml", ".html", ".css", ".cpp", ".c", ".js", ".json", ".php", ".py", ".ts", ".txt" };
+                var allowedExtensions = new HashSet<string>(extensions, StringComparer.OrdinalIgnoreCase);
+
+                string[] files = Directory.EnumerateFiles(filePath, "*.*", SearchOption.AllDirectories).ToArray();
+                foreach (string s in files)
+                {
+                    if (allowedExtensions.Contains(Path.GetExtension(s)))
+                    {
+                        if (HandleDuplicateFiles(s))
+                        {
+                            BlockControl newBlock = AddBlock(GetFileName(s), s, cursorPosition.X + increment, cursorPosition.Y + increment,
+                                BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
+                            BringToTop(newBlock);
+                            increment += 50;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (HandleDuplicateFiles(filePath))
+                {
+                    BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
+                        BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
+                    BringToTop(newBlock);
+                }
+            }
+        }
+
+        public bool HandleDuplicateFiles(string filePath)
+        {
+            MessageBoxResult res = new MessageBoxResult();
+
+            foreach (BlockControl bc in FetchAllBlocks())
+            {
+                if (bc.GetEditor().getFilePath().Equals(filePath))
+                {
+                    res = MessageBox.Show("The file is already added in the layout. Proceed with adding the file?",
+                          "Duplicate file", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    break;
+                }
+            }
+            if (res == MessageBoxResult.No)
+            {
+                return false;
+            }
+            return true;
         }
 
         public void focusViewOn(BlockControl block)
