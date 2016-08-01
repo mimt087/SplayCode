@@ -264,8 +264,8 @@ namespace SplayCode
         {
             double xPos = 900 * BlockList.Count + 100;
             double yPos = 100;
-            AddBlock(label, documentPath, xPos, yPos, BlockControl.MINIMUM_BLOCK_WIDTH, 
-                BlockControl.MINIMUM_BLOCK_HEIGHT, topmostZIndex + 1, minBlockId + 1);
+            AddBlock(label, documentPath, xPos, yPos, BlockControl.DEFAULT_BLOCK_WIDTH, 
+                BlockControl.DEFAULT_BLOCK_HEIGHT, topmostZIndex + 1, minBlockId + 1);
         }
 
         // Add a block with given parameters

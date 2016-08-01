@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SplayCode"
              mc:Ignorable="d" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Grid Name="baseGrid" Margin="0,0,0,0">
-        <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Top" DragDelta="onDragDelta" DragStarted="onDragStarted" Panel.ZIndex="100" 
+        <Thumb Name="dragThumb" VerticalAlignment="Top" DragDelta="onDragDelta" DragStarted="onDragStarted" Panel.ZIndex="100" 
                Height="36" Opacity="0" Margin="0,0,40,0" MouseDoubleClick="onDoubleClick"/>
         <Thumb Name="leftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Stretch"
                Width="16" DragDelta="onLeftResizeDelta" DragStarted="onDragStarted"

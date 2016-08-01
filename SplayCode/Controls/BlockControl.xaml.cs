@@ -19,8 +19,10 @@ namespace SplayCode
             set { blockId = value; }
         }
 
-        public static double MINIMUM_BLOCK_HEIGHT = 600;
-        public static double MINIMUM_BLOCK_WIDTH = 600;
+        public static double MINIMUM_BLOCK_HEIGHT = 300;
+        public static double MINIMUM_BLOCK_WIDTH = 300;
+        public static double DEFAULT_BLOCK_HEIGHT = 600;
+        public static double DEFAULT_BLOCK_WIDTH = 600;
 
         public BlockControl(string label, string documentPath)
         {
@@ -34,6 +36,8 @@ namespace SplayCode
             this.GotTouchCapture += BlockControl_GotFocus;
             MinHeight = MINIMUM_BLOCK_HEIGHT;
             MinWidth = MINIMUM_BLOCK_WIDTH;
+            Height = DEFAULT_BLOCK_HEIGHT;
+            Width = DEFAULT_BLOCK_WIDTH;
         }
 
         private void BlockControl_GotFocus(object sender, RoutedEventArgs e)
