@@ -126,5 +126,10 @@ namespace SplayCode
         {
             virtualSpace.LogEditorInteraction(this);
         }
+
+        void onDoubleClick(object sender, RoutedEventArgs e)
+        {
+            virtualSpace.focusViewOn(this);
+        }
     }
 }

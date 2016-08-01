@@ -80,18 +80,21 @@ namespace SplayCode
         {
             if (virtualSpace.CurrentLayoutFile.Equals(""))
             {
-                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
-                          "SplayCode: Save Layout", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (res == MessageBoxResult.Yes)
+                if (virtualSpace.GlobalStack.Count != 0)
                 {
-                    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                    saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
-                    saveFileDialog1.Title = "Save a Layout File";
-                    saveFileDialog1.ShowDialog();
-
-                    if (saveFileDialog1.FileName != "")
+                    MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
+                          "SplayCode: Save Layout", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (res == MessageBoxResult.Yes)
                     {
-                        SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+                        SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                        saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+                        saveFileDialog1.Title = "Save a Layout File";
+                        saveFileDialog1.ShowDialog();
+
+                        if (saveFileDialog1.FileName != "")
+                        {
+                            SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+                        }
                     }
                 }
             }
@@ -171,22 +174,26 @@ namespace SplayCode
 
             if (virtualSpace.CurrentLayoutFile.Equals(""))
             {
-                MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
+                if (virtualSpace.GlobalStack.Count != 0)
+                {
+                    MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
                           "SplayCode: Save Layout", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                if (res == MessageBoxResult.Yes)
-                {
-                    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                    saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
-                    saveFileDialog1.Title = "Save a Layout File";
-                    saveFileDialog1.ShowDialog();
-
-                    if (saveFileDialog1.FileName != "")
+                    if (res == MessageBoxResult.Yes)
                     {
-                        SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+                        SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                        saveFileDialog1.Filter = "XML Files (*.xml)|*.xml";
+                        saveFileDialog1.Title = "Save a Layout File";
+                        saveFileDialog1.ShowDialog();
+
+                        if (saveFileDialog1.FileName != "")
+                        {
+                            SaveLayoutCommand.Instance.saveLayout(saveFileDialog1.FileName);
+                        }
                     }
-                } else if (res == MessageBoxResult.Cancel)
-                {
-                    return VSConstants.E_ABORT;
+                    else if (res == MessageBoxResult.Cancel)
+                    {
+                        return VSConstants.E_ABORT;
+                    }
                 }
             }
             else

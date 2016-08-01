@@ -492,5 +492,12 @@ namespace SplayCode
             }
             return true;
         }
+
+        public void focusViewOn(BlockControl block)
+        {
+            zoomSlider.Value = 1.0;
+            ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));
+            ScrollView.ScrollToVerticalOffset(block.Margin.Top - (ScrollView.ViewportHeight / 10));
+        }
     }
 }
