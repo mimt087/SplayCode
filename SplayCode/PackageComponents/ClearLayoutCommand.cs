@@ -9,6 +9,7 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using SplayCode.Data;
 
 namespace SplayCode
 {
@@ -93,12 +94,9 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
-
-                if ((VirtualSpaceControl)window.Content != null) {
-                    ((VirtualSpaceControl)window.Content).Clear();
-                }
-
+            BlockManager.Instance.RemoveAllBlocks();
+            UndoManager.Instance.Reset();
+            VirtualSpaceControl.Instance.Reset();
         }
     }
 }

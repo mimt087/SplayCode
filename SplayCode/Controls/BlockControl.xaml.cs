@@ -10,7 +10,6 @@ namespace SplayCode
 
     public partial class BlockControl : UserControl
     {
-        private VirtualSpaceControl virtualSpace;
         private EditorControl editor;
         private int blockId;
         public int BlockId
@@ -19,15 +18,19 @@ namespace SplayCode
             set { blockId = value; }
         }
 
-        public static double MINIMUM_BLOCK_HEIGHT = 300;
-        public static double MINIMUM_BLOCK_WIDTH = 300;
-        public static double DEFAULT_BLOCK_HEIGHT = 600;
-        public static double DEFAULT_BLOCK_WIDTH = 600;
+        // Default and minimum sizes for a block
+        public static readonly double MINIMUM_BLOCK_HEIGHT = 300;
+        public static readonly double MINIMUM_BLOCK_WIDTH = 300;
+        public static readonly double DEFAULT_BLOCK_HEIGHT = 600;
+        public static readonly double DEFAULT_BLOCK_WIDTH = 600;
+
+        // Default highlight and normal colours
+        public static readonly Color HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33);
+        public static readonly Color NON_HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D);
 
         public BlockControl(string label, string documentPath)
         {
             InitializeComponent();
-            virtualSpace = VirtualSpaceControl.Instance;
             editor = new EditorControl(documentPath);
             contentSpace.Children.Add(editor);
             this.label.Content = label;
@@ -44,15 +47,22 @@ namespace SplayCode
         {
             if ((e.OriginalSource != closeButton) && (e.OriginalSource != closeIcon))
             {
-                virtualSpace.BringToTop(this);
+                BlockManager.Instance.SetActiveBlock(this);
             }
         }
 
-        public void changeColour(Color color)
+        public void SetHighlight(bool highlightOn)
         {
-            chrome.BorderBrush = new SolidColorBrush(color);
-            label.Background = new SolidColorBrush(color);
-            closeButton.BorderBrush = new SolidColorBrush(color);
+            if (highlightOn)
+            {
+                chrome.BorderBrush = new SolidColorBrush(HIGHLIGHT_COLOR);
+                label.Background = new SolidColorBrush(HIGHLIGHT_COLOR);
+            }
+            else
+            {
+                chrome.BorderBrush = new SolidColorBrush(NON_HIGHLIGHT_COLOR);
+                label.Background = new SolidColorBrush(NON_HIGHLIGHT_COLOR);
+            }            
         }
 
         public void Reposition(double xDelta, double yDelta)
@@ -66,9 +76,8 @@ namespace SplayCode
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
-            ActionDone action = new ActionDone(true, false, false, this, ActualWidth, ActualHeight, Margin.Left, Margin.Top, Panel.GetZIndex(this), BlockId);
-            virtualSpace.GlobalStack.Push(action);
-            virtualSpace.RemoveBlock(this);
+            UndoManager.Instance.SaveState();
+            BlockManager.Instance.RemoveBlock(this);
         }
 
         void onDragDelta(object sender, DragDeltaEventArgs e)
@@ -118,7 +127,7 @@ namespace SplayCode
 
         void RefreshVirtualSpaceSize()
         {
-            virtualSpace.ExpandToSize(Margin.Left + Width, Margin.Top + Height);
+            VirtualSpaceControl.Instance.ExpandToSize(Margin.Left + Width, Margin.Top + Height);
         }
 
         public EditorControl GetEditor()
@@ -128,12 +137,19 @@ namespace SplayCode
 
         private void onDragStarted(object sender, DragStartedEventArgs e)
         {
-            virtualSpace.LogEditorInteraction(this);
+            //VirtualSpaceControl.Instance.LogEditorInteraction(this);
         }
 
         void onDoubleClick(object sender, RoutedEventArgs e)
         {
-            virtualSpace.focusViewOn(this);
+            VirtualSpaceControl.Instance.focusViewOn(this);
+        }
+
+        // Scales the label, checkbox and closebutton so that they can remain the same size
+        // even when the whole view is zoomed out
+        public void RetainLabelBarSize(double zoomLevel)
+        {
+            //label
         }
     }
 }

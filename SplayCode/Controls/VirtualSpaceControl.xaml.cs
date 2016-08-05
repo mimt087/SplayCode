@@ -1,26 +1,19 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="ToolWindow1Control.xaml.cs" company="Company">
-//     Copyright (c) Company.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+﻿using SplayCode.Data;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace SplayCode
 {
-    using Data;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using System.Windows.Input;
-    using System.Windows.Media;
-
     public partial class VirtualSpaceControl : UserControl
     {
-        // singleton instance for retrieval
         private static VirtualSpaceControl instance;
         public static VirtualSpaceControl Instance
         {
@@ -32,14 +25,7 @@ namespace SplayCode
                 }
                 return instance;
             }
-            private set
-            {
-                instance = value;
-            }
         }
-
-        private List<BlockControl> BlockList;
-        public Stack<ActionDone> GlobalStack;
 
         public double ZoomLevel
         {
@@ -50,22 +36,6 @@ namespace SplayCode
         // this flag is used to ignore the 'false' touch input caused by the scrollviewer moving
         // as a counter action to actual touch input
         private bool duringTouch;
-
-        private static int MINIMUM_Z_INDEX = 50;
-        private int topmostZIndex;
-        public int TopmostZIndex
-        {
-            get { return topmostZIndex; }
-            set { topmostZIndex = value; }
-        }
-
-        private static int MINIMUM_BLOCK_ID = 1;
-        private int minBlockId;
-        public int MinBlockId
-        {
-            get { return minBlockId; }
-            set { minBlockId = value; }
-        }
 
         private string currentLayoutFile = "";
         public string CurrentLayoutFile
@@ -84,15 +54,9 @@ namespace SplayCode
             baseGrid.Width = this.ActualWidth;
             baseGrid.Height = this.ActualHeight;
 
-            BlockList = new List<BlockControl>();
-            GlobalStack = new Stack<ActionDone>();
             ZoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
-            //this.KeyDown += VirtualSpaceControl_KeyDown;
-
-            topmostZIndex = MINIMUM_Z_INDEX;
-            minBlockId = MINIMUM_BLOCK_ID;
         }
 
         // handler to expand the space if the window size changes
@@ -206,10 +170,7 @@ namespace SplayCode
                     t.Top = t.Top + verticalDelta;
                     dragThumb.Margin = t;
                     ExpandToSize(0, baseGrid.Height + verticalDelta);
-                    foreach (BlockControl block in BlockList)
-                    {
-                        block.Reposition(0, verticalDelta);
-                    }
+                    BlockManager.Instance.ShiftAllBlocks(0, verticalDelta);
                 }
             }
             // if dragging left, scroll right, expand space if neeeded
@@ -229,10 +190,7 @@ namespace SplayCode
                     t.Left = t.Left + horizontalDelta;
                     dragThumb.Margin = t;
                     ExpandToSize(baseGrid.Width + horizontalDelta, 0);
-                    foreach (BlockControl block in BlockList)
-                    {
-                        block.Reposition(horizontalDelta, 0);
-                    }
+                    BlockManager.Instance.ShiftAllBlocks(horizontalDelta, 0);
                 }
             }
 
@@ -261,74 +219,6 @@ namespace SplayCode
             resetThumbLocation();
         }
 
-        // Add a block using default positioning
-        public void AddBlock(string label, string documentPath)
-        {
-            double xPos = 900 * BlockList.Count + 100;
-            double yPos = 100;
-            AddBlock(label, documentPath, xPos, yPos, BlockControl.DEFAULT_BLOCK_WIDTH, 
-                BlockControl.DEFAULT_BLOCK_HEIGHT, topmostZIndex + 1, minBlockId + 1);
-        }
-
-        // Add a block with given parameters
-        public BlockControl AddBlock(string label, string documentPath, double xPos, double yPos, double height, double width, int zIndex, int blockId)
-        {
-            BlockControl newBlock = new BlockControl(label, documentPath);
-            newBlock.Width = width;
-            newBlock.Height = height;
-            newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
-
-            // Z-indices are assumed to be unique, no checks are performed 
-            // (probably should fix in future)
-            Panel.SetZIndex(newBlock, zIndex);
-            if (zIndex > topmostZIndex)
-            {
-                topmostZIndex = zIndex;
-            }
-
-            newBlock.BlockId = blockId;
-            if (blockId <= minBlockId)
-            {
-                // do nothing
-            } else
-            {
-                minBlockId = blockId;
-            }
-
-            BlockList.Add(newBlock);
-            baseGrid.Children.Add(newBlock);            
-            ExpandToSize(newBlock.Margin.Left + newBlock.Width, newBlock.Margin.Top + newBlock.Height);
-
-            GlobalStack.Push(new ActionDone(false, true, false, newBlock, 0, 0, 0, 0, 0, blockId));
-
-            return newBlock;
-        }
-
-        // Bring the selected block to the top. There is no check for when the z-index reaches
-        // the int limit but that's unlikely to happen so we'll leave it for now :)
-        public void BringToTop(BlockControl block)
-        {
-            Panel.SetZIndex(block, topmostZIndex + 1);
-            topmostZIndex++;
-            blockControl_Hightlight(block);
-        }
-
-        // change the colour of the focused editor block
-        public void blockControl_Hightlight(BlockControl block)
-        {
-            foreach (BlockControl bc in FetchAllBlocks())
-            {
-                if (block.Equals(bc))
-                {
-                    block.changeColour(Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33));
-                }
-                else
-                {
-                    bc.changeColour(Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D));
-                }
-            }
-        }
-
         // bring all the settings such as the size of the virtual space and the scroller position
         // and zoom level from the last saved instance
         public void LoadLayoutSettings(double virtualSpaceX, double virtualSpaceY, double scrollOffsetH, double scrollOffsetV, double zoomLv)
@@ -340,51 +230,25 @@ namespace SplayCode
             zoomSlider.Value = zoomLv;
         }
 
-        // remove a selected block
-        public void RemoveBlock(BlockControl block)
+        /* Add a block to the virtual space. */
+        public void InsertBlock(BlockControl block)
         {
-            BlockList.Remove(block);
+            baseGrid.Children.Add(block);
+        }
+
+        /* Remove a block from the virtual space. */
+        public void DeleteBlock(BlockControl block)
+        {
             baseGrid.Children.Remove(block);
         }
 
-        // clear all blocks and resets virtual space zoom and size
-        public void Clear()
+        /* Reset all virtual space properties to default. */
+        public void Reset()
         {
-            foreach (BlockControl block in BlockList)
-            {
-                baseGrid.Children.Remove(block);
-            }
-            BlockList.Clear();
             baseGrid.Width = ActualWidth;
             baseGrid.Height = ActualHeight;
             zoomSlider.Value = 1.0;
-            topmostZIndex = MINIMUM_Z_INDEX;
-            GlobalStack.Clear();
-            minBlockId = MINIMUM_BLOCK_ID;
             currentLayoutFile = "";
-        }
-
-        public List<BlockControl> FetchAllBlocks()
-        {
-            return BlockList;
-        }
-
-        public BlockControl GetActiveBlock()
-        {
-            foreach (BlockControl block in BlockList)
-            {
-                if (block.IsKeyboardFocusWithin)
-                {
-                    return block;
-                }
-            }
-            return null;
-        }
-
-        public void LogEditorInteraction(BlockControl block)
-        {
-            ActionDone action = new ActionDone(false, false, true, block, block.ActualWidth, block.ActualHeight, block.Margin.Left, block.Margin.Top, topmostZIndex, block.BlockId);
-            GlobalStack.Push(action);
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -400,7 +264,6 @@ namespace SplayCode
                 e.Handled = true;
                 e.Effects = DragDropEffects.Copy;
                 string files = (string)e.Data.GetData(DataFormats.StringFormat);
-                //Debug.Print("panel_DragOver@@@@" + files);
             } else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Handled = true;
