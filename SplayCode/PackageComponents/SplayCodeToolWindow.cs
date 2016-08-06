@@ -78,7 +78,7 @@ namespace SplayCode
         {
             if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
-                if (virtualSpace.GlobalStack.Count != 0)
+                if (UndoManager.Instance.StateStack.Count != 0)
                 {
                     MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
                           "SplayCode: Save Layout", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -98,14 +98,14 @@ namespace SplayCode
             }
             else
             {
-                if (virtualSpace.GlobalStack.Count != 0)
+                if (UndoManager.Instance.StateStack.Count != 0)
                 {
                     MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
                                   "SplayCode: Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                     // If the users wants to save
                     if (res == MessageBoxResult.Yes)
                     {
-                        SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+                        SaveLayoutCommand.Instance.saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFile);
                     }
                 }
             }
@@ -170,9 +170,9 @@ namespace SplayCode
             //    VirtualSpaceControl.Instance.CurrentLayoutFileName.GetHashCode))
             // Prompt a dialog
 
-            if (virtualSpace.CurrentLayoutFile.Equals(""))
+            if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
-                if (virtualSpace.GlobalStack.Count != 0)
+                if (UndoManager.Instance.StateStack.Count != 0)
                 {
                     MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the layout?",
                           "SplayCode: Save Layout", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -196,14 +196,14 @@ namespace SplayCode
             }
             else
             {
-                if (virtualSpace.GlobalStack.Count != 0)
+                if (UndoManager.Instance.StateStack.Count != 0)
                 {
                     MessageBoxResult res = System.Windows.MessageBox.Show("Do you want to save the changes to the layout?",
                                   "SplayCode: Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                     // If the users wants to save
                     if (res == MessageBoxResult.Yes)
                     {
-                        SaveLayoutCommand.Instance.saveLayout(virtualSpace.CurrentLayoutFile);
+                        SaveLayoutCommand.Instance.saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFile);
 
                     }
 

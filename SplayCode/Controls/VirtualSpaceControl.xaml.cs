@@ -308,9 +308,11 @@ namespace SplayCode
             base.OnDrop(e);
         }
 
-        /* Find the next best place to put a block, considering the scenario of adding
-        multiple blocks. If the preferred position is null, calculations begin at the
-        top left space of the viewport. Otherwise it start at the preferred position. */
+        /// <summary>
+        /// Find the next best place to put a block, considering the scenario of adding
+        /// multiple blocks.If the preferred position is null, calculations begin at the
+        /// top left space of the viewport. Otherwise it start at the preferred position.
+        /// </summary>
         public Point GetNextBlockPosition(Point? preferredPosition)
         {
             Point nextBlockPosition = new Point();
@@ -324,7 +326,7 @@ namespace SplayCode
                 double xPos = ScrollView.HorizontalOffset + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
                 double yPos = ScrollView.VerticalOffset + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
                 nextBlockPosition.X = xPos;
-                nextBlockPosition.X = yPos;
+                nextBlockPosition.Y = yPos;
             }
             multipleBlockCounter++;
             return nextBlockPosition;

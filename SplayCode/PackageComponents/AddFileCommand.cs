@@ -109,29 +109,6 @@ namespace SplayCode
                     BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
                             openFileDialog1.FileName);
                 }
-                //foreach (BlockControl bc in VirtualSpaceControl.Instance.FetchAllBlocks())
-                //{
-                //    if (bc.GetEditor().getFilePath().Equals(openFileDialog1.FileName))
-                //    {
-                //        res = System.Windows.MessageBox.Show("The file is already added in the layout. Proceed with adding the file?",
-                //          "Duplicate file", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                //        duplicate = true;
-                //    }
-                //}
-
-                //if (duplicate)
-                //{
-                //    if (res == MessageBoxResult.Yes)
-                //    {
-                //        VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                //            openFileDialog1.FileName);
-                //    }
-                //}
-                //else
-                //{
-                //    VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                //        openFileDialog1.FileName);
-                //}
             }
         }
     }

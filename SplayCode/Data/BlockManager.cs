@@ -8,8 +8,10 @@ using System.Windows.Controls;
 
 namespace SplayCode.Data
 {
-    /* This is a singleton class that manages the placement and manipulation
-    of blocks in the virtual space. */
+    /// <summary>
+    /// This is a singleton class that manages the placement and manipulation of 
+    /// blocks in the virtual space.
+    /// </summary>
     class BlockManager
     {
         private List<BlockControl> blockList;
@@ -61,7 +63,9 @@ namespace SplayCode.Data
             currentBlockId = MINIMUM_BLOCK_ID;
         }
 
-        // Add a block using default properties
+        /// <summary>
+        /// Add a block using default properties.
+        /// </summary>
         public void AddBlock(string label, string documentPath)
         {
             Point blockPosition = VirtualSpaceControl.Instance.GetNextBlockPosition(null);
@@ -74,7 +78,9 @@ namespace SplayCode.Data
             AddBlock(label, documentPath, xPos, yPos, width, height, zIndex, blockId, true);
         }
 
-        // Add a block at the preferred position
+        /// <summary>
+        /// Add a block at the preferred position.
+        /// </summary>
         public void AddBlock(string label, string documentPath, double preferredXPos, double preferredYPos)
         {
             Point preferredPosition = new Point(preferredXPos, preferredYPos);
@@ -88,7 +94,9 @@ namespace SplayCode.Data
             AddBlock(label, documentPath, xPos, yPos, width, height, zIndex, blockId, true);
         }
 
-        // Add a block with given parameters
+        /// <summary>
+        /// Add a block with given parameters.
+        /// </summary>
         public void AddBlock(string label, string documentPath, double xPos, 
             double yPos, double height, double width, int zIndex, int blockId, bool setActive)
         {
@@ -115,8 +123,10 @@ namespace SplayCode.Data
             }
 
             VirtualSpaceControl.Instance.InsertBlock(newBlock);
-            VirtualSpaceControl.Instance.ExpandWidth(newBlock.Margin.Left + newBlock.Width);
-            VirtualSpaceControl.Instance.ExpandHeight(newBlock.Margin.Top + newBlock.Height);
+            //VirtualSpaceControl.Instance.ExpandWidth(newBlock.Margin.Left + newBlock.Width);
+            //VirtualSpaceControl.Instance.ExpandHeight(newBlock.Margin.Top + newBlock.Height);
+            VirtualSpaceControl.Instance.ExpandToSize(newBlock.Margin.Left + newBlock.Width,
+                newBlock.Margin.Top + newBlock.Height);
         }
 
         /* Replace the current state of blocks with the given state of blocks. */ 
