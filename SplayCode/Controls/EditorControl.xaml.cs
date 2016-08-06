@@ -39,6 +39,10 @@ namespace SplayCode.Controls
         private IVsEditorAdaptersFactoryService editorAdapter;
 
         private string filePath;
+        public string FilePath
+        {
+            get { return filePath; }
+        }
 
         public EditorControl(string filePath)
         {
@@ -116,11 +120,6 @@ namespace SplayCode.Controls
                 pdwCookie: out docCookie);
 
             return docCookie;
-        }
-
-        public string getFilePath()
-        {
-            return filePath;
         }
 
         public IVsTextView GetTextView()

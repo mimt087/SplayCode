@@ -22,13 +22,15 @@ namespace SplayCode.Data
             BlockStates = new List<BlockState>();
             foreach(BlockControl block in blockList)
             {
+                string label = block.Label;
+                string docPath = block.DocumentPath;
                 double width = block.Width;
                 double height = block.Height;
                 double xPos = block.Margin.Left;
                 double yPos = block.Margin.Top;
                 int zIndex = Panel.GetZIndex(block);
                 int id = block.BlockId;
-                BlockStates.Add(new BlockState(width, height, xPos, yPos, zIndex, id));
+                BlockStates.Add(new BlockState(label, docPath, width, height, xPos, yPos, zIndex, id));
             }
         }
     }

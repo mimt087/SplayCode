@@ -33,6 +33,10 @@ namespace SplayCode
             private set;
         }
 
+        // this is the displacement distance for adding multiple blocks
+        private static readonly double BLOCK_DISPLACEMENT_DISTANCE = 50;
+        private int multipleBlockCounter;
+
         // this flag is used to ignore the 'false' touch input caused by the scrollviewer moving
         // as a counter action to actual touch input
         private bool duringTouch;
@@ -57,6 +61,7 @@ namespace SplayCode
             ZoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
+            ResetMultipleBlockCounter();
         }
 
         // handler to expand the space if the window size changes
@@ -197,6 +202,9 @@ namespace SplayCode
             // perform scrolling
             ScrollView.ScrollToVerticalOffset(ScrollView.VerticalOffset - (verticalDelta * ZoomLevel));
             ScrollView.ScrollToHorizontalOffset(ScrollView.HorizontalOffset - (horizontalDelta * ZoomLevel));
+
+            // resets multiple block counter when virtual space is moved
+            ResetMultipleBlockCounter();
         }
 
         // resets the location of the dragging thumb after a drag
@@ -249,6 +257,13 @@ namespace SplayCode
             baseGrid.Height = ActualHeight;
             zoomSlider.Value = 1.0;
             currentLayoutFile = "";
+            ResetMultipleBlockCounter();
+        }
+
+        /* Resets the counter for adding multiple blocks. */
+        private void ResetMultipleBlockCounter()
+        {
+            multipleBlockCounter = 0;
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -293,6 +308,28 @@ namespace SplayCode
             base.OnDrop(e);
         }
 
+        /* Find the next best place to put a block, considering the scenario of adding
+        multiple blocks. If the preferred position is null, calculations begin at the
+        top left space of the viewport. Otherwise it start at the preferred position. */
+        public Point GetNextBlockPosition(Point? preferredPosition)
+        {
+            Point nextBlockPosition = new Point();
+            if (preferredPosition != null)
+            {
+                nextBlockPosition.X = preferredPosition.Value.X + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                nextBlockPosition.Y = preferredPosition.Value.Y + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);              
+            }
+            else
+            {
+                double xPos = ScrollView.HorizontalOffset + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                double yPos = ScrollView.VerticalOffset + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                nextBlockPosition.X = xPos;
+                nextBlockPosition.X = yPos;
+            }
+            multipleBlockCounter++;
+            return nextBlockPosition;
+        }
+
         public string GetFileName(string filePath)
         {
             Uri pathUri = new Uri(filePath);
@@ -306,7 +343,6 @@ namespace SplayCode
 
             if (attr.HasFlag(FileAttributes.Directory))
             {
-                int increment = 0;
                 string[] extensions = { ".cs", ".xml", ".xaml", ".html", ".css", ".cpp", ".c", ".js", ".json", ".php", ".py", ".ts", ".txt" };
                 var allowedExtensions = new HashSet<string>(extensions, StringComparer.OrdinalIgnoreCase);
 
@@ -317,10 +353,7 @@ namespace SplayCode
                     {
                         if (HandleDuplicateFiles(s))
                         {
-                            BlockControl newBlock = AddBlock(GetFileName(s), s, cursorPosition.X + increment, cursorPosition.Y + increment,
-                                BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
-                            BringToTop(newBlock);
-                            increment += 50;
+                            BlockManager.Instance.AddBlock(GetFileName(s), s);
                         }
                     }
                 }
@@ -329,9 +362,7 @@ namespace SplayCode
             {
                 if (HandleDuplicateFiles(filePath))
                 {
-                    BlockControl newBlock = AddBlock(GetFileName(filePath), filePath, cursorPosition.X, cursorPosition.Y,
-                        BlockControl.MINIMUM_BLOCK_HEIGHT, BlockControl.MINIMUM_BLOCK_WIDTH, TopmostZIndex + 1, MinBlockId + 1);
-                    BringToTop(newBlock);
+                    BlockManager.Instance.AddBlock(GetFileName(filePath), filePath);
                 }
             }
         }
@@ -340,14 +371,9 @@ namespace SplayCode
         {
             MessageBoxResult res = new MessageBoxResult();
 
-            foreach (BlockControl bc in FetchAllBlocks())
-            {
-                if (bc.GetEditor().getFilePath().Equals(filePath))
-                {
+            if (BlockManager.Instance.BlockAlreadyExists(filePath)) {
                     res = MessageBox.Show("The file is already added in the layout. Proceed with adding the file?",
                           "Duplicate file", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                    break;
-                }
             }
             if (res == MessageBoxResult.No)
             {

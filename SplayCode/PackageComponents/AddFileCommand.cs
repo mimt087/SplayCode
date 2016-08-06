@@ -9,6 +9,7 @@ using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
 using System.Windows.Forms;
 using System.Windows;
+using SplayCode.Data;
 
 namespace SplayCode
 {
@@ -105,7 +106,7 @@ namespace SplayCode
 
                 if (VirtualSpaceControl.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
                 {
-                    VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                    BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
                             openFileDialog1.FileName);
                 }
                 //foreach (BlockControl bc in VirtualSpaceControl.Instance.FetchAllBlocks())

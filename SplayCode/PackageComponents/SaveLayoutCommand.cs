@@ -123,7 +123,7 @@ namespace SplayCode
 
         public void saveLayout (string fileName)
         {
-            List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
+            List<BlockControl> chromes = BlockManager.Instance.BlockList;
             XmlFormat format = new XmlFormat();
             IEnumerable<EditorControl> editors;
 
@@ -137,7 +137,7 @@ namespace SplayCode
             {
                 editors = cc.contentSpace.Children.OfType<EditorControl>();
                 EditorControl editorControl = editors.First();
-                string filepath = editorControl.getFilePath();
+                string filepath = editorControl.FilePath;
 
                 Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc), cc.BlockId);
                 format.Editors.Add(editor);

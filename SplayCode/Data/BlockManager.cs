@@ -20,6 +20,10 @@ namespace SplayCode.Data
 
         private List<BlockControl> selectedBlocks;
         private BlockControl activeBlock;
+        public BlockControl ActiveBlock
+        {
+            get { return activeBlock; }
+        }
 
         private static readonly int MINIMUM_Z_INDEX = 0;
         private int topmostZIndex;
@@ -29,10 +33,10 @@ namespace SplayCode.Data
         }
 
         private static readonly int MINIMUM_BLOCK_ID = 0;
-        private int minBlockId;
-        public int MinBlockId
+        private int currentBlockId;
+        public int CurrentBlockId
         {
-            get { return minBlockId; }
+            get { return currentBlockId; }
         }
 
         private static BlockManager instance;
@@ -54,19 +58,33 @@ namespace SplayCode.Data
             selectedBlocks = new List<BlockControl>();
             activeBlock = null;
             topmostZIndex = MINIMUM_Z_INDEX;
-            minBlockId = MINIMUM_BLOCK_ID;
+            currentBlockId = MINIMUM_BLOCK_ID;
         }
 
         // Add a block using default properties
         public void AddBlock(string label, string documentPath)
         {
-            Point blockPosition = VirtualSpaceControl.Instance.GetNextBlockPosition();
+            Point blockPosition = VirtualSpaceControl.Instance.GetNextBlockPosition(null);
             double xPos = blockPosition.X;
             double yPos = blockPosition.Y;
             double width = BlockControl.DEFAULT_BLOCK_WIDTH;
             double height = BlockControl.DEFAULT_BLOCK_HEIGHT;
             int zIndex = topmostZIndex + 1;
-            int blockId = minBlockId + 1;
+            int blockId = currentBlockId + 1;
+            AddBlock(label, documentPath, xPos, yPos, width, height, zIndex, blockId, true);
+        }
+
+        // Add a block at the preferred position
+        public void AddBlock(string label, string documentPath, double preferredXPos, double preferredYPos)
+        {
+            Point preferredPosition = new Point(preferredXPos, preferredYPos);
+            Point blockPosition = VirtualSpaceControl.Instance.GetNextBlockPosition(preferredPosition);
+            double xPos = blockPosition.X;
+            double yPos = blockPosition.Y;
+            double width = BlockControl.DEFAULT_BLOCK_WIDTH;
+            double height = BlockControl.DEFAULT_BLOCK_HEIGHT;
+            int zIndex = topmostZIndex + 1;
+            int blockId = currentBlockId + 1;
             AddBlock(label, documentPath, xPos, yPos, width, height, zIndex, blockId, true);
         }
 
@@ -74,7 +92,9 @@ namespace SplayCode.Data
         public void AddBlock(string label, string documentPath, double xPos, 
             double yPos, double height, double width, int zIndex, int blockId, bool setActive)
         {
-            BlockControl newBlock = new BlockControl(label, documentPath);
+            UndoManager.Instance.SaveState();
+
+            BlockControl newBlock = new BlockControl(label, documentPath, blockId);
             newBlock.Width = width;
             newBlock.Height = height;
             newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
@@ -83,10 +103,9 @@ namespace SplayCode.Data
             {
                 topmostZIndex = zIndex;
             }
-            newBlock.BlockId = blockId;
-            if (blockId > minBlockId)
+            if (blockId > currentBlockId)
             {
-                minBlockId = blockId;
+                currentBlockId = blockId;
             }
 
             blockList.Add(newBlock);
@@ -98,15 +117,56 @@ namespace SplayCode.Data
             VirtualSpaceControl.Instance.InsertBlock(newBlock);
             VirtualSpaceControl.Instance.ExpandWidth(newBlock.Margin.Left + newBlock.Width);
             VirtualSpaceControl.Instance.ExpandHeight(newBlock.Margin.Top + newBlock.Height);
-
-            UndoManager.Instance.SaveState();
         }
 
         /* Replace the current state of blocks with the given state of blocks. */ 
         public void LoadBlockStates(List<BlockState> newBlockStates)
         {
+            List<BlockControl> blocksToAdd = new List<BlockControl>();
+            List<BlockControl> blocksToRemove = new List<BlockControl>();
             foreach (BlockControl block in blockList)
             {
+                bool hasBlockState = false;
+                foreach(BlockState blockState in newBlockStates)
+                {
+                    // find the corresponding block in the replacement state and refresh
+                    // block properties from its data
+                    if (blockState.BlockId == block.BlockId)
+                    {
+                        block.Height = blockState.BlockHeight;
+                        block.Width = blockState.BlockWidth;
+                        Thickness t = block.Margin;
+                        t.Left = blockState.BlockXPos;
+                        t.Top = blockState.BlockYPos;
+                        block.Margin = t;
+                        Panel.SetZIndex(block, blockState.BlockZIndex);
+                        hasBlockState = true;
+                        break;
+                    }
+                }
+                // if a block exists in the block list but not in the replacement state, remove it
+                if (!hasBlockState)
+                {
+                    blocksToRemove.Add(block);
+                }
+            }
+
+            foreach(BlockState blockState in newBlockStates)
+            {
+                bool hasBlock = false;
+                foreach(BlockControl block in blockList)
+                {
+                    if (block.BlockId == blockState.BlockId)
+                    {
+                        hasBlock = true;
+                    }
+                }
+                if (!hasBlock)
+                {
+                    AddBlock(blockState.Label, blockState.DocumentPath, blockState.BlockXPos,
+                        blockState.BlockYPos, blockState.BlockHeight, blockState.BlockWidth,
+                        blockState.BlockZIndex, blockState.BlockId, false);
+                }
             }
             SetTopmostBlockAsActive();
         }
@@ -151,7 +211,6 @@ namespace SplayCode.Data
             selectedBlocks.Clear();
             activeBlock = null;
             topmostZIndex = MINIMUM_Z_INDEX;
-            minBlockId = MINIMUM_BLOCK_ID;
         }
 
         /* Find the block that has the highest z-index and set it as active.
@@ -182,6 +241,19 @@ namespace SplayCode.Data
             {
                 block.Reposition(xDelta, yDelta);
             }
+        }
+
+        /* Test whether a block containing the given document already exists. */
+        public bool BlockAlreadyExists(string documentPath)
+        {
+            foreach (BlockControl block in blockList)
+            {
+                if (block.DocumentPath.Equals(documentPath))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

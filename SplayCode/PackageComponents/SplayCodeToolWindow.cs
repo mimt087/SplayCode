@@ -16,7 +16,7 @@ namespace SplayCode
     using Microsoft.VisualStudio;
     using EnvDTE80;
     using EnvDTE;
-
+    using Data;
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.
     /// </summary>
@@ -33,7 +33,6 @@ namespace SplayCode
     {
         private DTE2 m_applicationObject = null;
         DTEEvents m_packageDTEEvents = null;
-        VirtualSpaceControl virtualSpace;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
@@ -55,7 +54,6 @@ namespace SplayCode
             var cmdUi = Microsoft.VisualStudio.VSConstants.GUID_TextEditorFactory;
             windowFrame.SetGuidProperty((int)__VSFPROPID.VSFPROPID_InheritKeyBindings,
               ref cmdUi);
-            virtualSpace = VirtualSpaceControl.Instance;
             m_packageDTEEvents = ApplicationObject.Events.DTEEvents;
             m_packageDTEEvents.OnBeginShutdown += new _dispDTEEvents_OnBeginShutdownEventHandler(HandleVisualStudioShutDown);
 
@@ -78,7 +76,7 @@ namespace SplayCode
 
         public void HandleVisualStudioShutDown()
         {
-            if (virtualSpace.CurrentLayoutFile.Equals(""))
+            if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
                 if (virtualSpace.GlobalStack.Count != 0)
                 {
@@ -115,7 +113,7 @@ namespace SplayCode
 
         protected override bool PreProcessMessage(ref Message m)
         {
-            BlockControl block = virtualSpace.GetActiveBlock();
+            BlockControl block = BlockManager.Instance.ActiveBlock;
             if (block != null)
             {
                 // copy the Message into a MSG[] array, so we can pass
@@ -139,7 +137,7 @@ namespace SplayCode
             var hr =
               (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
 
-            BlockControl block = virtualSpace.GetActiveBlock();
+            BlockControl block = BlockManager.Instance.ActiveBlock;
             if (block != null)
             {
 
@@ -155,7 +153,7 @@ namespace SplayCode
         {
             var hr =
               (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
-            BlockControl block = virtualSpace.GetActiveBlock();
+            BlockControl block = BlockManager.Instance.ActiveBlock;
             if (block != null)
             {
                 var cmdTarget = (IOleCommandTarget)(block.GetEditor().GetTextView());
@@ -216,7 +214,7 @@ namespace SplayCode
                     }
                 }
             }
-            virtualSpace.Clear();
+            VirtualSpaceControl.Instance.Reset();
             // Else, exit
             return VSConstants.S_OK;
         }

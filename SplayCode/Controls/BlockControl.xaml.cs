@@ -11,11 +11,19 @@ namespace SplayCode
     public partial class BlockControl : UserControl
     {
         private EditorControl editor;
+
+        public string Label
+        {
+            get { return (string)label.Content; }
+        }
+        public string DocumentPath
+        {
+            get { return editor.FilePath; }
+        }
         private int blockId;
         public int BlockId
         {
             get { return blockId; }
-            set { blockId = value; }
         }
 
         // Default and minimum sizes for a block
@@ -28,11 +36,12 @@ namespace SplayCode
         public static readonly Color HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33);
         public static readonly Color NON_HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D);
 
-        public BlockControl(string label, string documentPath)
+        public BlockControl(string label, string documentPath, int id)
         {
             InitializeComponent();
             editor = new EditorControl(documentPath);
             contentSpace.Children.Add(editor);
+            blockId = id;
             this.label.Content = label;
             this.GotFocus += BlockControl_GotFocus;
             this.GotMouseCapture += BlockControl_GotFocus;

@@ -117,7 +117,7 @@ namespace SplayCode
 
                 // clear the layout if it is not empty
                 if ((VirtualSpaceControl)window.Content != null) {
-                    VirtualSpaceControl.Instance.Clear();
+                    VirtualSpaceControl.Instance.Reset();
                 }
 
                 string path = openFileDialog1.FileName;
@@ -137,13 +137,10 @@ namespace SplayCode
                 foreach (Editor editor in editorList)
                 {
                     Uri documentPath = new Uri(editor.source);                          
-                    VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId);
-                    VirtualSpaceControl.Instance.GlobalStack.Pop();
+                    BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId, false);
                 }
             }
-
-
         }
     }
 }
