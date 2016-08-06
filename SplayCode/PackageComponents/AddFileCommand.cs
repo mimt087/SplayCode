@@ -104,7 +104,7 @@ namespace SplayCode
             {
                 Uri documentPath = new Uri(openFileDialog1.FileName);
 
-                if (VirtualSpaceControl.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
+                if (ImportManager.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
                 {
                     BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
                             openFileDialog1.FileName);

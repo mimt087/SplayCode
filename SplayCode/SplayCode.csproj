@@ -57,6 +57,7 @@
     <Compile Include="Data\BlockState.cs" />
     <Compile Include="Data\BlockManager.cs" />
     <Compile Include="Data\Editor.cs" />
+    <Compile Include="Data\ImportManager.cs" />
     <Compile Include="Data\UndoManager.cs" />
     <Compile Include="Data\UndoState.cs" />
     <Compile Include="Data\XmlFormat.cs" />

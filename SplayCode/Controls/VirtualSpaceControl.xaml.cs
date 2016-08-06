@@ -12,6 +12,10 @@ using System.Windows.Media;
 
 namespace SplayCode
 {
+    /// <summary>
+    /// Represents the scrollable, zoomable, self-expanding virtual space
+    /// in SplayCode.
+    /// </summary>
     public partial class VirtualSpaceControl : UserControl
     {
         private static VirtualSpaceControl instance;
@@ -27,14 +31,21 @@ namespace SplayCode
             }
         }
 
+        private double zoomLevel;
         public double ZoomLevel
         {
-            get;
-            private set;
+            get { return ZoomLevel; }
         }
 
-        // this is the displacement distance for adding multiple blocks
+        /// <summary>
+        /// The displacement distance for adding multiple blocks.
+        /// </summary>
         private static readonly double BLOCK_DISPLACEMENT_DISTANCE = 50;
+
+        /// <summary>
+        /// Counts how many blocks were added at the same location.
+        /// Resets when the virtual space is moved.
+        /// </summary>
         private int multipleBlockCounter;
 
         // this flag is used to ignore the 'false' touch input caused by the scrollviewer moving
@@ -58,7 +69,7 @@ namespace SplayCode
             baseGrid.Width = this.ActualWidth;
             baseGrid.Height = this.ActualHeight;
 
-            ZoomLevel = zoomSlider.Value;
+            zoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
             duringTouch = false;
             ResetMultipleBlockCounter();
@@ -67,14 +78,14 @@ namespace SplayCode
         // handler to expand the space if the window size changes
         private void sizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ExpandToSize(ActualWidth / ZoomLevel, ActualHeight / ZoomLevel);
+            ExpandToSize(ActualWidth / zoomLevel, ActualHeight / zoomLevel);
         }
 
         // handler for change in the zoom slider value; zooming is already done in the xaml binding
         private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             double previousZoomLevel = ZoomLevel;
-            ZoomLevel = zoomSlider.Value;
+            zoomLevel = zoomSlider.Value;
 
             // expand the space if zooming out makes it smaller than the window space
             if (baseGrid.Width * ZoomLevel < this.ActualWidth)
@@ -238,19 +249,25 @@ namespace SplayCode
             zoomSlider.Value = zoomLv;
         }
 
-        /* Add a block to the virtual space. */
+        /// <summary>
+        /// Add a block to the virtual space.
+        /// </summary>
         public void InsertBlock(BlockControl block)
         {
             baseGrid.Children.Add(block);
         }
 
-        /* Remove a block from the virtual space. */
+        /// <summary>
+        /// Remove a block from the virtual space.
+        /// </summary>
         public void DeleteBlock(BlockControl block)
         {
             baseGrid.Children.Remove(block);
         }
 
-        /* Reset all virtual space properties to default. */
+        /// <summary>
+        /// Reset all virtual space properties to default.
+        /// </summary>
         public void Reset()
         {
             baseGrid.Width = ActualWidth;
@@ -258,12 +275,6 @@ namespace SplayCode
             zoomSlider.Value = 1.0;
             currentLayoutFile = "";
             ResetMultipleBlockCounter();
-        }
-
-        /* Resets the counter for adding multiple blocks. */
-        private void ResetMultipleBlockCounter()
-        {
-            multipleBlockCounter = 0;
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -296,14 +307,15 @@ namespace SplayCode
                 e.Handled = true;
                 string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
                 Point cursorPosition = e.GetPosition(dragThumb);
-                AddSingleOrMultipleFiles(filePath, cursorPosition);
-            } else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                ImportManager.Instance.AddSingleOrMultipleFiles(filePath, cursorPosition);
+            }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Handled = true;
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 string file = files[0];
                 Point cursorPosition = e.GetPosition(dragThumb);
-                AddSingleOrMultipleFiles(file, cursorPosition);
+                ImportManager.Instance.AddSingleOrMultipleFiles(file, cursorPosition);
             }
             base.OnDrop(e);
         }
@@ -332,59 +344,18 @@ namespace SplayCode
             return nextBlockPosition;
         }
 
-        public string GetFileName(string filePath)
+        /// <summary>
+        /// Resets the counter for adding multiple blocks.
+        /// </summary>
+        private void ResetMultipleBlockCounter()
         {
-            Uri pathUri = new Uri(filePath);
-            return (pathUri.Segments[pathUri.Segments.Length - 1]);
+            multipleBlockCounter = 0;
         }
 
-        public void AddSingleOrMultipleFiles(string filePath, Point cursorPosition)
-        {
-            // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
-            FileAttributes attr = File.GetAttributes(filePath);
-
-            if (attr.HasFlag(FileAttributes.Directory))
-            {
-                string[] extensions = { ".cs", ".xml", ".xaml", ".html", ".css", ".cpp", ".c", ".js", ".json", ".php", ".py", ".ts", ".txt" };
-                var allowedExtensions = new HashSet<string>(extensions, StringComparer.OrdinalIgnoreCase);
-
-                string[] files = Directory.EnumerateFiles(filePath, "*.*", SearchOption.AllDirectories).ToArray();
-                foreach (string s in files)
-                {
-                    if (allowedExtensions.Contains(Path.GetExtension(s)))
-                    {
-                        if (HandleDuplicateFiles(s))
-                        {
-                            BlockManager.Instance.AddBlock(GetFileName(s), s);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (HandleDuplicateFiles(filePath))
-                {
-                    BlockManager.Instance.AddBlock(GetFileName(filePath), filePath);
-                }
-            }
-        }
-
-        public bool HandleDuplicateFiles(string filePath)
-        {
-            MessageBoxResult res = new MessageBoxResult();
-
-            if (BlockManager.Instance.BlockAlreadyExists(filePath)) {
-                    res = MessageBox.Show("The file is already added in the layout. Proceed with adding the file?",
-                          "Duplicate file", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            }
-            if (res == MessageBoxResult.No)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public void focusViewOn(BlockControl block)
+        /// <summary>
+        /// Focus view on the given block in the virtual space.
+        /// </summary>
+        public void FocusViewOn(BlockControl block)
         {
             zoomSlider.Value = 1.0;
             ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));

@@ -151,7 +151,7 @@ namespace SplayCode
 
         void onDoubleClick(object sender, RoutedEventArgs e)
         {
-            VirtualSpaceControl.Instance.focusViewOn(this);
+            VirtualSpaceControl.Instance.FocusViewOn(this);
         }
 
         // Scales the label, checkbox and closebutton so that they can remain the same size
