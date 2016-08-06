@@ -34,6 +34,10 @@ namespace SplayCode.Data
             stateStack = new List<UndoState>();
         }
 
+        /// <summary>
+        /// Captures the current state of SplayCode. Call this before
+        /// proceeding on an action that should be undoable.
+        /// </summary>
         public void SaveState()
         {
             UndoState newState = new UndoState(BlockManager.Instance.BlockList);
@@ -44,6 +48,9 @@ namespace SplayCode.Data
             stateStack.Add(newState);
         }
 
+        /// <summary>
+        /// Return SplayCode to the last captured state.
+        /// </summary>
         public void Undo()
         {
             if (stateStack.Count != 0)
