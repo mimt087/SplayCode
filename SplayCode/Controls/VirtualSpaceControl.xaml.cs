@@ -34,7 +34,7 @@ namespace SplayCode
         private double zoomLevel;
         public double ZoomLevel
         {
-            get { return ZoomLevel; }
+            get { return zoomLevel; }
         }
 
         /// <summary>
