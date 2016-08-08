@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SplayCode.Data
 {
+    /// <summary>
+    /// Singleton class that manages the undo functionality.
+    /// </summary>
     class UndoManager
     {
         private static readonly int UNDO_LIMIT = 30;
@@ -61,6 +64,9 @@ namespace SplayCode.Data
             }
         }
 
+        /// <summary>
+        /// Clears the undo stack.
+        /// </summary>
         public void Reset()
         {
             stateStack.Clear();

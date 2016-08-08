@@ -361,5 +361,10 @@ namespace SplayCode
             ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));
             ScrollView.ScrollToVerticalOffset(block.Margin.Top - (ScrollView.ViewportHeight / 10));
         }
+
+        private void dragThumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            BlockManager.Instance.RemoveAllSelections();
+        }
     }
 }

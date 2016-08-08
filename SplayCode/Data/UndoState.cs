@@ -7,8 +7,10 @@ using System.Windows.Controls;
 
 namespace SplayCode.Data
 {
-    /* Class that represents a snapshot of the program state of SplayCode.
-    Currently just involves the state of each block. */ 
+    /// <summary>
+    /// Class that represents a snapshot of the program state of SplayCode.
+    /// Currently just involves the state of each block.
+    /// </summary>
     class UndoState
     {
         public List<BlockState> BlockStates

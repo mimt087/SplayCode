@@ -162,6 +162,10 @@ namespace SplayCode.Data
                     blocksToRemove.Add(block);
                 }
             }
+            foreach(BlockControl block in blocksToRemove)
+            {
+                RemoveBlock(block);
+            }
 
             foreach(BlockState blockState in newBlockStates)
             {
@@ -210,6 +214,7 @@ namespace SplayCode.Data
         {
             VirtualSpaceControl.Instance.DeleteBlock(block);
             blockList.Remove(block);
+            RemoveBlockSelection(block);
             if (block.Equals(activeBlock))
             {
                 SetTopmostBlockAsActive();                
@@ -293,6 +298,14 @@ namespace SplayCode.Data
         public void RemoveBlockSelection(BlockControl block)
         {
             selectedBlocks.Remove(block);
+        }
+
+        public void RemoveAllSelections()
+        {
+            foreach(BlockControl block in blockList)
+            {
+                block.selectionCheckBox.IsChecked = false;
+            }
         }
 
         /// <summary>
