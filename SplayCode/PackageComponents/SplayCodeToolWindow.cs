@@ -124,7 +124,7 @@ namespace SplayCode
                 pMsg[0].wParam = m.WParam;
                 pMsg[0].lParam = m.LParam;
 
-                var vsWindowPane = (IVsWindowPane)(block.GetEditor().GetTextView());
+                var vsWindowPane = (IVsWindowPane)(block.Editor.GetTextView());
                 return vsWindowPane.TranslateAccelerator(pMsg) == 0;
             }
             return base.PreProcessMessage(ref m);
@@ -141,7 +141,7 @@ namespace SplayCode
             if (block != null)
             {
 
-                var cmdTarget = (IOleCommandTarget)(block.GetEditor().GetTextView());
+                var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
                 hr = cmdTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
 
             }
@@ -156,7 +156,7 @@ namespace SplayCode
             BlockControl block = BlockManager.Instance.ActiveBlock;
             if (block != null)
             {
-                var cmdTarget = (IOleCommandTarget)(block.GetEditor().GetTextView());
+                var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
                 hr = cmdTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
             }
             return hr;

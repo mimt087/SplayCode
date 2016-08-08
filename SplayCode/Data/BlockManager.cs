@@ -129,7 +129,9 @@ namespace SplayCode.Data
                 newBlock.Margin.Top + newBlock.Height);
         }
 
-        /* Replace the current state of blocks with the given state of blocks. */ 
+        /// <summary>
+        /// Replace the current state of blocks with the given state of blocks.
+        /// </summary>
         public void LoadBlockStates(List<BlockState> newBlockStates)
         {
             List<BlockControl> blocksToAdd = new List<BlockControl>();
@@ -181,8 +183,10 @@ namespace SplayCode.Data
             SetTopmostBlockAsActive();
         }
 
-        /* Set the given block as active. The active block gets highlight and is brought
-        to the top. */
+        /// <summary>
+        /// Set the given block as active. The active block gets highlight and is brought
+        /// to the top.
+        /// </summary>
         public void SetActiveBlock(BlockControl block)
         {
             if (Panel.GetZIndex(block) < topmostZIndex)
@@ -198,8 +202,10 @@ namespace SplayCode.Data
             activeBlock.SetHighlight(true);
         }
 
-        /* Remove the given block. If it is the active block, set the next
-        topmost block as active. */
+        /// <summary>
+        /// Remove the given block. If it is the active block, set the next
+        /// topmost block as active.
+        /// </summary>
         public void RemoveBlock(BlockControl block)
         {
             VirtualSpaceControl.Instance.DeleteBlock(block);
@@ -210,7 +216,9 @@ namespace SplayCode.Data
             }
         }
 
-        /* Remove all blocks and resets fields. */
+        /// <summary>
+        /// Remove all blocks and resets fields.
+        /// </summary>
         public void RemoveAllBlocks()
         {
             foreach(BlockControl block in blockList)
@@ -223,8 +231,10 @@ namespace SplayCode.Data
             topmostZIndex = MINIMUM_Z_INDEX;
         }
 
-        /* Find the block that has the highest z-index and set it as active.
-        If there are no blocks, nothing happens. */
+        /// <summary>
+        /// Find the block that has the highest z-index and set it as active.
+        /// If there are no blocks, nothing happens.
+        /// </summary>
         private void SetTopmostBlockAsActive()
         {
             int currentZIndex = MINIMUM_Z_INDEX;
@@ -244,7 +254,29 @@ namespace SplayCode.Data
             }
         }
 
-        /* Shift all blocks by the given x and y delta values. */
+        /// <summary>
+        /// Shift the given block by the given x and y delta values.
+        /// If the block is one of the selected blocks, all selected blocks
+        /// will be moved similarly.
+        /// </summary>
+        public void ShiftBlock(BlockControl block, double xDelta, double yDelta)
+        {
+            if (selectedBlocks.Contains(block))
+            {
+                foreach (BlockControl selectedBlock in selectedBlocks)
+                {
+                    selectedBlock.Reposition(xDelta, yDelta);
+                }
+            }
+            else
+            {
+                block.Reposition(xDelta, yDelta);
+            }
+        }
+
+        /// <summary>
+        /// Shift all blocks by the given x and y delta values.
+        /// </summary>
         public void ShiftAllBlocks(double xDelta, double yDelta)
         {
             foreach (BlockControl block in blockList)
@@ -253,7 +285,19 @@ namespace SplayCode.Data
             }
         }
 
-        /* Test whether a block containing the given document already exists. */
+        public void RegisterBlockSelection(BlockControl block)
+        {
+            selectedBlocks.Add(block);
+        }
+
+        public void RemoveBlockSelection(BlockControl block)
+        {
+            selectedBlocks.Remove(block);
+        }
+
+        /// <summary>
+        /// Test whether a block containing the given document already exists.
+        /// </summary>
         public bool BlockAlreadyExists(string documentPath)
         {
             foreach (BlockControl block in blockList)

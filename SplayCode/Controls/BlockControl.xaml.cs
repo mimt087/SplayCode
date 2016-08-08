@@ -11,6 +11,10 @@ namespace SplayCode
     public partial class BlockControl : UserControl
     {
         private EditorControl editor;
+        public EditorControl Editor
+        {
+            get { return editor; }
+        }
 
         public string Label
         {
@@ -32,9 +36,10 @@ namespace SplayCode
         public static readonly double DEFAULT_BLOCK_HEIGHT = 600;
         public static readonly double DEFAULT_BLOCK_WIDTH = 600;
 
-        // Default highlight and normal colours
+        // Default colours
         public static readonly Color HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33);
         public static readonly Color NON_HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D);
+        public static readonly Color SELECTION_BORDER_COLOR = Color.FromArgb(0xFF, 0x74, 0x86, 0xA6);
 
         public BlockControl(string label, string documentPath, int id)
         {
@@ -89,9 +94,19 @@ namespace SplayCode
             BlockManager.Instance.RemoveBlock(this);
         }
 
+        void onDragStart(object sender, DragStartedEventArgs e)
+        {
+            UndoManager.Instance.SaveState();
+        }
+
         void onDragDelta(object sender, DragDeltaEventArgs e)
-        {            
-            Reposition(e.HorizontalChange, e.VerticalChange);
+        {
+            BlockManager.Instance.ShiftBlock(this, e.HorizontalChange, e.VerticalChange); 
+        }
+
+        void onResizeStart(object sender, DragStartedEventArgs e)
+        {
+            UndoManager.Instance.SaveState();
         }
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)
@@ -139,16 +154,6 @@ namespace SplayCode
             VirtualSpaceControl.Instance.ExpandToSize(Margin.Left + Width, Margin.Top + Height);
         }
 
-        public EditorControl GetEditor()
-        {
-            return editor;
-        }
-
-        private void onDragStarted(object sender, DragStartedEventArgs e)
-        {
-            //VirtualSpaceControl.Instance.LogEditorInteraction(this);
-        }
-
         void onDoubleClick(object sender, RoutedEventArgs e)
         {
             VirtualSpaceControl.Instance.FocusViewOn(this);
@@ -159,6 +164,33 @@ namespace SplayCode
         public void RetainLabelBarSize(double zoomLevel)
         {
             //label
+        }
+
+        /// <summary>
+        /// Turn the selection border on/off.
+        /// </summary>
+        public void ToggleSelectionBorder(bool borderOn)
+        {
+            if (borderOn)
+            {
+                BorderBrush = new SolidColorBrush(SELECTION_BORDER_COLOR);
+            }
+            else
+            {
+                BorderBrush = Brushes.Transparent;
+            }
+        }
+
+        private void selectionCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ToggleSelectionBorder(true);
+            BlockManager.Instance.RegisterBlockSelection(this);
+        }
+
+        private void selectionCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToggleSelectionBorder(false);
+            BlockManager.Instance.RemoveBlockSelection(this);
         }
     }
 }
