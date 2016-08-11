@@ -38,7 +38,7 @@ namespace SplayCode
 
         // Default colours
         public static readonly Color HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33);
-        public static readonly Color NON_HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xF2, 0x9D);
+        public static readonly Color NON_HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xC2, 0xC3, 0xC9);
         public static readonly Color SELECTION_BORDER_COLOR = Color.FromArgb(0xFF, 0x74, 0x86, 0xA6);
 
         public BlockControl(string label, string documentPath, int id)

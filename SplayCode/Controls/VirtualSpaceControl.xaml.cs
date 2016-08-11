@@ -270,9 +270,13 @@ namespace SplayCode
         /// </summary>
         public void Reset()
         {
+            zoomSlider.Value = 1.0;
+            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             baseGrid.Width = ActualWidth;
             baseGrid.Height = ActualHeight;
-            zoomSlider.Value = 1.0;
+            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             currentLayoutFile = "";
             ResetMultipleBlockCounter();
         }
