@@ -1,4 +1,5 @@
-﻿using SplayCode.Data;
+﻿using SplayCode.Controls;
+using SplayCode.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -134,7 +135,6 @@ namespace SplayCode
             {
                 duringTouch = false;
             }
-
         }
 
         void manipulationComplete(object sender, ManipulationCompletedEventArgs e)
@@ -145,12 +145,12 @@ namespace SplayCode
         // handlers for zoom buttons
         void zoomIn(object sender, RoutedEventArgs e)
         {
-            zoomSlider.Value = zoomSlider.Value + zoomSlider.LargeChange;
+            zoomSlider.Value = zoomSlider.Maximum;
         }
 
         void zoomOut(object sender, RoutedEventArgs e)
         {
-            zoomSlider.Value = zoomSlider.Value - zoomSlider.LargeChange;
+            zoomSlider.Value = zoomSlider.Minimum;
         }
 
         // expands the size of the virtual space if the given size is larger than current size
@@ -364,6 +364,19 @@ namespace SplayCode
             zoomSlider.Value = 1.0;
             ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));
             ScrollView.ScrollToVerticalOffset(block.Margin.Top - (ScrollView.ViewportHeight / 10));
+        }
+
+        public void EnterEditorView(BlockControl block)
+        {
+            SplayCodeToolWindow.SetEditorViewMode(true);
+            EditorViewControl.Instance.SetEditor(block);
+            Content = EditorViewControl.Instance;
+        }
+
+        public void ExitEditorView()
+        {
+            SplayCodeToolWindow.SetEditorViewMode(false);
+            Content = virtualSpace;
         }
 
         private void dragThumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)

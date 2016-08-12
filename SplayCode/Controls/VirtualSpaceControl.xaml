@@ -7,7 +7,7 @@
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d" AllowDrop="True"
              d:DesignHeight="300" d:DesignWidth="300" RenderTransformOrigin="0.5,0.5">
-    <Grid AllowDrop="True">
+    <Grid Name="virtualSpace" AllowDrop="True">
         <Label x:Name="label1" Content="60%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,89" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Label x:Name="label2" Content="20%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,45" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Label x:Name="label3" Content="100%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,133" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>

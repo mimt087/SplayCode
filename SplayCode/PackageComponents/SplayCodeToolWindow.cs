@@ -17,22 +17,24 @@ namespace SplayCode
     using EnvDTE80;
     using EnvDTE;
     using Data;
-    /// <summary>
-    /// This class implements the tool window exposed by this package and hosts a user control.
-    /// </summary>
-    /// <remarks>
-    /// In Visual Studio tool windows are composed of a frame (implemented by the shell) and a pane,
-    /// usually implemented by the package implementer.
-    /// <para>
-    /// This class derives from the ToolWindowPane class provided from the MPF in order to use its
-    /// implementation of the IVsUIElementPane interface.
-    /// </para>
-    /// </remarks>
+    using Controls;    /// <summary>
+                       /// This class implements the tool window exposed by this package and hosts a user control.
+                       /// </summary>
+                       /// <remarks>
+                       /// In Visual Studio tool windows are composed of a frame (implemented by the shell) and a pane,
+                       /// usually implemented by the package implementer.
+                       /// <para>
+                       /// This class derives from the ToolWindowPane class provided from the MPF in order to use its
+                       /// implementation of the IVsUIElementPane interface.
+                       /// </para>
+                       /// </remarks>
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
     public class SplayCodeToolWindow : ToolWindowPane, IOleCommandTarget, IVsWindowFrameNotify2
     {
         private DTE2 m_applicationObject = null;
         DTEEvents m_packageDTEEvents = null;
+
+        private static bool isInEditorViewMode = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SplayCodeToolWindow"/> class.
@@ -113,21 +115,34 @@ namespace SplayCode
 
         protected override bool PreProcessMessage(ref Message m)
         {
-            BlockControl block = BlockManager.Instance.ActiveBlock;
-            if (block != null)
+            if (isInEditorViewMode)
             {
-                // copy the Message into a MSG[] array, so we can pass
-                // it along to the active core editor's IVsWindowPane.TranslateAccelerator
                 var pMsg = new MSG[1];
                 pMsg[0].hwnd = m.HWnd;
                 pMsg[0].message = (uint)m.Msg;
                 pMsg[0].wParam = m.WParam;
                 pMsg[0].lParam = m.LParam;
 
-                var vsWindowPane = (IVsWindowPane)(block.Editor.GetTextView());
+                var vsWindowPane = (IVsWindowPane)(EditorViewControl.Instance.Editor.GetTextView());
                 return vsWindowPane.TranslateAccelerator(pMsg) == 0;
             }
-            return base.PreProcessMessage(ref m);
+            else {
+                BlockControl block = BlockManager.Instance.ActiveBlock;
+                if (block != null)
+                {
+                    // copy the Message into a MSG[] array, so we can pass
+                    // it along to the active core editor's IVsWindowPane.TranslateAccelerator
+                    var pMsg = new MSG[1];
+                    pMsg[0].hwnd = m.HWnd;
+                    pMsg[0].message = (uint)m.Msg;
+                    pMsg[0].wParam = m.WParam;
+                    pMsg[0].lParam = m.LParam;
+
+                    var vsWindowPane = (IVsWindowPane)(block.Editor.GetTextView());
+                    return vsWindowPane.TranslateAccelerator(pMsg) == 0;
+                }
+                return base.PreProcessMessage(ref m);
+            }
         }
 
         int IOleCommandTarget.Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
@@ -137,15 +152,21 @@ namespace SplayCode
             var hr =
               (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
 
-            BlockControl block = BlockManager.Instance.ActiveBlock;
-            if (block != null)
+            if (isInEditorViewMode)
             {
-
-                var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
+                var cmdTarget = (IOleCommandTarget)(EditorViewControl.Instance.Editor.GetTextView());
                 hr = cmdTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-
+                return hr;
             }
-            return hr;
+            else {
+                BlockControl block = BlockManager.Instance.ActiveBlock;
+                if (block != null)
+                {
+                    var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
+                    hr = cmdTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+                }
+                return hr;
+            }
         }
 
         int IOleCommandTarget.QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[]
@@ -153,13 +174,27 @@ namespace SplayCode
         {
             var hr =
               (int)Microsoft.VisualStudio.OLE.Interop.Constants.OLECMDERR_E_NOTSUPPORTED;
-            BlockControl block = BlockManager.Instance.ActiveBlock;
-            if (block != null)
+
+            if (isInEditorViewMode)
             {
-                var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
+                var cmdTarget = (IOleCommandTarget)(EditorViewControl.Instance.Editor.GetTextView());
                 hr = cmdTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
+                return hr;
             }
-            return hr;
+            else {               
+                BlockControl block = BlockManager.Instance.ActiveBlock;
+                if (block != null)
+                {
+                    var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
+                    hr = cmdTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
+                }
+                return hr;
+            }
+        }
+
+        public static void SetEditorViewMode(bool isInEditorView)
+        {
+            isInEditorViewMode = isInEditorView;
         }
 
         public int OnClose(ref uint pgrfSaveOptions)

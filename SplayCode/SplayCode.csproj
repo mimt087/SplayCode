@@ -54,6 +54,9 @@
     <Compile Include="Controls\EditorControl.xaml.cs">
       <DependentUpon>EditorControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EditorViewControl.xaml.cs">
+      <DependentUpon>EditorViewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data\BlockState.cs" />
     <Compile Include="Data\BlockManager.cs" />
     <Compile Include="Data\Editor.cs" />
@@ -85,6 +88,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ic_fullscreen_black_24dp_2x.png" />
+    <Resource Include="Resources\ic_fullscreen_exit_black_24dp_2x.png" />
     <Content Include="Resources\SplayCodePackage.ico" />
     <VSCTCompile Include="SplayCodePackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
@@ -93,6 +98,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\EditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\EditorViewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

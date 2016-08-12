@@ -94,6 +94,11 @@ namespace SplayCode
             BlockManager.Instance.RemoveBlock(this);
         }
 
+        private void maximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            VirtualSpaceControl.Instance.EnterEditorView(this);
+        }
+
         void onDragStart(object sender, DragStartedEventArgs e)
         {
             UndoManager.Instance.SaveState();

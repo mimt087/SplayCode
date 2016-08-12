@@ -22,7 +22,7 @@
         <Thumb Name="bottomRightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                 Width="15" Height="16" DragDelta="onBottomRightResizeDelta" DragStarted="onDragStart"
                Panel.ZIndex="100" Opacity="0" Margin="0,0,-3.6,-2.6" Cursor="SizeNWSE"/>
-        <CheckBox x:Name="selectionCheckBox" HorizontalAlignment="Right" Margin="0,11,46,0" VerticalAlignment="Top" Height="15" Width="16" 
+        <CheckBox x:Name="selectionCheckBox" HorizontalAlignment="Right" Margin="0,11,78,0" VerticalAlignment="Top" Height="15" Width="16" 
                   Panel.ZIndex="200" RenderTransformOrigin="0.5,0.5" Checked="selectionCheckBox_Checked" Unchecked="selectionCheckBox_Unchecked">
             <CheckBox.RenderTransform>
                 <TransformGroup>
@@ -33,6 +33,11 @@
                 </TransformGroup>
             </CheckBox.RenderTransform>
         </CheckBox>
+        <Button x:Name="maximizeButton" HorizontalAlignment="Right" Height="25" Margin="0,4,41,0" VerticalAlignment="Top" 
+                        Width="25" Click="maximizeButton_Click" 
+                        Panel.ZIndex="200" Background="#FFF6F6F6">
+            <Image x:Name="maximizeIcon" Height="20" Source="/SplayCode;component/Resources/ic_fullscreen_black_24dp_2x.png" Width="20"/>
+        </Button>
         <Button x:Name="closeButton" HorizontalAlignment="Right" Height="25" Margin="0,4,8,0" VerticalAlignment="Top" 
                         Width="25" Click="closeButton_Click" 
                         Panel.ZIndex="200" Background="#FFF6F6F6">
