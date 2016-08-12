@@ -106,7 +106,7 @@ namespace SplayCode
             XmlFormat format = new XmlFormat();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
+            //openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = false;
@@ -134,11 +134,16 @@ namespace SplayCode
                 VirtualSpaceControl.Instance.LoadLayoutSettings(format.VirtualSpaceX, format.VirtualSpaceY, format.ScrollOffsetHorizontal, format.ScrollOffsetVertical, format.ZoomLevel);
                
                 // recreate the editor windows
-                foreach (Editor editor in editorList)
+                for (int i = 0; i < editorList.Count; i++)
                 {
+                    Editor editor = editorList[i];
                     Uri documentPath = new Uri(editor.source);                          
                     BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
                         editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId, false);
+                    if (i != 0)
+                    {
+                        UndoManager.Instance.StateStack.RemoveAt(UndoManager.Instance.StateStack.Count-1);
+                    }
                 }
             }
         }
