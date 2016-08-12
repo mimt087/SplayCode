@@ -37,7 +37,7 @@ namespace SplayCode
         public static readonly double DEFAULT_BLOCK_WIDTH = 600;
 
         // Default colours
-        public static readonly Color HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xE4, 0x33);
+        public static readonly Color HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xFF, 0xEF, 0x9F);
         public static readonly Color NON_HIGHLIGHT_COLOR = Color.FromArgb(0xFF, 0xC2, 0xC3, 0xC9);
         public static readonly Color SELECTION_BORDER_COLOR = Color.FromArgb(0xFF, 0x74, 0x86, 0xA6);
 

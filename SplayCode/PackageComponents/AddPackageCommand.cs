@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="LoadLayoutCommand.cs" company="Company">
+// <copyright file="AddPackageCommand.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -10,13 +10,6 @@ using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using System.IO;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Drawing;
 using SplayCode.Data;
 
 namespace SplayCode
@@ -24,12 +17,12 @@ namespace SplayCode
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class LoadLayoutCommand
+    internal sealed class AddPackageCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 5;
+        public const int CommandId = 8;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -42,11 +35,11 @@ namespace SplayCode
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoadLayoutCommand"/> class.
+        /// Initializes a new instance of the <see cref="AddPackageCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private LoadLayoutCommand(Package package)
+        private AddPackageCommand(Package package)
         {
             if (package == null)
             {
@@ -67,7 +60,7 @@ namespace SplayCode
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static LoadLayoutCommand Instance
+        public static AddPackageCommand Instance
         {
             get;
             private set;
@@ -90,7 +83,7 @@ namespace SplayCode
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new LoadLayoutCommand(package);
+            Instance = new AddPackageCommand(package);
         }
 
         /// <summary>
@@ -102,49 +95,15 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            List<Editor> editorList = new List<Editor>();
-            XmlFormat format = new XmlFormat();
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
 
-            //openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
-            openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
-            openFileDialog1.FilterIndex = 2;
-            openFileDialog1.RestoreDirectory = false;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            folderBrowserDialog1.ShowNewFolderButton = false;
+            
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
+                Uri folderPath = new Uri(folderBrowserDialog1.SelectedPath);
 
-                // clear the layout if it is not empty
-                if ((VirtualSpaceControl)window.Content != null) {
-                    VirtualSpaceControl.Instance.Reset();
-                }
-
-                string path = openFileDialog1.FileName;
-                VirtualSpaceControl.Instance.CurrentLayoutFile = path;
-                XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
-                StreamReader reader = new StreamReader(path);
-
-                // read the layout file and produce XmlFormat instance with loaded information
-                format = (XmlFormat)x.Deserialize(reader);
-                reader.Close();
-
-                // get the list of editors and restore settings from the last save
-                editorList = format.Editors;
-                VirtualSpaceControl.Instance.LoadLayoutSettings(format.VirtualSpaceX, format.VirtualSpaceY, format.ScrollOffsetHorizontal, format.ScrollOffsetVertical, format.ZoomLevel);
-               
-                // recreate the editor windows
-                for (int i = 0; i < editorList.Count; i++)
-                {
-                    Editor editor = editorList[i];
-                    Uri documentPath = new Uri(editor.source);                          
-                    BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId, false);
-                    if (i != 0)
-                    {
-                        UndoManager.Instance.StateStack.RemoveAt(UndoManager.Instance.StateStack.Count-1);
-                    }
-                }
+                ImportManager.Instance.AddSingleOrMultipleFiles(folderBrowserDialog1.SelectedPath);
             }
         }
     }

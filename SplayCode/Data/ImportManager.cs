@@ -33,14 +33,14 @@ namespace SplayCode.Data
             return (pathUri.Segments[pathUri.Segments.Length - 1]);
         }
 
-        public void AddSingleOrMultipleFiles(string filePath, Point cursorPosition)
+        public void AddSingleOrMultipleFiles(string filePath/*, Point cursorPosition*/)
         {
             // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
             FileAttributes attr = File.GetAttributes(filePath);
 
             if (attr.HasFlag(FileAttributes.Directory))
             {
-                string[] extensions = { ".cs", ".xml", ".xaml", ".html", ".css", ".cpp", ".c", ".js", ".json", ".php", ".py", ".ts", ".txt" };
+                string[] extensions = { ".cs", ".xml", ".xaml", ".html", ".css", ".cpp", ".c", ".js", ".json", ".php", ".py", ".ts", ".txt", ".snk", ".config", ".vsixmanifest", ".vsct", ".resx", ".java", ".sln", ".md", ".gitignore", ".csproj", ".user", ".manifest", ".cache", ".resources", ".pkgdef", ".pdb", ".lref", ".tlog", ".vsix" };
                 var allowedExtensions = new HashSet<string>(extensions, StringComparer.OrdinalIgnoreCase);
 
                 string[] files = Directory.EnumerateFiles(filePath, "*.*", SearchOption.AllDirectories).ToArray();
@@ -57,9 +57,14 @@ namespace SplayCode.Data
             }
             else
             {
-                if (HandleDuplicateFiles(filePath))
+                string[] extensions = { ".cs", ".xml", ".xaml", ".html", ".css", ".cpp", ".c", ".js", ".json", ".php", ".py", ".ts", ".txt", ".snk", ".config", ".vsixmanifest", ".vsct", ".resx", ".java", ".sln", ".md", ".gitignore", ".csproj", ".user", ".manifest", ".cache", ".resources", ".pkgdef", ".pdb", ".lref", ".tlog", ".vsix"};
+                var allowedExtensions = new HashSet<string>(extensions, StringComparer.OrdinalIgnoreCase);
+                if (allowedExtensions.Contains(Path.GetExtension(filePath)))
                 {
-                    BlockManager.Instance.AddBlock(GetFileName(filePath), filePath);
+                    if (HandleDuplicateFiles(filePath))
+                    {
+                        BlockManager.Instance.AddBlock(GetFileName(filePath), filePath);
+                    }
                 }
             }
         }

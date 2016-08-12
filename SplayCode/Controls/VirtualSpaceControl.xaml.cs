@@ -311,15 +311,17 @@ namespace SplayCode
                 e.Handled = true;
                 string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
                 Point cursorPosition = e.GetPosition(dragThumb);
-                ImportManager.Instance.AddSingleOrMultipleFiles(filePath, cursorPosition);
+                ImportManager.Instance.AddSingleOrMultipleFiles(filePath/*, cursorPosition*/);
             }
             else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Handled = true;
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string file = files[0];
                 Point cursorPosition = e.GetPosition(dragThumb);
-                ImportManager.Instance.AddSingleOrMultipleFiles(file, cursorPosition);
+                foreach (string s in files)
+                {
+                    ImportManager.Instance.AddSingleOrMultipleFiles(s/*, cursorPosition*/);
+                }                
             }
             base.OnDrop(e);
         }

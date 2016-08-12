@@ -69,7 +69,7 @@ namespace SplayCode
             LoadLayoutCommand.Initialize(this);
             ClearLayoutCommand.Initialize(this);
             LayoutUndoCommand.Initialize(this);
-
+            AddPackageCommand.Initialize(this);
             EditorControl.OLEServiceProvider = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)GetService(
                 typeof(Microsoft.VisualStudio.OLE.Interop.IServiceProvider));
             
