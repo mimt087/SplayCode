@@ -33,7 +33,7 @@ namespace SplayCode.Data
             return (pathUri.Segments[pathUri.Segments.Length - 1]);
         }
 
-        public void AddSingleOrMultipleFiles(string filePath/*, Point cursorPosition*/)
+        public void AddSingleOrMultipleFiles(string filePath, Point? cursorPosition)
         {
             // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
             FileAttributes attr = File.GetAttributes(filePath);
@@ -50,7 +50,14 @@ namespace SplayCode.Data
                     {
                         if (HandleDuplicateFiles(s))
                         {
-                            BlockManager.Instance.AddBlock(GetFileName(s), s);
+                            if (cursorPosition == null)
+                            {
+                                BlockManager.Instance.AddBlock(GetFileName(s), s);
+                            }
+                            else
+                            {
+                                BlockManager.Instance.AddBlock(GetFileName(s), s, cursorPosition.Value.X, cursorPosition.Value.Y);
+                            }
                         }
                     }
                 }
@@ -63,7 +70,15 @@ namespace SplayCode.Data
                 {
                     if (HandleDuplicateFiles(filePath))
                     {
-                        BlockManager.Instance.AddBlock(GetFileName(filePath), filePath);
+                        if (cursorPosition == null)
+                        {
+                            BlockManager.Instance.AddBlock(GetFileName(filePath), filePath);
+                        }
+                        else
+                        {
+                            BlockManager.Instance.AddBlock(GetFileName(filePath), filePath, cursorPosition.Value.X,
+                                cursorPosition.Value.Y);
+                        }
                     }
                 }
             }

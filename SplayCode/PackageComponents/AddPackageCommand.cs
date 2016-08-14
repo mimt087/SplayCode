@@ -95,6 +95,8 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            SplayCodeToolWindow.Instance.Activate();
+
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
 
             folderBrowserDialog1.ShowNewFolderButton = false;
@@ -103,7 +105,7 @@ namespace SplayCode
             {
                 Uri folderPath = new Uri(folderBrowserDialog1.SelectedPath);
 
-                ImportManager.Instance.AddSingleOrMultipleFiles(folderBrowserDialog1.SelectedPath);
+                ImportManager.Instance.AddSingleOrMultipleFiles(folderBrowserDialog1.SelectedPath, null);
             }
         }
     }

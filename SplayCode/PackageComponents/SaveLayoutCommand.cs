@@ -104,6 +104,9 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+
+            SplayCodeToolWindow.Instance.Activate();
+
             if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -119,6 +122,7 @@ namespace SplayCode
             {
                 saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFile);
             }
+
         }
 
         public void saveLayout (string fileName)

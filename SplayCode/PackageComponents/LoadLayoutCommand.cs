@@ -105,6 +105,7 @@ namespace SplayCode
             List<Editor> editorList = new List<Editor>();
             XmlFormat format = new XmlFormat();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            SplayCodeToolWindow.Instance.Activate();
 
             //openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
@@ -113,10 +114,8 @@ namespace SplayCode
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
-
                 // clear the layout if it is not empty
-                if ((VirtualSpaceControl)window.Content != null) {
+                if ((VirtualSpaceControl)SplayCodeToolWindow.Instance.Content != null) {
                     VirtualSpaceControl.Instance.Reset();
                 }
 

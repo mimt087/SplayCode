@@ -60,6 +60,10 @@ namespace SplayCode
             set { currentLayoutFile = value; }
         }
 
+        // stores the scroll position for switching between editor and virtual space view
+        private double horizontalScrollPos = 0;
+        private double verticalScrollPos = 0;
+
         private VirtualSpaceControl()
         {
             InitializeComponent();
@@ -311,7 +315,7 @@ namespace SplayCode
                 e.Handled = true;
                 string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
                 Point cursorPosition = e.GetPosition(dragThumb);
-                ImportManager.Instance.AddSingleOrMultipleFiles(filePath/*, cursorPosition*/);
+                ImportManager.Instance.AddSingleOrMultipleFiles(filePath, cursorPosition);
             }
             else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -320,7 +324,7 @@ namespace SplayCode
                 Point cursorPosition = e.GetPosition(dragThumb);
                 foreach (string s in files)
                 {
-                    ImportManager.Instance.AddSingleOrMultipleFiles(s/*, cursorPosition*/);
+                    ImportManager.Instance.AddSingleOrMultipleFiles(s, cursorPosition);
                 }                
             }
             base.OnDrop(e);
@@ -341,8 +345,8 @@ namespace SplayCode
             }
             else
             {
-                double xPos = ScrollView.HorizontalOffset + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
-                double yPos = ScrollView.VerticalOffset + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                double xPos = (ScrollView.HorizontalOffset / ZoomLevel) + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                double yPos = (ScrollView.VerticalOffset / ZoomLevel) + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
                 nextBlockPosition.X = xPos;
                 nextBlockPosition.Y = yPos;
             }
@@ -370,15 +374,19 @@ namespace SplayCode
 
         public void EnterEditorView(BlockControl block)
         {
-            SplayCodeToolWindow.SetEditorViewMode(true);
+            horizontalScrollPos = ScrollView.HorizontalOffset;
+            verticalScrollPos = ScrollView.VerticalOffset;
             EditorViewControl.Instance.SetEditor(block);
             Content = EditorViewControl.Instance;
+            SplayCodeToolWindow.SetEditorViewMode(true);
         }
 
         public void ExitEditorView()
         {
             SplayCodeToolWindow.SetEditorViewMode(false);
             Content = virtualSpace;
+            ScrollView.ScrollToHorizontalOffset(horizontalScrollPos);
+            ScrollView.ScrollToVerticalOffset(verticalScrollPos);
         }
 
         private void dragThumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)

@@ -48,7 +48,6 @@ namespace SplayCode
             contentSpace.Children.Add(editor);
             blockId = id;
             this.label.Content = label;
-            this.GotFocus += BlockControl_GotFocus;
             this.GotMouseCapture += BlockControl_GotFocus;
             this.GotTouchCapture += BlockControl_GotFocus;
             MinHeight = MINIMUM_BLOCK_HEIGHT;

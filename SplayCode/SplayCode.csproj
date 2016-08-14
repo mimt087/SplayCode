@@ -89,9 +89,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ic_fullscreen_black_24dp_2x.png" />
-    <Resource Include="Resources\ic_fullscreen_exit_black_24dp_2x.png" />
+    <Resource Include="Resources\fullscreen-enter-8x.png" />
+    <Resource Include="Resources\fullscreen-exit-8x.png" />
     <Content Include="Resources\SplayCodePackage.ico" />
+    <Resource Include="Resources\x-8x.png" />
+    <Resource Include="Resources\zoom-in-8x.png" />
+    <Resource Include="Resources\zoom-out-8x.png" />
     <VSCTCompile Include="SplayCodePackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
@@ -251,11 +254,6 @@
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_clear_black_24dp_2x.png" />
-    <Resource Include="Resources\ic_zoom_in_black_24dp_2x.png" />
-    <Resource Include="Resources\ic_zoom_out_black_24dp_2x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

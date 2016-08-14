@@ -36,18 +36,18 @@
         <Button x:Name="maximizeButton" HorizontalAlignment="Right" Height="25" Margin="0,4,41,0" VerticalAlignment="Top" 
                         Width="25" Click="maximizeButton_Click" 
                         Panel.ZIndex="200" Background="#FFF6F6F6">
-            <Image x:Name="maximizeIcon" Height="20" Source="/SplayCode;component/Resources/ic_fullscreen_black_24dp_2x.png" Width="20"/>
+            <Image x:Name="maximizeIcon" Height="20" Source="/SplayCode;component/Resources/fullscreen-enter-8x.png" Width="20"/>
         </Button>
         <Button x:Name="closeButton" HorizontalAlignment="Right" Height="25" Margin="0,4,8,0" VerticalAlignment="Top" 
                         Width="25" Click="closeButton_Click" 
                         Panel.ZIndex="200" Background="#FFF6F6F6">
-            <Image x:Name="closeIcon" Height="20" Source="/SplayCode;component/Resources/ic_clear_black_24dp_2x.png" Width="20"/>
+            <Image x:Name="closeIcon" Height="20" Source="/SplayCode;component/Resources/x-8x.png" Width="20"/>
         </Button>
         <Border Name="chrome" BorderBrush="#FFC2C3C9" BorderThickness="8" HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch">
             <Grid Name="chromeGrid" Margin="0,0,0,0">
-                <Label x:Name="label" Height="34" Margin="-1,-6,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#FFC2C3C9" FontSize="13.333"/>
-                
+                <Label x:Name="label" Height="34" Margin="-1,-6,0,0" VerticalAlignment="Top" 
+                       HorizontalAlignment="Stretch" Background="#FFC2C3C9" FontSize="13.333"/>
                 <Grid Name="contentSpace" Margin="0,28,0,0"/>
             </Grid>
         </Border>

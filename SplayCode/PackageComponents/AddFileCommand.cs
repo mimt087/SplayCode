@@ -94,6 +94,8 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            SplayCodeToolWindow.Instance.Activate();
+
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             //MessageBoxResult res = new MessageBoxResult();
             //bool duplicate = false;

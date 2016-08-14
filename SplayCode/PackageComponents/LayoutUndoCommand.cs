@@ -99,6 +99,9 @@ namespace SplayCode
         private void MenuItemCallback(object sender, EventArgs e)
         {
             UndoManager.Instance.Undo();
+
+            SplayCodeToolWindow.Instance.Activate();
+
         }
     }
 }

@@ -74,6 +74,9 @@ namespace SplayCode.Controls
 
         public IWpfTextViewHost CreateEditor(string filePath)
         {
+            SplayCodeToolWindow.ApplicationObject.ItemOperations.OpenFile(filePath);
+            SplayCodeToolWindow.Instance.Activate();
+
             //IVsInvisibleEditors are in-memory represenations of typical Visual Studio editors.
             //Language services, highlighting and error squiggles are hooked up to these editors
             //for us once we convert them to WpfTextViews. 

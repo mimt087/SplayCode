@@ -31,7 +31,13 @@ namespace SplayCode
     [Guid("8d4e6cbb-0bed-4758-976d-d850c6cbd4bd")]
     public class SplayCodeToolWindow : ToolWindowPane, IOleCommandTarget, IVsWindowFrameNotify2
     {
-        private DTE2 m_applicationObject = null;
+        private static SplayCodeToolWindow instance;
+        public static SplayCodeToolWindow Instance
+        {
+            get { return instance; }
+        }
+
+        private static DTE2 m_applicationObject = null;
         DTEEvents m_packageDTEEvents = null;
 
         private static bool isInEditorViewMode = false;
@@ -42,7 +48,7 @@ namespace SplayCode
         public SplayCodeToolWindow() : base(null)
         {
             this.Caption = "SplayCode";
-
+            instance = this;
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
             // the object returned by the Content property.
@@ -51,6 +57,9 @@ namespace SplayCode
 
         public override void OnToolWindowCreated()
         {
+            DTE dte = (DTE)GetService(typeof(DTE));
+            m_applicationObject = dte as DTE2;
+
             // --- Register key bindings to use in the editor
             var windowFrame = (IVsWindowFrame)Frame;
             var cmdUi = Microsoft.VisualStudio.VSConstants.GUID_TextEditorFactory;
@@ -62,16 +71,10 @@ namespace SplayCode
             base.OnToolWindowCreated();
         }
 
-        public DTE2 ApplicationObject
+        public static DTE2 ApplicationObject
         {
             get
             {
-                if (m_applicationObject == null)
-                {
-                    // Get an instance of the currently running Visual Studio IDE
-                    DTE dte = (DTE)GetService(typeof(DTE));
-                    m_applicationObject = dte as DTE2;
-                }
                 return m_applicationObject;
             }
         }
@@ -165,7 +168,7 @@ namespace SplayCode
                     var cmdTarget = (IOleCommandTarget)(block.Editor.GetTextView());
                     hr = cmdTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
                 }
-                return hr;
+                return hr;              
             }
         }
 
@@ -253,5 +256,10 @@ namespace SplayCode
             // Else, exit
             return VSConstants.S_OK;
         }
+        
+        public void Activate()
+        {
+            ((IVsWindowFrame)Frame).Show();
+        }                
     }
 }

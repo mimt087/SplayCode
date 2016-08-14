@@ -97,6 +97,9 @@ namespace SplayCode
             BlockManager.Instance.RemoveAllBlocks();
             UndoManager.Instance.Reset();
             VirtualSpaceControl.Instance.Reset();
+
+            SplayCodeToolWindow.Instance.Activate();
+
         }
     }
 }

@@ -123,8 +123,6 @@ namespace SplayCode.Data
             }
 
             VirtualSpaceControl.Instance.InsertBlock(newBlock);
-            //VirtualSpaceControl.Instance.ExpandWidth(newBlock.Margin.Left + newBlock.Width);
-            //VirtualSpaceControl.Instance.ExpandHeight(newBlock.Margin.Top + newBlock.Height);
             VirtualSpaceControl.Instance.ExpandToSize(newBlock.Margin.Left + newBlock.Width,
                 newBlock.Margin.Top + newBlock.Height);
         }
