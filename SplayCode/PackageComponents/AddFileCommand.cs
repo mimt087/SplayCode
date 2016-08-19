@@ -101,15 +101,33 @@ namespace SplayCode
             //bool duplicate = false;
             
             openFileDialog1.RestoreDirectory = false;
+            openFileDialog1.Multiselect = true;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                Uri documentPath = new Uri(openFileDialog1.FileName);
-
-                if (ImportManager.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
+                string[] filepaths = openFileDialog1.FileNames;
+                if (filepaths.Length > 1)
                 {
-                    BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                            openFileDialog1.FileName);
+                    foreach (string path in filepaths)
+                    {
+
+                        Uri documentPath = new Uri(path);
+
+                        if (ImportManager.Instance.HandleDuplicateFiles(path))
+                        {
+                            BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1], path);
+                        }
+                    }
+                }
+                else
+                {
+                    Uri documentPath = new Uri(openFileDialog1.FileName);
+
+                    if (ImportManager.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
+                    {
+                        BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                                openFileDialog1.FileName);
+                    }
                 }
             }
         }
