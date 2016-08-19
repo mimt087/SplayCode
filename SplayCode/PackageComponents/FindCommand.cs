@@ -11,6 +11,8 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using SplayCode.Data;
 using Microsoft.VisualBasic;
+using System.Windows.Forms;
+using System.Windows;
 
 namespace SplayCode
 {
@@ -22,7 +24,7 @@ namespace SplayCode
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 256;
+        public const int CommandId = 9;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -96,12 +98,20 @@ namespace SplayCode
         private void MenuItemCallback(object sender, EventArgs e)
         {
             String path = Interaction.InputBox("Which file do you want to find?", "Find", "Type Full Class Name");
+            bool found = false;
 
             foreach (BlockControl bc in BlockManager.Instance.BlockList) {
                 if (bc.Editor.FilePath.Contains(path))
                 {
                     BlockManager.Instance.SetActiveBlock(bc);
+                    VirtualSpaceControl.Instance.FocusViewOn(bc);
+                    found = true;
                 }
+            }
+
+            if (!found)
+            {
+                System.Windows.MessageBox.Show("The requested file is not found.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }
