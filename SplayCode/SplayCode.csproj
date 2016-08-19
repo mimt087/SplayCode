@@ -67,6 +67,7 @@
     <Compile Include="PackageComponents\AddFileCommand.cs" />
     <Compile Include="PackageComponents\AddPackageCommand.cs" />
     <Compile Include="PackageComponents\ClearLayoutCommand.cs" />
+    <Compile Include="PackageComponents\FindCommand.cs" />
     <Compile Include="PackageComponents\LayoutUndoCommand.cs" />
     <Compile Include="PackageComponents\LoadLayoutCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,6 +92,7 @@
   <ItemGroup>
     <Resource Include="Resources\fullscreen-enter-8x.png" />
     <Resource Include="Resources\fullscreen-exit-8x.png" />
+    <Content Include="PackageComponents\Resources\FindCommand.png" />
     <Content Include="Resources\SplayCodePackage.ico" />
     <Resource Include="Resources\x-8x.png" />
     <Resource Include="Resources\zoom-in-8x.png" />
@@ -133,6 +135,7 @@
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.CommandBars, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
