@@ -149,12 +149,12 @@ namespace SplayCode
         // handlers for zoom buttons
         void zoomIn(object sender, RoutedEventArgs e)
         {
-            zoomSlider.Value = zoomSlider.Maximum;
+            zoomSlider.Value = zoomSlider.Value + zoomSlider.LargeChange;
         }
 
         void zoomOut(object sender, RoutedEventArgs e)
         {
-            zoomSlider.Value = zoomSlider.Minimum;
+            zoomSlider.Value = zoomSlider.Value - zoomSlider.LargeChange;
         }
 
         // expands the size of the virtual space if the given size is larger than current size

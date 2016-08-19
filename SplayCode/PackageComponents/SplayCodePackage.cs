@@ -62,6 +62,12 @@ namespace SplayCode
         /// </summary>
         protected override void Initialize()
         {
+            SplayCodeToolWindow window = (SplayCodeToolWindow)FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
+            if ((null == window) || (null == window.Frame))
+            {
+                throw new NotSupportedException("Cannot create tool window");
+            }
+
             SplayCodeCommand.Initialize(this);
             base.Initialize();
             AddFileCommand.Initialize(this);
@@ -72,7 +78,7 @@ namespace SplayCode
             AddPackageCommand.Initialize(this);
             EditorControl.OLEServiceProvider = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)GetService(
                 typeof(Microsoft.VisualStudio.OLE.Interop.IServiceProvider));
-            
+
         }
 
         #endregion
