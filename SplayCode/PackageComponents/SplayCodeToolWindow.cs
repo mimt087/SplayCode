@@ -259,7 +259,8 @@ namespace SplayCode
         
         public void Activate()
         {
-            ((IVsWindowFrame)Frame).Show();
+            IVsWindowFrame windowFrame = (IVsWindowFrame)Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }                
     }
 }
