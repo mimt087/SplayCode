@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using SplayCode.Controls;
 using System.Windows.Media;
 using SplayCode.Data;
+using System.Windows.Input;
 
 namespace SplayCode
 {
@@ -50,6 +51,7 @@ namespace SplayCode
             this.label.Content = label;
             this.GotMouseCapture += BlockControl_GotFocus;
             this.GotTouchCapture += BlockControl_GotFocus;
+            this.GotKeyboardFocus += BlockControl_GotKeyboardFocus;
             MinHeight = MINIMUM_BLOCK_HEIGHT;
             MinWidth = MINIMUM_BLOCK_WIDTH;
             Height = DEFAULT_BLOCK_HEIGHT;
@@ -61,6 +63,18 @@ namespace SplayCode
             if ((e.OriginalSource != closeButton) && (e.OriginalSource != closeIcon))
             {
                 BlockManager.Instance.SetActiveBlock(this);
+            }
+        }
+
+        private void BlockControl_GotKeyboardFocus(object sender, RoutedEventArgs e)
+        {
+            if (IsMouseOver)
+            {
+                BlockManager.Instance.SetActiveBlock(this);
+            }
+            if (!Equals(BlockManager.Instance.ActiveBlock))
+            {
+                Keyboard.ClearFocus();
             }
         }
 
