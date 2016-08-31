@@ -94,12 +94,11 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            SplayCodeToolWindow.Instance.Activate();
+
             BlockManager.Instance.RemoveAllBlocks();
             UndoManager.Instance.Reset();
             VirtualSpaceControl.Instance.Reset();
-
-            SplayCodeToolWindow.Instance.Activate();
-
         }
     }
 }

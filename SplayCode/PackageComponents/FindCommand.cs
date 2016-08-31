@@ -104,7 +104,7 @@ namespace SplayCode
                 if (bc.Editor.FilePath.Contains(path))
                 {
                     BlockManager.Instance.SetActiveBlock(bc);
-                    VirtualSpaceControl.Instance.FocusViewOn(bc);
+                    VirtualSpaceControl.Instance.CenterViewOn(bc);
                     found = true;
                 }
             }

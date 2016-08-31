@@ -35,6 +35,7 @@ namespace SplayCode.Data
 
         public void AddSingleOrMultipleFiles(string filePath, Point? cursorPosition)
         {
+
             // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
             FileAttributes attr = File.GetAttributes(filePath);
 
@@ -81,6 +82,11 @@ namespace SplayCode.Data
                         }
                     }
                 }
+            }
+            // resets the placement position if it's a drag-n-drop operation
+            if (cursorPosition != null)
+            {
+                VirtualSpaceControl.Instance.ResetMultipleBlockCounter();
             }
         }
 

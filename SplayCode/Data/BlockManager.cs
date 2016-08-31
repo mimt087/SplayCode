@@ -68,6 +68,7 @@ namespace SplayCode.Data
         /// </summary>
         public void AddBlock(string label, string documentPath)
         {
+
             Point blockPosition = VirtualSpaceControl.Instance.GetNextBlockPosition(null);
             double xPos = blockPosition.X;
             double yPos = blockPosition.Y;
@@ -83,6 +84,7 @@ namespace SplayCode.Data
         /// </summary>
         public void AddBlock(string label, string documentPath, double preferredXPos, double preferredYPos)
         {
+
             Point preferredPosition = new Point(preferredXPos, preferredYPos);
             Point blockPosition = VirtualSpaceControl.Instance.GetNextBlockPosition(preferredPosition);
             double xPos = blockPosition.X;
@@ -100,12 +102,13 @@ namespace SplayCode.Data
         public void AddBlock(string label, string documentPath, double xPos, 
             double yPos, double height, double width, int zIndex, int blockId, bool setActive)
         {
+
             UndoManager.Instance.SaveState();
 
             BlockControl newBlock = new BlockControl(label, documentPath, blockId);
             newBlock.Width = width;
             newBlock.Height = height;
-            newBlock.Margin = new Thickness(xPos, yPos, 0, 0);
+            newBlock.Position(new Thickness(xPos, yPos, 0, 0));
             Panel.SetZIndex(newBlock, zIndex);
             if (zIndex > topmostZIndex)
             {
@@ -122,9 +125,7 @@ namespace SplayCode.Data
                 SetActiveBlock(newBlock);
             }
 
-            VirtualSpaceControl.Instance.InsertBlock(newBlock);
-            VirtualSpaceControl.Instance.ExpandToSize(newBlock.Margin.Left + newBlock.Width,
-                newBlock.Margin.Top + newBlock.Height);
+            VirtualSpaceControl.Instance.InsertBlock(newBlock);            
         }
 
         /// <summary>

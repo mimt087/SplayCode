@@ -259,8 +259,10 @@ namespace SplayCode
         
         public void Activate()
         {
+            VirtualSpaceControl.Instance.SaveScrollOffsets();
             IVsWindowFrame windowFrame = (IVsWindowFrame)Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
-        }                
+            VirtualSpaceControl.Instance.LoadScrollOffsets();
+        }
     }
 }

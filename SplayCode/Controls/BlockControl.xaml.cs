@@ -31,6 +31,8 @@ namespace SplayCode
             get { return blockId; }
         }
 
+        private ChromeBarOverlay overlayBar;
+
         // Default and minimum sizes for a block
         public static readonly double MINIMUM_BLOCK_HEIGHT = 300;
         public static readonly double MINIMUM_BLOCK_WIDTH = 300;
@@ -46,16 +48,26 @@ namespace SplayCode
         {
             InitializeComponent();
             editor = new EditorControl(documentPath);
+
             contentSpace.Children.Add(editor);
             blockId = id;
             this.label.Content = label;
+
             this.GotMouseCapture += BlockControl_GotFocus;
             this.GotTouchCapture += BlockControl_GotFocus;
             this.GotKeyboardFocus += BlockControl_GotKeyboardFocus;
+            this.MouseEnter += ShowOverlayBar;
+            this.MouseLeave += HideOverlayBar;
+
             MinHeight = MINIMUM_BLOCK_HEIGHT;
             MinWidth = MINIMUM_BLOCK_WIDTH;
             Height = DEFAULT_BLOCK_HEIGHT;
             Width = DEFAULT_BLOCK_WIDTH;
+
+            overlayBar = new ChromeBarOverlay();
+            overlayBar.Width = this.Width;
+            overlayBar.Visibility = Visibility.Hidden;
+            VirtualSpaceControl.Instance.PutOverlayBar(overlayBar);
         }
 
         private void BlockControl_GotFocus(object sender, RoutedEventArgs e)
@@ -78,6 +90,16 @@ namespace SplayCode
             }
         }
 
+        private void ShowOverlayBar(object sender, MouseEventArgs e)
+        {
+            //overlayBar.Visibility = Visibility.Visible;
+        }
+
+        private void HideOverlayBar(object sender, MouseEventArgs e)
+        {
+            overlayBar.Visibility = Visibility.Hidden;
+        }
+
         public void SetHighlight(bool highlightOn)
         {
             if (highlightOn)
@@ -90,6 +112,16 @@ namespace SplayCode
                 chrome.BorderBrush = new SolidColorBrush(NON_HIGHLIGHT_COLOR);
                 label.Background = new SolidColorBrush(NON_HIGHLIGHT_COLOR);
             }            
+        }
+
+        public void Position(Thickness m)
+        {
+            this.Margin = m;
+            Thickness t = new Thickness();
+            t.Left = m.Left - VirtualSpaceControl.Instance.ScrollView.HorizontalOffset;
+            t.Top = m.Top - VirtualSpaceControl.Instance.ScrollView.VerticalOffset;
+            overlayBar.Margin = t;
+            RefreshVirtualSpaceSize();
         }
 
         public void Reposition(double xDelta, double yDelta)
@@ -174,14 +206,7 @@ namespace SplayCode
 
         void onDoubleClick(object sender, RoutedEventArgs e)
         {
-            VirtualSpaceControl.Instance.FocusViewOn(this);
-        }
-
-        // Scales the label, checkbox and closebutton so that they can remain the same size
-        // even when the whole view is zoomed out
-        public void RetainLabelBarSize(double zoomLevel)
-        {
-            //label
+            VirtualSpaceControl.Instance.CenterViewOn(this);
         }
 
         /// <summary>

@@ -53,6 +53,8 @@ namespace SplayCode
         // as a counter action to actual touch input
         private bool duringTouch;
 
+        public bool firstInit = true;
+
         private string currentLayoutFile = "";
         public string CurrentLayoutFile
         {
@@ -69,15 +71,10 @@ namespace SplayCode
             InitializeComponent();
             this.SizeChanged += sizeChanged;
 
-            // the size of the grid determines the size of the virtual space;
-            // it's initialized to the size of tool window
-            baseGrid.Width = this.ActualWidth;
-            baseGrid.Height = this.ActualHeight;
-
             zoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
+
             duringTouch = false;
-            ResetMultipleBlockCounter();
         }
 
         // handler to expand the space if the window size changes
@@ -274,15 +271,18 @@ namespace SplayCode
         /// </summary>
         public void Reset()
         {
-            zoomSlider.Value = 1.0;
-            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            baseGrid.Width = ActualWidth;
-            baseGrid.Height = ActualHeight;
+            zoomSlider.Value = 0.6;
+            //ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            //ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            baseGrid.Width = (ActualWidth / ZoomLevel) * 10;
+            baseGrid.Height = (ActualHeight / ZoomLevel) * 10;
             ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            currentLayoutFile = "";
+            ScrollView.ScrollToHorizontalOffset((baseGrid.Width * ZoomLevel) / 2 - ScrollView.ViewportWidth / 2);
+            ScrollView.ScrollToVerticalOffset((baseGrid.Height * ZoomLevel) / 2 - ScrollView.ViewportHeight / 2);
+            //currentLayoutFile = "";
             ResetMultipleBlockCounter();
+            firstInit = false;
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -332,7 +332,7 @@ namespace SplayCode
 
         /// <summary>
         /// Find the next best place to put a block, considering the scenario of adding
-        /// multiple blocks.If the preferred position is null, calculations begin at the
+        /// multiple blocks. If the preferred position is null, calculations begin at the
         /// top left space of the viewport. Otherwise it start at the preferred position.
         /// </summary>
         public Point GetNextBlockPosition(Point? preferredPosition)
@@ -345,8 +345,10 @@ namespace SplayCode
             }
             else
             {
-                double xPos = (ScrollView.HorizontalOffset / ZoomLevel) + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
-                double yPos = (ScrollView.VerticalOffset / ZoomLevel) + 100 + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                double xPos = (ScrollView.HorizontalOffset / ZoomLevel) + ((ScrollView.ViewportWidth / zoomLevel) / 2) 
+                    - (BlockControl.DEFAULT_BLOCK_WIDTH / 2) + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
+                double yPos = (ScrollView.VerticalOffset / ZoomLevel) + ((ScrollView.ViewportHeight / zoomLevel) / 2)
+                    - (BlockControl.DEFAULT_BLOCK_HEIGHT / 2) + (BLOCK_DISPLACEMENT_DISTANCE * multipleBlockCounter);
                 nextBlockPosition.X = xPos;
                 nextBlockPosition.Y = yPos;
             }
@@ -357,25 +359,36 @@ namespace SplayCode
         /// <summary>
         /// Resets the counter for adding multiple blocks.
         /// </summary>
-        private void ResetMultipleBlockCounter()
+        public void ResetMultipleBlockCounter()
         {
             multipleBlockCounter = 0;
         }
 
         /// <summary>
-        /// Focus view on the given block in the virtual space.
+        /// Center view on the given block in the virtual space.
         /// </summary>
-        public void FocusViewOn(BlockControl block)
+        public void CenterViewOn(BlockControl block)
         {
             zoomSlider.Value = 1.0;
             ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));
             ScrollView.ScrollToVerticalOffset(block.Margin.Top - (ScrollView.ViewportHeight / 10));
         }
 
-        public void EnterEditorView(BlockControl block)
+        public void SaveScrollOffsets()
         {
             horizontalScrollPos = ScrollView.HorizontalOffset;
             verticalScrollPos = ScrollView.VerticalOffset;
+        }
+
+        public void LoadScrollOffsets()
+        {
+            ScrollView.ScrollToHorizontalOffset(horizontalScrollPos);
+            ScrollView.ScrollToVerticalOffset(verticalScrollPos);
+        }
+
+        public void EnterEditorView(BlockControl block)
+        {
+            SaveScrollOffsets();
             EditorViewControl.Instance.SetEditor(block);
             Content = EditorViewControl.Instance;
             SplayCodeToolWindow.SetEditorViewMode(true);
@@ -385,8 +398,17 @@ namespace SplayCode
         {
             SplayCodeToolWindow.SetEditorViewMode(false);
             Content = virtualSpace;
-            ScrollView.ScrollToHorizontalOffset(horizontalScrollPos);
-            ScrollView.ScrollToVerticalOffset(verticalScrollPos);
+            LoadScrollOffsets();           
+        }
+
+        public void PutOverlayBar(ChromeBarOverlay overlay)
+        {
+            virtualSpace.Children.Add(overlay);
+        }
+
+        public void DeleteOverlayBar(ChromeBarOverlay overlay)
+        {
+            virtualSpace.Children.Remove(overlay);
         }
 
         private void dragThumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
