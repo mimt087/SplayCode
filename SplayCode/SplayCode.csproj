@@ -92,7 +92,6 @@
   <ItemGroup>
     <Resource Include="Resources\fullscreen-enter-8x.png" />
     <Resource Include="Resources\fullscreen-exit-8x.png" />
-    <Content Include="PackageComponents\Resources\FindCommand.png" />
     <Content Include="Resources\SplayCodePackage.ico" />
     <Resource Include="Resources\x-8x.png" />
     <Resource Include="Resources\zoom-in-8x.png" />
