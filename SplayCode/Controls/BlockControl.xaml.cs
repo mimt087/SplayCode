@@ -31,7 +31,7 @@ namespace SplayCode
             get { return blockId; }
         }
 
-        private ChromeBarOverlay overlayBar;
+        private bool duringResize = false;
 
         // Default and minimum sizes for a block
         public static readonly double MINIMUM_BLOCK_HEIGHT = 300;
@@ -64,10 +64,6 @@ namespace SplayCode
             Height = DEFAULT_BLOCK_HEIGHT;
             Width = DEFAULT_BLOCK_WIDTH;
 
-            overlayBar = new ChromeBarOverlay();
-            overlayBar.Width = this.Width;
-            overlayBar.Visibility = Visibility.Hidden;
-            VirtualSpaceControl.Instance.PutOverlayBar(overlayBar);
         }
 
         private void BlockControl_GotFocus(object sender, RoutedEventArgs e)
@@ -92,25 +88,28 @@ namespace SplayCode
 
         private void ShowOverlayBar(object sender, MouseEventArgs e)
         {
-            //overlayBar.Visibility = Visibility.Visible;
-            ScaleTransform scaleTransform1 = new ScaleTransform(1.0 / VirtualSpaceControl.Instance.ZoomLevel, 
-                1.0 / VirtualSpaceControl.Instance.ZoomLevel);
-            labelBar.RenderTransform = scaleTransform1;
-            Thickness t = labelBar.Margin;
-            double fullWidth = Width + chrome.BorderThickness.Left * 2;
-            t.Left = t.Left + ((Width - fullWidth * VirtualSpaceControl.Instance.ZoomLevel) / 2);
-            t.Right = t.Right + ((Width - fullWidth * VirtualSpaceControl.Instance.ZoomLevel) / 2);
-            if ((Width - t.Left - t.Right) < 250)
+            if (!duringResize && VirtualSpaceControl.Instance.ZoomLevel <= 0.9)
             {
-                t.Left = (Width - 250) / 2;
-                t.Right = (Width - 250) / 2;
+                ScaleTransform scaleTransform1 = new ScaleTransform(1.0 / VirtualSpaceControl.Instance.ZoomLevel,
+                    1.0 / VirtualSpaceControl.Instance.ZoomLevel);
+                labelBar.RenderTransform = scaleTransform1;
+                Thickness t = labelBar.Margin;
+                double edgeWidth = chrome.BorderThickness.Left;
+                t.Left = t.Left + ((Width - Width * VirtualSpaceControl.Instance.ZoomLevel) / 2) -
+                    edgeWidth;
+                t.Right = t.Right + ((Width - Width * VirtualSpaceControl.Instance.ZoomLevel) / 2) -
+                    edgeWidth;
+                if ((Width - t.Left - t.Right) < 250)
+                {
+                    t.Left = (Width - 250) / 2;
+                    t.Right = (Width - 250) / 2;
+                }
+                labelBar.Margin = t;
             }
-            labelBar.Margin = t;
         }
 
         private void HideOverlayBar(object sender, MouseEventArgs e)
         {
-            //overlayBar.Visibility = Visibility.Hidden;
             ScaleTransform scaleTransform1 = new ScaleTransform(1.0, 1.0);
             labelBar.RenderTransform = scaleTransform1;
             Thickness t = labelBar.Margin;
@@ -139,7 +138,6 @@ namespace SplayCode
             Thickness t = new Thickness();
             t.Left = m.Left - VirtualSpaceControl.Instance.ScrollView.HorizontalOffset;
             t.Top = m.Top - VirtualSpaceControl.Instance.ScrollView.VerticalOffset;
-            overlayBar.Margin = t;
             RefreshVirtualSpaceSize();
         }
 
@@ -175,7 +173,15 @@ namespace SplayCode
 
         void onResizeStart(object sender, DragStartedEventArgs e)
         {
+            duringResize = true;
+            HideOverlayBar(this, null);
             UndoManager.Instance.SaveState();
+        }
+
+        void onResizeComplete(object sender, DragCompletedEventArgs e)
+        {
+            duringResize = false;
+            ShowOverlayBar(this, null);
         }
 
         void onLeftResizeDelta(object sender, DragDeltaEventArgs e)

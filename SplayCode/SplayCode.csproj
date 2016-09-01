@@ -51,9 +51,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Controls\ChromeBarOverlay.xaml.cs">
-      <DependentUpon>ChromeBarOverlay.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\EditorControl.xaml.cs">
       <DependentUpon>EditorControl.xaml</DependentUpon>
     </Compile>
@@ -105,10 +102,6 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\ChromeBarOverlay.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\EditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

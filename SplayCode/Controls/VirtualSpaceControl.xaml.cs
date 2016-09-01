@@ -283,7 +283,7 @@ namespace SplayCode
             ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             ScrollView.ScrollToHorizontalOffset((baseGrid.Width * ZoomLevel) / 2 - ScrollView.ViewportWidth / 2);
             ScrollView.ScrollToVerticalOffset((baseGrid.Height * ZoomLevel) / 2 - ScrollView.ViewportHeight / 2);
-            //currentLayoutFile = "";
+            currentLayoutFile = "";
             ResetMultipleBlockCounter();
             firstInit = false;
         }
@@ -402,16 +402,6 @@ namespace SplayCode
             SplayCodeToolWindow.SetEditorViewMode(false);
             Content = virtualSpace;
             LoadScrollOffsets();           
-        }
-
-        public void PutOverlayBar(ChromeBarOverlay overlay)
-        {
-            virtualSpace.Children.Add(overlay);
-        }
-
-        public void DeleteOverlayBar(ChromeBarOverlay overlay)
-        {
-            virtualSpace.Children.Remove(overlay);
         }
 
         private void dragThumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
