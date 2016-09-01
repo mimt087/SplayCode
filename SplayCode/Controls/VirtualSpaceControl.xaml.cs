@@ -71,6 +71,9 @@ namespace SplayCode
             InitializeComponent();
             this.SizeChanged += sizeChanged;
 
+            baseGrid.Width = this.ActualWidth;
+            baseGrid.Height = this.ActualHeight;
+
             zoomLevel = zoomSlider.Value;
             zoomSlider.ValueChanged += zoomChanged;
 

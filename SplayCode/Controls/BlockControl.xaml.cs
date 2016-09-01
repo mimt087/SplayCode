@@ -93,11 +93,30 @@ namespace SplayCode
         private void ShowOverlayBar(object sender, MouseEventArgs e)
         {
             //overlayBar.Visibility = Visibility.Visible;
+            ScaleTransform scaleTransform1 = new ScaleTransform(1.0 / VirtualSpaceControl.Instance.ZoomLevel, 
+                1.0 / VirtualSpaceControl.Instance.ZoomLevel);
+            labelBar.RenderTransform = scaleTransform1;
+            Thickness t = labelBar.Margin;
+            double fullWidth = Width + chrome.BorderThickness.Left * 2;
+            t.Left = t.Left + ((Width - fullWidth * VirtualSpaceControl.Instance.ZoomLevel) / 2);
+            t.Right = t.Right + ((Width - fullWidth * VirtualSpaceControl.Instance.ZoomLevel) / 2);
+            if ((Width - t.Left - t.Right) < 250)
+            {
+                t.Left = (Width - 250) / 2;
+                t.Right = (Width - 250) / 2;
+            }
+            labelBar.Margin = t;
         }
 
         private void HideOverlayBar(object sender, MouseEventArgs e)
         {
-            overlayBar.Visibility = Visibility.Hidden;
+            //overlayBar.Visibility = Visibility.Hidden;
+            ScaleTransform scaleTransform1 = new ScaleTransform(1.0, 1.0);
+            labelBar.RenderTransform = scaleTransform1;
+            Thickness t = labelBar.Margin;
+            t.Left = 0;
+            t.Right = 0;            
+            labelBar.Margin = t;
         }
 
         public void SetHighlight(bool highlightOn)
