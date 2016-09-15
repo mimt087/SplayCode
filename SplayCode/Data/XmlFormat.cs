@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace SplayCode.Data
 {
+    /// <summary>
+    /// This is an entity class that is used for serialising spatial layout information to an XML file
+    /// and deserialising the XML file to an identical spatial layout
+    /// The properties of this class specify some information about the virtual space and the editor blocks
+    /// </summary>
     [Serializable()]
     public class XmlFormat
     {
