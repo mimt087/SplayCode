@@ -274,15 +274,15 @@ namespace SplayCode
         /// </summary>
         public void Reset()
         {
-            zoomSlider.Value = 0.6;
-            //ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            //ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            baseGrid.Width = (ActualWidth / ZoomLevel) * 10;
-            baseGrid.Height = (ActualHeight / ZoomLevel) * 10;
+            zoomSlider.Value = 1.0;
+            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            baseGrid.Width = (ActualWidth / ZoomLevel);
+            baseGrid.Height = (ActualHeight / ZoomLevel);
             ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            ScrollView.ScrollToHorizontalOffset((baseGrid.Width * ZoomLevel) / 2 - ScrollView.ViewportWidth / 2);
-            ScrollView.ScrollToVerticalOffset((baseGrid.Height * ZoomLevel) / 2 - ScrollView.ViewportHeight / 2);
+            //ScrollView.ScrollToHorizontalOffset((baseGrid.Width * ZoomLevel) / 2 - ScrollView.ViewportWidth / 2);
+            //ScrollView.ScrollToVerticalOffset((baseGrid.Height * ZoomLevel) / 2 - ScrollView.ViewportHeight / 2);
             currentLayoutFile = "";
             ResetMultipleBlockCounter();
             firstInit = false;
