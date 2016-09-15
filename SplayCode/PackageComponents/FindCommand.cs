@@ -17,7 +17,9 @@ using System.Windows;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Find' button on the toolbar is clicked
+    /// Execution of this command will prompt an input dialog, which takes in the name of a file
+    /// that is being looked for in the spatial layout
     /// </summary>
     internal sealed class FindCommand
     {
@@ -97,9 +99,11 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            //Prompt an input box
             String path = Interaction.InputBox("Which file do you want to find?", "Find", "Type Full Class Name");
             bool found = false;
 
+            //find the corresonding editor control, whose file path contains the given file name.
             foreach (BlockControl bc in BlockManager.Instance.BlockList) {
                 if (bc.Editor.FilePath.Contains(path))
                 {
@@ -109,6 +113,7 @@ namespace SplayCode
                 }
             }
 
+            //if the target editor is not found, show a warning dialog
             if (!found)
             {
                 System.Windows.MessageBox.Show("The requested file is not found.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
