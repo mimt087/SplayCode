@@ -22,7 +22,10 @@ using SplayCode.Data;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Load Layout' button on the toolbar is clicked
+    /// Execution of this command will prompt an 'open file dialog', in which an XML file can be selected.
+    /// Selected XML file is read in using XMLSerialiser class and the input from the XML can be used to
+    /// provide information required to reconstruct the spatial layout.
     /// </summary>
     internal sealed class LoadLayoutCommand
     {
@@ -110,6 +113,7 @@ namespace SplayCode
             //openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog1.FilterIndex = 2;
+            openFileDialog1.Title = "Load a Layout file";
             openFileDialog1.RestoreDirectory = false;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
