@@ -120,6 +120,8 @@ namespace SplayCode
             {
                 // clear the layout if it is not empty
                 if ((VirtualSpaceControl)SplayCodeToolWindow.Instance.Content != null) {
+                    BlockManager.Instance.RemoveAllBlocks();
+                    UndoManager.Instance.Reset();
                     VirtualSpaceControl.Instance.Reset();
                 }
 
