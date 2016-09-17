@@ -18,7 +18,8 @@ using System.Windows.Controls;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Undo' button on the toolbar is clicked
+    /// Execution of this command will revert the spatial layout back to its previous version
     /// </summary>
     internal sealed class LayoutUndoCommand
     {

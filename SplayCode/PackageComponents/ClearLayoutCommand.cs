@@ -14,8 +14,9 @@ using SplayCode.Data;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
-    /// </summary>
+    /// This is a command class that triggers when 'Clear' button on the toolbar is clicked
+    /// Execution of this command will remove every editor control in the virtual space and reset all the settings.
+    /// <summary>
     internal sealed class ClearLayoutCommand
     {
         /// <summary>
@@ -96,6 +97,7 @@ namespace SplayCode
         {
             SplayCodeToolWindow.Instance.Activate();
 
+            //Remove all the editor controls from the virtual space and reset the properties of UndoManager and VirtualSpaceControl
             BlockManager.Instance.RemoveAllBlocks();
             UndoManager.Instance.Reset();
             VirtualSpaceControl.Instance.Reset();

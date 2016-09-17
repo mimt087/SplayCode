@@ -14,7 +14,9 @@ using SplayCode.Data;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Add Files' button on the toolbar is clicked
+    /// Execution of this command will prompt an 'open file dialog', which allows the users choose which files to open.
+    /// Selection of a file or files will open them in the virtual space.
     /// </summary>
     internal sealed class AddFileCommand
     {
@@ -96,18 +98,19 @@ namespace SplayCode
         {
             SplayCodeToolWindow.Instance.Activate();
 
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            //MessageBoxResult res = new MessageBoxResult();
-            //bool duplicate = false;
-            
+            //enable multi-selection of files
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();            
             openFileDialog1.RestoreDirectory = false;
             openFileDialog1.Multiselect = true;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 string[] filepaths = openFileDialog1.FileNames;
+                //if multiple files are being added, 
                 if (filepaths.Length > 1)
                 {
+                    //iterate through individual files and open them in the virtual space.
+                    //check if the file is already open in the virtual space
                     foreach (string path in filepaths)
                     {
 
@@ -119,6 +122,7 @@ namespace SplayCode
                         }
                     }
                 }
+                //if only one file is being opened, check if it already exists in the virtual space, then open.
                 else
                 {
                     Uri documentPath = new Uri(openFileDialog1.FileName);

@@ -60,6 +60,9 @@ namespace SplayCode.Data
                                 BlockManager.Instance.AddBlock(GetFileName(s), s, cursorPosition.Value.X, cursorPosition.Value.Y);
                             }
                         }
+                    } else
+                    {
+                        MessageBox.Show("\"" + GetFileName(s) + "\"" + " cannot be open in SplayCode. " + "\"" + Path.GetExtension(s) + "\" is not supported.", "Unspported file type", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
@@ -81,6 +84,9 @@ namespace SplayCode.Data
                                 cursorPosition.Value.Y);
                         }
                     }
+                } else
+                {
+                    MessageBox.Show("\"" + GetFileName(filePath) + "\"" + " cannot be open in SplayCode. " + "\"" + Path.GetExtension(filePath) + "\" is not supported.", "Unspported file type", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             // resets the placement position if it's a drag-n-drop operation
@@ -96,7 +102,7 @@ namespace SplayCode.Data
 
             if (BlockManager.Instance.BlockAlreadyExists(filePath))
             {
-                res = MessageBox.Show("The file is already added in the layout. Proceed with adding the file?",
+                res = MessageBox.Show("\"" + GetFileName(filePath) + "\" is already added in the layout. Proceed with adding the file?",
                       "Duplicate file", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             }
             if (res == MessageBoxResult.No)

@@ -15,7 +15,9 @@ using SplayCode.Data;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Add Package' button on the toolbar is clicked
+    /// Execution of this command will prompt a 'find directory' dialog.
+    /// Selection of a directory will open all the supported files in the virtual space.
     /// </summary>
     internal sealed class AddPackageCommand
     {
@@ -98,9 +100,9 @@ namespace SplayCode
             SplayCodeToolWindow.Instance.Activate();
 
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
-
             folderBrowserDialog1.ShowNewFolderButton = false;
             
+            //open every file under the target directory
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 Uri folderPath = new Uri(folderBrowserDialog1.SelectedPath);

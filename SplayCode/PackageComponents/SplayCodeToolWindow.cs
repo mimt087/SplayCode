@@ -79,8 +79,13 @@ namespace SplayCode
             }
         }
 
+        /// <summary>
+        /// This functions asks the users if they want to save the changes before closing Visual Studio
+        /// </summary>
         public void HandleVisualStudioShutDown()
         {
+            //if there is currently no layout file loaded, and the global undo stack is not empty,
+            //ask the user if he/she wants to save the layout in a new file
             if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
                 if (UndoManager.Instance.StateStack.Count != 0)
@@ -101,6 +106,7 @@ namespace SplayCode
                     }
                 }
             }
+            //if currently on a layout file and changes are made, ask the user if he/she wants to save the changes
             else
             {
                 if (UndoManager.Instance.StateStack.Count != 0)
@@ -200,14 +206,16 @@ namespace SplayCode
             isInEditorViewMode = isInEditorView;
         }
 
+        /// <summary>
+        /// This function is triggered when there are changes made to the layout or a new layout is created,
+        /// and SplayCode tool window is being closed. The function asks the user if he/she wants to save the layout or changes made
+        /// </summary>
+        /// <param name="pgrfSaveOptions"></param>
+        /// <returns></returns>
         public int OnClose(ref uint pgrfSaveOptions)
         {
-            // Check if your content is dirty here, then
-            //SaveLayoutCommand.Instance.saveLayout(Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml");
-            //if ((Environment.SpecialFolder.ApplicationData.ToString() + "\\temp.xml").GetHashCode. ==
-            //    VirtualSpaceControl.Instance.CurrentLayoutFileName.GetHashCode))
-            // Prompt a dialog
-
+            //if there is currently no layout file loaded, and the global undo stack is not empty,
+            //ask the user if he/she wants to save the layout in a new file
             if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
                 if (UndoManager.Instance.StateStack.Count != 0)
@@ -232,6 +240,7 @@ namespace SplayCode
                     }
                 }
             }
+            //if currently on a layout file and changes are made, ask the user if he/she wants to save the changes
             else
             {
                 if (UndoManager.Instance.StateStack.Count != 0)
