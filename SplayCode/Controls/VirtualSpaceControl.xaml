@@ -7,7 +7,7 @@
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d" AllowDrop="True"
              d:DesignHeight="300" d:DesignWidth="300" RenderTransformOrigin="0.5,0.5">
-    <Grid AllowDrop="True">
+    <Grid Name="virtualSpace" AllowDrop="True">
         <Label x:Name="label1" Content="60%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,89" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Label x:Name="label2" Content="20%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,45" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
         <Label x:Name="label3" Content="100%" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,47,133" FontSize="10.667" Panel.ZIndex="300" Opacity="0.7"/>
@@ -16,25 +16,16 @@
                 Cursor="Arrow" Height="100" Width="24" Maximum="1" Minimum="0.2" LargeChange="0.1" Panel.ZIndex="300" IsSnapToTickEnabled="True"/>
         <ScrollViewer Name="ScrollView" AllowDrop="True" Background="Transparent" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid Name="baseGrid" AllowDrop="True" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
-                <Grid.LayoutTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="{Binding ElementName=zoomSlider,Path=Value}" 
-                                        ScaleY="{Binding ElementName=zoomSlider,Path=Value}"/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.LayoutTransform>
                 <Thumb Name="dragThumb" ManipulationDelta="manipulationDelta" 
                        ManipulationCompleted="manipulationComplete" DragDelta="onDragDelta" DragCompleted="onDragComplete" Opacity="0" Margin="0" IsManipulationEnabled="True" Background="{x:Null}" 
-                       AllowDrop="True"/>
+                       AllowDrop="True" MouseDoubleClick="dragThumb_MouseDoubleClick"/>
             </Grid>
         </ScrollViewer>
         <Button x:Name="zoomInButton" Click="zoomIn" HorizontalAlignment="Right" Margin="0,0,20,151" VerticalAlignment="Bottom" Width="24" Height="24" Background="#FFE5E7E7" BorderBrush="{x:Null}">
-            <Image x:Name="zoomInIcon" Source="/SplayCode;component/Resources/ic_zoom_in_black_24dp_2x.png" Width="18" Height="18" HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="300" Opacity="0.6"/>
+            <Image x:Name="zoomInIcon" Source="/SplayCode;component/Resources/zoom-in-8x.png" Width="18" Height="18" HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="300" Opacity="0.6"/>
         </Button>
         <Button x:Name="zoomOutButton" Click="zoomOut" HorizontalAlignment="Right" Margin="0,0,20,25" VerticalAlignment="Bottom" Width="24" Height="24" Background="#FFE5E7E7" BorderBrush="{x:Null}">
-            <Image x:Name="zoomOutIcon" Source="/SplayCode;component/Resources/ic_zoom_out_black_24dp_2x.png" Width="18" Height="18" HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="300" Opacity="0.6"/>
+            <Image x:Name="zoomOutIcon" Source="/SplayCode;component/Resources/zoom-out-8x.png" Width="18" Height="18" HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="300" Opacity="0.6"/>
         </Button>
     </Grid>
 </UserControl>

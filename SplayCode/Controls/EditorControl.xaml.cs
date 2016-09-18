@@ -26,7 +26,11 @@ using System.Runtime.InteropServices;
 
 namespace SplayCode.Controls
 {
-
+    /// <summary>
+    /// Custom control which hosts a WpfTextViewHost for displaying an editor.
+    /// The source code for initializing the editor is largely taken from:
+    /// https://joshvarty.wordpress.com/2014/08/01/ripping-the-visual-studio-editor-apart-with-projection-buffers/
+    /// </summary>
     public partial class EditorControl : UserControl
     {
 
@@ -39,6 +43,10 @@ namespace SplayCode.Controls
         private IVsEditorAdaptersFactoryService editorAdapter;
 
         private string filePath;
+        public string FilePath
+        {
+            get { return filePath; }
+        }
 
         public EditorControl(string filePath)
         {
@@ -70,6 +78,9 @@ namespace SplayCode.Controls
 
         public IWpfTextViewHost CreateEditor(string filePath)
         {
+            SplayCodeToolWindow.ApplicationObject.ItemOperations.OpenFile(filePath);
+            SplayCodeToolWindow.Instance.Activate();
+
             //IVsInvisibleEditors are in-memory represenations of typical Visual Studio editors.
             //Language services, highlighting and error squiggles are hooked up to these editors
             //for us once we convert them to WpfTextViews. 
@@ -98,6 +109,11 @@ namespace SplayCode.Controls
             return textViewHost;
         }
 
+        /// <summary>
+        /// This function is acquired from
+        /// http://stackoverflow.com/questions/32937232/syntax-highlight-doesnt-work-for-ivsinvisibleeditor.
+        /// At the moment it is unclear where to use this function in the editor initialization process.
+        /// </summary>
         uint RegisterDocument(string targetFile)
         {
             //Then when creating the IVsInvisibleEditor, find and lock the document 
@@ -116,11 +132,6 @@ namespace SplayCode.Controls
                 pdwCookie: out docCookie);
 
             return docCookie;
-        }
-
-        public string getFilePath()
-        {
-            return filePath;
         }
 
         public IVsTextView GetTextView()

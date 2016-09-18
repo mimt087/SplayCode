@@ -24,7 +24,9 @@ using System.Windows.Forms;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Save Layout' button on the toolbar is clicked
+    /// Execution of this command will either prompt a 'file save dialog' to save a new file or save the
+    /// update on the currently open layout file.
     /// </summary>
     internal sealed class SaveLayoutCommand
     {
@@ -104,6 +106,10 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+
+            SplayCodeToolWindow.Instance.Activate();
+
+            //if there is no layout file currently open, prompt a file save dialog and save the layout
             if (VirtualSpaceControl.Instance.CurrentLayoutFile.Equals(""))
             {
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -115,34 +121,49 @@ namespace SplayCode
                 {
                     saveLayout(saveFileDialog1.FileName);
                 }
-            } else
+            }
+
+            //if a layout file is already loaded, update the layout file 
+            else
             {
                 saveLayout(VirtualSpaceControl.Instance.CurrentLayoutFile);
             }
+
         }
 
+        /// <summary>
+        /// This function receives a file name as a parameter.
+        /// The functions looks for every open editor that is open in the virtual space.
+        /// Every property of the each editor and the virtual space is used
+        /// to construct an XmlFormat class, which is then serialised to an xml file.
+        /// </summary>
+        /// <param name="fileName"></param>
         public void saveLayout (string fileName)
         {
-            List<BlockControl> chromes = VirtualSpaceControl.Instance.FetchAllBlocks();
+            List<BlockControl> chromes = BlockManager.Instance.BlockList;
             XmlFormat format = new XmlFormat();
             IEnumerable<EditorControl> editors;
 
+            //pass all the properties of the virtual space as the properties of the XmlFormat instance
             format.VirtualSpaceX = VirtualSpaceControl.Instance.baseGrid.Width;
             format.VirtualSpaceY = VirtualSpaceControl.Instance.baseGrid.Height;
             format.ScrollOffsetHorizontal = VirtualSpaceControl.Instance.ScrollView.HorizontalOffset;
             format.ScrollOffsetVertical = VirtualSpaceControl.Instance.ScrollView.VerticalOffset;
             format.ZoomLevel = VirtualSpaceControl.Instance.ZoomLevel;
 
+            //for all editor controls within the virtual space, pass their properties into
+            //the constructor of the Editor class, which is then added to the list of editors under XmlFormat.
             foreach (BlockControl cc in chromes)
             {
                 editors = cc.contentSpace.Children.OfType<EditorControl>();
                 EditorControl editorControl = editors.First();
-                string filepath = editorControl.getFilePath();
+                string filepath = editorControl.FilePath;
 
                 Editor editor = new Editor(cc.Margin.Left, cc.Margin.Top, filepath, cc.ActualHeight, cc.ActualWidth, System.Windows.Controls.Panel.GetZIndex(cc), cc.BlockId);
                 format.Editors.Add(editor);
             }
 
+            //serialise the XmlFormat class into an XML file format and save
             XmlSerializer x = new XmlSerializer(typeof(XmlFormat));
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;

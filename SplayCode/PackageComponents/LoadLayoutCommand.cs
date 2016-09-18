@@ -22,7 +22,10 @@ using SplayCode.Data;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Load Layout' button on the toolbar is clicked
+    /// Execution of this command will prompt an 'open file dialog', in which an XML file can be selected.
+    /// Selected XML file is read in using XMLSerialiser class and the input from the XML can be used to
+    /// provide information required to reconstruct the spatial layout.
     /// </summary>
     internal sealed class LoadLayoutCommand
     {
@@ -105,19 +108,21 @@ namespace SplayCode
             List<Editor> editorList = new List<Editor>();
             XmlFormat format = new XmlFormat();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            SplayCodeToolWindow.Instance.Activate();
 
-            openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
+            //openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog1.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog1.FilterIndex = 2;
+            openFileDialog1.Title = "Load a Layout file";
             openFileDialog1.RestoreDirectory = false;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
-
                 // clear the layout if it is not empty
-                if ((VirtualSpaceControl)window.Content != null) {
-                    VirtualSpaceControl.Instance.Clear();
+                if ((VirtualSpaceControl)SplayCodeToolWindow.Instance.Content != null) {
+                    BlockManager.Instance.RemoveAllBlocks();
+                    UndoManager.Instance.Reset();
+                    VirtualSpaceControl.Instance.Reset();
                 }
 
                 string path = openFileDialog1.FileName;
@@ -134,16 +139,18 @@ namespace SplayCode
                 VirtualSpaceControl.Instance.LoadLayoutSettings(format.VirtualSpaceX, format.VirtualSpaceY, format.ScrollOffsetHorizontal, format.ScrollOffsetVertical, format.ZoomLevel);
                
                 // recreate the editor windows
-                foreach (Editor editor in editorList)
+                for (int i = 0; i < editorList.Count; i++)
                 {
+                    Editor editor = editorList[i];
                     Uri documentPath = new Uri(editor.source);                          
-                    VirtualSpaceControl.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId);
-                    VirtualSpaceControl.Instance.GlobalStack.Pop();
+                    BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
+                        editor.source, editor.X, editor.Y, editor.height, editor.width, editor.ZIndex, editor.BlockId, false);
+                    if (i != 0)
+                    {
+                        UndoManager.Instance.StateStack.RemoveAt(UndoManager.Instance.StateStack.Count-1);
+                    }
                 }
             }
-
-
         }
     }
 }

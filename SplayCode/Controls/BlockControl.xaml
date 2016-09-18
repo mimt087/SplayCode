@@ -4,33 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SplayCode"
-             mc:Ignorable="d" HorizontalAlignment="Left" VerticalAlignment="Top">
+             mc:Ignorable="d" HorizontalAlignment="Left" VerticalAlignment="Top" d:DesignHeight="300" d:DesignWidth="300" BorderThickness="8,8,8,8">
     <Grid Name="baseGrid" Margin="0,0,0,0">
-        <Thumb Name="dragThumb" HorizontalAlignment="Stretch" VerticalAlignment="Top" DragDelta="onDragDelta" DragStarted="onDragStarted" Panel.ZIndex="100" 
-               Height="36" Opacity="0" Margin="0,0,40,0" MouseDoubleClick="onDoubleClick"/>
         <Thumb Name="leftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Stretch"
-               Width="16" DragDelta="onLeftResizeDelta" DragStarted="onDragStarted"
+               Width="16" DragDelta="onLeftResizeDelta" DragStarted="onResizeStart" DragCompleted="onResizeComplete"
                Panel.ZIndex="100" Opacity="0" Margin="-4,36,0,13.4" Cursor="SizeWE"/>
         <Thumb Name="rightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Stretch"
-               Width="15" DragDelta="onRightResizeDelta" DragStarted="onDragStarted"
+               Width="15" DragDelta="onRightResizeDelta" DragStarted="onResizeStart" DragCompleted="onResizeComplete"
                Panel.ZIndex="100" Opacity="0" Margin="0,36,-3.6,13.4" Cursor="SizeWE"/>
-        <Thumb Name="bottomResizeThumb" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="16" DragDelta="onBottomResizeDelta" DragStarted="onDragStarted"
+        <Thumb Name="bottomResizeThumb" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="16" DragDelta="onBottomResizeDelta" DragStarted="onResizeStart"
+               DragCompleted="onResizeComplete"
                Panel.ZIndex="100" Opacity="0" Margin="12,0,11.4,-2.6" Cursor="SizeNS"/>
-        <Thumb Name="bottomLeftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Bottom" DragStarted="onDragStarted"
+        <Thumb Name="bottomLeftResizeThumb" HorizontalAlignment="Left" VerticalAlignment="Bottom" DragStarted="onResizeStart" DragCompleted="onResizeComplete"
                Width="16" Height="16" DragDelta="onBottomLeftResizeDelta" 
                Panel.ZIndex="100" Opacity="0" Margin="-4,0,0,-2.6" Cursor="SizeNESW"/>
         <Thumb Name="bottomRightResizeThumb" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                Width="15" Height="16" DragDelta="onBottomRightResizeDelta" DragStarted="onDragStarted"
+                Width="15" Height="16" DragDelta="onBottomRightResizeDelta" DragStarted="onResizeStart" DragCompleted="onResizeComplete"
                Panel.ZIndex="100" Opacity="0" Margin="0,0,-3.6,-2.6" Cursor="SizeNWSE"/>
-        <Border Name="chrome" BorderBrush="#FFFFF29D" BorderThickness="8" HorizontalAlignment="Stretch" 
+        <Border Name="chrome" BorderBrush="#FFC2C3C9" BorderThickness="8" HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch">
             <Grid Name="chromeGrid" Margin="0,0,0,0">
-                <Label x:Name="label" Height="34" Margin="-1,-6,32,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#FFFFF29D" FontSize="13.333"/>
-                <Button x:Name="closeButton" HorizontalAlignment="Right" Height="34" Margin="0,-6,-1,0" VerticalAlignment="Top" 
-                        Width="33" Click="closeButton_Click" BorderThickness="6" 
-                        Background="#FFDDDDDD" BorderBrush="#FFFFF29D">
-                    <Image x:Name="closeIcon" Height="20" Source="/SplayCode;component/Resources/ic_clear_black_24dp_2x.png" Width="20"/>
-                </Button>
+                <Grid Name="labelBar" Panel.ZIndex="200" RenderTransformOrigin="0.5,0">
+                    <Label x:Name="label" Height="34" Margin="-1,-6,0,0" VerticalAlignment="Top" 
+                       HorizontalAlignment="Stretch" Background="#FFC2C3C9" FontSize="13.333" RenderTransformOrigin="0.5,0.5"/>
+                    <CheckBox x:Name="selectionCheckBox" HorizontalAlignment="Right" Margin="0,2,77,0" VerticalAlignment="Top" Height="15" Width="16" 
+                       Panel.ZIndex="200" RenderTransformOrigin="0.5,0.5" Checked="selectionCheckBox_Checked" Unchecked="selectionCheckBox_Unchecked">
+                        <CheckBox.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1.5" ScaleY="1.6"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </CheckBox.RenderTransform>
+                    </CheckBox>
+                    <Button x:Name="maximizeButton" HorizontalAlignment="Right" Height="25" Margin="0,-4,40,0" VerticalAlignment="Top" 
+                        Width="25" Click="maximizeButton_Click" 
+                        Panel.ZIndex="200" Background="#FFF6F6F6">
+                        <Image x:Name="maximizeIcon" Height="20" Source="/SplayCode;component/Resources/fullscreen-enter-8x.png" Width="20"/>
+                    </Button>
+                    <Button x:Name="closeButton" HorizontalAlignment="Right" Height="25" VerticalAlignment="Top" 
+                        Width="25" Click="closeButton_Click" 
+                        Panel.ZIndex="200" Background="#FFF6F6F6" Margin="0,-4,7
+                            ,0">
+                        <Image x:Name="closeIcon" Height="20" Source="/SplayCode;component/Resources/x-8x.png" Width="20"/>
+                    </Button>
+                    <Thumb Name="dragThumb" VerticalAlignment="Top" DragDelta="onDragDelta" DragStarted="onDragStart"  Panel.ZIndex="100" 
+                         Height="36" Opacity="0" MouseDoubleClick="onDoubleClick" Margin="0,-1,0,0"/>
+                </Grid>
+                
                 <Grid Name="contentSpace" Margin="0,28,0,0"/>
             </Grid>
         </Border>

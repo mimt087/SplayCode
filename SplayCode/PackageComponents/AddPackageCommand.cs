@@ -1,29 +1,30 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="AddImageCommand.cs" company="Company">
+// <copyright file="AddPackageCommand.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
 
 using System;
 using System.ComponentModel.Design;
+using System.Globalization;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using System.Windows.Forms;
-using System.Windows;
 using SplayCode.Data;
 
 namespace SplayCode
 {
     /// <summary>
-    /// This is a command class that triggers when 'Add Files' button on the toolbar is clicked
-    /// Execution of this command will prompt an 'open file dialog', which allows the users choose which files to open.
-    /// Selection of a file or files will open them in the virtual space.
+    /// This is a command class that triggers when 'Add Package' button on the toolbar is clicked
+    /// Execution of this command will prompt a 'find directory' dialog.
+    /// Selection of a directory will open all the supported files in the virtual space.
     /// </summary>
-    internal sealed class AddFileCommand
+    internal sealed class AddPackageCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 3;
+        public const int CommandId = 8;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -36,11 +37,11 @@ namespace SplayCode
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddFileCommand"/> class.
+        /// Initializes a new instance of the <see cref="AddPackageCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private AddFileCommand(Package package)
+        private AddPackageCommand(Package package)
         {
             if (package == null)
             {
@@ -61,7 +62,7 @@ namespace SplayCode
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static AddFileCommand Instance
+        public static AddPackageCommand Instance
         {
             get;
             private set;
@@ -84,7 +85,7 @@ namespace SplayCode
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new AddFileCommand(package);
+            Instance = new AddPackageCommand(package);
         }
 
         /// <summary>
@@ -98,41 +99,15 @@ namespace SplayCode
         {
             SplayCodeToolWindow.Instance.Activate();
 
-            //enable multi-selection of files
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();            
-            openFileDialog1.RestoreDirectory = false;
-            openFileDialog1.Multiselect = true;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            folderBrowserDialog1.ShowNewFolderButton = false;
+            
+            //open every file under the target directory
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                string[] filepaths = openFileDialog1.FileNames;
-                //if multiple files are being added, 
-                if (filepaths.Length > 1)
-                {
-                    //iterate through individual files and open them in the virtual space.
-                    //check if the file is already open in the virtual space
-                    foreach (string path in filepaths)
-                    {
+                Uri folderPath = new Uri(folderBrowserDialog1.SelectedPath);
 
-                        Uri documentPath = new Uri(path);
-
-                        if (ImportManager.Instance.HandleDuplicateFiles(path))
-                        {
-                            BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1], path);
-                        }
-                    }
-                }
-                //if only one file is being opened, check if it already exists in the virtual space, then open.
-                else
-                {
-                    Uri documentPath = new Uri(openFileDialog1.FileName);
-
-                    if (ImportManager.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
-                    {
-                        BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                                openFileDialog1.FileName);
-                    }
-                }
+                ImportManager.Instance.AddSingleOrMultipleFiles(folderBrowserDialog1.SelectedPath, null, true);
             }
         }
     }

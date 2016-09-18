@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace SplayCode.Data
 {
+    /// <summary>
+    /// This is an entity class for individual editor instances.
+    /// This class contains a list of properties that are required to recreate an editor
+    /// A list of this class is used as a property of XmlFormat class.
+    /// </summary>
+    /// 
+
     [Serializable()]
     public class Editor
     {

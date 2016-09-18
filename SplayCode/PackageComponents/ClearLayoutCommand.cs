@@ -9,12 +9,14 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using SplayCode.Data;
 
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
-    /// </summary>
+    /// This is a command class that triggers when 'Clear' button on the toolbar is clicked
+    /// Execution of this command will remove every editor control in the virtual space and reset all the settings.
+    /// <summary>
     internal sealed class ClearLayoutCommand
     {
         /// <summary>
@@ -93,12 +95,12 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = this.package.FindToolWindow(typeof(SplayCodeToolWindow), 0, true);
+            SplayCodeToolWindow.Instance.Activate();
 
-                if ((VirtualSpaceControl)window.Content != null) {
-                    ((VirtualSpaceControl)window.Content).Clear();
-                }
-
+            //Remove all the editor controls from the virtual space and reset the properties of UndoManager and VirtualSpaceControl
+            BlockManager.Instance.RemoveAllBlocks();
+            UndoManager.Instance.Reset();
+            VirtualSpaceControl.Instance.Reset();
         }
     }
 }

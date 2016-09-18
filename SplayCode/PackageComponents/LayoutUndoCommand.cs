@@ -18,7 +18,8 @@ using System.Windows.Controls;
 namespace SplayCode
 {
     /// <summary>
-    /// Command handler
+    /// This is a command class that triggers when 'Undo' button on the toolbar is clicked
+    /// Execution of this command will revert the spatial layout back to its previous version
     /// </summary>
     internal sealed class LayoutUndoCommand
     {
@@ -98,47 +99,10 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            VirtualSpaceControl virtualSpace = VirtualSpaceControl.Instance;
-            Stack<ActionDone> globalStack = virtualSpace.GlobalStack;
-            
-            ActionDone action = null;
-            
-            // undo can only be called when the GlobalStack is not empty            
-            if (globalStack.Count != 0)
-            {
-                action = globalStack.Pop();
-                // if the top action of the stack was pushed by an editor being closed, reopen it where it was
-                if (action.EditorClosed)
-                {
-                    virtualSpace.AddBlock(virtualSpace.GetFileName(action.MovedBlock.GetEditor().getFilePath()), action.MovedBlock.GetEditor().getFilePath(),
-                        action.BlockPositionX, action.BlockPositionY, action.BlockSizeY, action.BlockSizeX, action.ZIndex, action.BlockId);
-                    globalStack.Pop();
-                }
-                // if the top action of the stack was pushed due to addition of a new editor, close it
-                else if (action.EditorAdded)
-                {
-                    List<BlockControl> bcList = virtualSpace.FetchAllBlocks();
-                    foreach (BlockControl bc in bcList)
-                    {
-                        if (bc.BlockId == action.BlockId)
-                        {
-                            virtualSpace.RemoveBlock(bc);
-                            break;
-                        }
-                    }
-                }
-                // if the top action of the stack was pushed due to repositioning or resizing of an editor, position is back to where it was
-                else
-                {
-                    action.MovedBlock.Width = action.BlockSizeX;
-                    action.MovedBlock.Height = action.BlockSizeY;
-                    Thickness t = action.MovedBlock.Margin;
-                    t.Left = action.BlockPositionX;
-                    t.Top = action.BlockPositionY;
-                    action.MovedBlock.Margin = t;
-                    Panel.SetZIndex(action.MovedBlock, action.ZIndex);
-                }
-            }
+            UndoManager.Instance.Undo();
+
+            SplayCodeToolWindow.Instance.Activate();
+
         }
     }
 }

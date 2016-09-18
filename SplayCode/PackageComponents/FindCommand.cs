@@ -1,29 +1,32 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="AddImageCommand.cs" company="Company">
+// <copyright file="FindCommand.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
 
 using System;
 using System.ComponentModel.Design;
+using System.Globalization;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using SplayCode.Data;
+using Microsoft.VisualBasic;
 using System.Windows.Forms;
 using System.Windows;
-using SplayCode.Data;
 
 namespace SplayCode
 {
     /// <summary>
-    /// This is a command class that triggers when 'Add Files' button on the toolbar is clicked
-    /// Execution of this command will prompt an 'open file dialog', which allows the users choose which files to open.
-    /// Selection of a file or files will open them in the virtual space.
+    /// This is a command class that triggers when 'Find' button on the toolbar is clicked
+    /// Execution of this command will prompt an input dialog, which takes in the name of a file
+    /// that is being looked for in the spatial layout
     /// </summary>
-    internal sealed class AddFileCommand
+    internal sealed class FindCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 3;
+        public const int CommandId = 9;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -36,11 +39,11 @@ namespace SplayCode
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddFileCommand"/> class.
+        /// Initializes a new instance of the <see cref="FindCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private AddFileCommand(Package package)
+        private FindCommand(Package package)
         {
             if (package == null)
             {
@@ -61,7 +64,7 @@ namespace SplayCode
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static AddFileCommand Instance
+        public static FindCommand Instance
         {
             get;
             private set;
@@ -84,7 +87,7 @@ namespace SplayCode
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new AddFileCommand(package);
+            Instance = new FindCommand(package);
         }
 
         /// <summary>
@@ -96,44 +99,34 @@ namespace SplayCode
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            SplayCodeToolWindow.Instance.Activate();
+            //Prompt an input box
+            String path = Interaction.InputBox("Which file do you want to find?", "Find", "Type Full Class Name");
+            bool found = false;
 
-            //enable multi-selection of files
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();            
-            openFileDialog1.RestoreDirectory = false;
-            openFileDialog1.Multiselect = true;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (!path.Equals(""))
             {
-                string[] filepaths = openFileDialog1.FileNames;
-                //if multiple files are being added, 
-                if (filepaths.Length > 1)
+                //find the corresonding editor control, whose file path contains the given file name.
+                foreach (BlockControl bc in BlockManager.Instance.BlockList)
                 {
-                    //iterate through individual files and open them in the virtual space.
-                    //check if the file is already open in the virtual space
-                    foreach (string path in filepaths)
+                    if (bc.Editor.FilePath.Contains(path))
                     {
-
-                        Uri documentPath = new Uri(path);
-
-                        if (ImportManager.Instance.HandleDuplicateFiles(path))
-                        {
-                            BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1], path);
-                        }
+                        BlockManager.Instance.SetActiveBlock(bc);
+                        VirtualSpaceControl.Instance.CenterViewOn(bc);
+                        found = true;
                     }
                 }
-                //if only one file is being opened, check if it already exists in the virtual space, then open.
-                else
-                {
-                    Uri documentPath = new Uri(openFileDialog1.FileName);
 
-                    if (ImportManager.Instance.HandleDuplicateFiles(openFileDialog1.FileName))
-                    {
-                        BlockManager.Instance.AddBlock(documentPath.Segments[documentPath.Segments.Length - 1],
-                                openFileDialog1.FileName);
-                    }
+                //if the target editor is not found, show a warning dialog
+                if (!found)
+                {
+                    System.Windows.MessageBox.Show("The requested file is not found.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
+            } else
+            {
+                //do nothing
             }
+
+            
         }
     }
 }
