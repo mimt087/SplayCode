@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace SplayCode.Data
 {
+    /// <summary>
+    /// Utility class that provides methods for adding files into the virtual space. 
+    /// </summary>
     class ImportManager
     {
         private static ImportManager instance;
@@ -33,10 +36,16 @@ namespace SplayCode.Data
             return (pathUri.Segments[pathUri.Segments.Length - 1]);
         }
 
-        public void AddSingleOrMultipleFiles(string filePath, Point? cursorPosition)
+        /// <summary>
+        /// Call this function to add a file or multiple files from a directory into the virtual space.
+        /// </summary>
+        /// <param name="filePath">Absolute path of the file/directory to add.</param>
+        /// <param name="cursorPosition">The point in virtual space at which to place the file. If null, places it at the
+        /// default position.</param>
+        /// <param name="doNotResetBlockCounter">Choose not to reset the block position counter (for drag-and-dropping 
+        /// multiple files only).</param>
+        public void AddSingleOrMultipleFiles(string filePath, Point? cursorPosition, bool doNotResetBlockCounter)
         {
-
-            // TODO need to check the nature of the string eg. directory/file/multiple/invalid etc
             FileAttributes attr = File.GetAttributes(filePath);
 
             if (attr.HasFlag(FileAttributes.Directory))
@@ -90,7 +99,7 @@ namespace SplayCode.Data
                 }
             }
             // resets the placement position if it's a drag-n-drop operation
-            if (cursorPosition != null)
+            if (cursorPosition != null && !doNotResetBlockCounter)
             {
                 VirtualSpaceControl.Instance.ResetMultipleBlockCounter();
             }

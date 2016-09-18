@@ -1,6 +1,8 @@
 ﻿namespace SplayCode.Data
 {
-    /* Represents a snapshot of the state of a block. */
+    /// <summary>
+    /// Represents a snapshot of the state of a block. Used for managing undo actions.
+    /// </summary>
     public class BlockState
     {
         private string label;

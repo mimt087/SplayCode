@@ -33,6 +33,9 @@ namespace SplayCode
         }
 
         private double zoomLevel;
+        /// <summary>
+        /// Zoom level of the virtual space.
+        /// </summary>
         public double ZoomLevel
         {
             get { return zoomLevel; }
@@ -49,11 +52,16 @@ namespace SplayCode
         /// </summary>
         private int multipleBlockCounter;
 
-        // this flag is used to ignore the 'false' touch input caused by the scrollviewer moving
-        // as a counter action to actual touch input
+        /// <summary>
+        /// This flag is used to ignore the 'fake' touch input caused by the scrollviewer moving
+        /// as a counter action to actual touch input.
+        /// </summary>
         private bool duringTouch;
 
-        public bool firstInit = true;
+        /// <summary>
+        /// Flag used to disable to zoom slider change handler once.
+        /// </summary>
+        private bool disableZoomSliderHandler = false;
 
         private string currentLayoutFile = "";
         public string CurrentLayoutFile
@@ -80,43 +88,100 @@ namespace SplayCode
             duringTouch = false;
         }
 
-        // handler to expand the space if the window size changes
+        /// <summary>
+        /// Event handler to expand the virtual space if window size changes.
+        /// </summary>
         private void sizeChanged(object sender, SizeChangedEventArgs e)
         {
             ExpandToSize(ActualWidth / zoomLevel, ActualHeight / zoomLevel);
         }
 
-        // handler for change in the zoom slider value; zooming is already done in the xaml binding
-        private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        /// <summary>
+        /// Call this function to change the zoom level of the virtual space.
+        /// </summary>
+        /// <param name="zoomValue">The target zoom level, should be between min and max of the zoom slider.</param>
+        /// <param name="centreZoomFocus">If set to true, adjust positions in the virtual space to keep zoom focus at centre.</param>
+        /// <param name="adjustZoomSlider">If set to true, adjust the value of the zoom slider as well.</param>
+        private void SetVirtualSpaceZoomLevel(double zoomValue, bool centreZoomFocus, bool adjustZoomSlider)
         {
+            // if zoom value given is outside valid range
+            if (zoomValue < zoomSlider.Minimum)
+            {
+                zoomValue = zoomSlider.Minimum;
+            }
+            else if (zoomValue > zoomSlider.Maximum)
+            {
+                zoomValue = zoomSlider.Maximum;
+            }
+
+            // actual zooming
+            baseGrid.LayoutTransform = new ScaleTransform(zoomValue, zoomValue);
+            if (adjustZoomSlider)
+            {
+                disableZoomSliderHandler = true;
+                zoomSlider.Value = zoomValue;
+            }
             double previousZoomLevel = ZoomLevel;
-            zoomLevel = zoomSlider.Value;
+            zoomLevel = zoomValue;
 
-            // expand the space if zooming out makes it smaller than the window space
-            if (baseGrid.Width * ZoomLevel < this.ActualWidth)
-                ExpandToSize(ActualWidth / ZoomLevel, 0);
-            if (baseGrid.Height * ZoomLevel < this.ActualHeight)
-                ExpandToSize(0, this.ActualHeight / ZoomLevel);
+            if (centreZoomFocus)
+            {
+                // expand the space if zooming out makes it smaller than the window space
+                if (baseGrid.Width * ZoomLevel < this.ActualWidth)
+                    ExpandToSize(ActualWidth / ZoomLevel, 0);
+                if (baseGrid.Height * ZoomLevel < this.ActualHeight)
+                    ExpandToSize(0, this.ActualHeight / ZoomLevel);
 
-            // automatically adjust the position in the scrollviewer such that the centre of zoom
-            // stays at the middle of the window
-            double vertOffset = (ScrollView.VerticalOffset * (ZoomLevel / previousZoomLevel))
-                + (ScrollView.ViewportHeight * (ZoomLevel / previousZoomLevel - 1) / 2);
-            if (vertOffset < 0 || vertOffset + ScrollView.ViewportHeight > ScrollView.ExtentHeight)
-            {
-                ExpandToSize(0, baseGrid.Height + Math.Abs(vertOffset));
+                // adjust the scroll position such that the centre of zoom
+                // stays at the middle of the window, shift blocks by offset overflow if 
+                // exceeds the boundary
+                double vertOffset = (ScrollView.VerticalOffset * (ZoomLevel / previousZoomLevel))
+                    + (ScrollView.ViewportHeight * (ZoomLevel / previousZoomLevel - 1) / 2);
+                if (vertOffset < 0)
+                {
+                    BlockManager.Instance.ShiftAllBlocks(0, Math.Abs(vertOffset) / ZoomLevel);
+                }
+                else if (vertOffset + ScrollView.ViewportHeight > baseGrid.Height * ZoomLevel)
+                {
+                    BlockManager.Instance.ShiftAllBlocks(0, 
+                        (baseGrid.Height * ZoomLevel - (vertOffset + ScrollView.ViewportHeight)) / zoomLevel);
+                }
+                double horizOffset = (ScrollView.HorizontalOffset * (ZoomLevel / previousZoomLevel))
+                    + (ScrollView.ViewportWidth * (ZoomLevel / previousZoomLevel - 1) / 2);
+                if (horizOffset < 0)
+                {
+                    BlockManager.Instance.ShiftAllBlocks(Math.Abs(horizOffset) / ZoomLevel, 0);
+                }
+                else if (horizOffset + ScrollView.ViewportWidth > baseGrid.Width * ZoomLevel)
+                {
+                    BlockManager.Instance.ShiftAllBlocks(
+                        (baseGrid.Width * ZoomLevel - (horizOffset + ScrollView.ViewportWidth)) / zoomLevel , 0);
+                }
+
+                // actual scroll command
+                ScrollView.ScrollToVerticalOffset(vertOffset);
+                ScrollView.ScrollToHorizontalOffset(horizOffset);
             }
-            double horizOffset = (ScrollView.HorizontalOffset * (ZoomLevel / previousZoomLevel))
-                + (ScrollView.ViewportWidth * (ZoomLevel / previousZoomLevel - 1) / 2);
-            if (horizOffset < 0 || horizOffset + ScrollView.ViewportWidth > ScrollView.ExtentWidth)
-            {
-                ExpandToSize(baseGrid.Width + Math.Abs(horizOffset), 0);
-            }
-            ScrollView.ScrollToVerticalOffset(vertOffset);
-            ScrollView.ScrollToHorizontalOffset(horizOffset);
         }
 
-        // handler for touch input
+        /// <summary>
+        /// Event handler for changes in the zoom slider value.
+        /// </summary>
+        private void zoomChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (disableZoomSliderHandler)
+            {
+                disableZoomSliderHandler = false;
+            }
+            else
+            {
+                SetVirtualSpaceZoomLevel(zoomSlider.Value, true, false);
+            }
+        }
+
+        /// <summary>
+        /// Event handler for touch input.
+        /// </summary>
         void manipulationDelta(object sender, ManipulationDeltaEventArgs e)
         {
             if (!duringTouch)
@@ -127,7 +192,7 @@ namespace SplayCode
                 // if zoom gesture detected
                 if (Math.Abs(e.DeltaManipulation.Scale.X - 1) > 0.0001 || Math.Abs(e.DeltaManipulation.Scale.Y - 1) > 0.0001)
                 {
-                    zoomSlider.Value = zoomSlider.Value * e.DeltaManipulation.Scale.X;
+                    SetVirtualSpaceZoomLevel(ZoomLevel * e.DeltaManipulation.Scale.X, true, true);
                 }
                 // drag space if not zoom
                 else
@@ -141,23 +206,33 @@ namespace SplayCode
             }
         }
 
+        /// <summary>
+        /// Event handler for touch input completion.
+        /// </summary>
         void manipulationComplete(object sender, ManipulationCompletedEventArgs e)
         {
             resetThumbLocation();
         }
 
-        // handlers for zoom buttons
+        /// <summary>
+        /// Event handler for zoom in button.
+        /// </summary>
         void zoomIn(object sender, RoutedEventArgs e)
         {
             zoomSlider.Value = zoomSlider.Value + zoomSlider.LargeChange;
         }
 
+        /// <summary>
+        /// Event handler for zoom out button.
+        /// </summary>
         void zoomOut(object sender, RoutedEventArgs e)
         {
             zoomSlider.Value = zoomSlider.Value - zoomSlider.LargeChange;
         }
 
-        // expands the size of the virtual space if the given size is larger than current size
+        /// <summary>
+        /// Expands the size of the virtual space if the given size is larger than current size.
+        /// </summary>
         public void ExpandToSize(double width, double height)
         {
             if (width > baseGrid.Width)
@@ -170,7 +245,9 @@ namespace SplayCode
             }
         }
 
-        // move the virtual space by the given delta values
+        /// <summary>
+        /// Call this function to move the virtual space by the given delta values.
+        /// </summary>
         private void translateVirtualSpace(double horizontalDelta, double verticalDelta)
         {
             // if dragging up, scroll down, expand space if needed
@@ -222,7 +299,9 @@ namespace SplayCode
             ResetMultipleBlockCounter();
         }
 
-        // resets the location of the dragging thumb after a drag
+        /// <summary>
+        /// Resets the location of the dragging thumb after a drag.
+        /// </summary>
         private void resetThumbLocation()
         {
             Thickness t = dragThumb.Margin;
@@ -231,7 +310,9 @@ namespace SplayCode
             dragThumb.Margin = t;
         }
 
-        // handles mouse input of dragging on the virtual space
+        /// <summary>
+        /// Event handler for mouse drag on virtual space.
+        /// </summary>
         void onDragDelta(object sender, DragDeltaEventArgs e)
         {
             translateVirtualSpace(e.HorizontalChange, e.VerticalChange);
@@ -242,15 +323,16 @@ namespace SplayCode
             resetThumbLocation();
         }
 
-        // bring all the settings such as the size of the virtual space and the scroller position
-        // and zoom level from the last saved instance
+        /// <summary>
+        /// Load parameters for the virtual space from a saved layout.
+        /// </summary>
         public void LoadLayoutSettings(double virtualSpaceX, double virtualSpaceY, double scrollOffsetH, double scrollOffsetV, double zoomLv)
         {
+            SetVirtualSpaceZoomLevel(zoomLv, false, true);
             baseGrid.Width = virtualSpaceX;
             baseGrid.Height = virtualSpaceY;
             ScrollView.ScrollToHorizontalOffset(scrollOffsetH);
             ScrollView.ScrollToVerticalOffset(scrollOffsetV);
-            zoomSlider.Value = zoomLv;
         }
 
         /// <summary>
@@ -274,18 +356,15 @@ namespace SplayCode
         /// </summary>
         public void Reset()
         {
-            zoomSlider.Value = 1.0;
+            SetVirtualSpaceZoomLevel(1.0, false, true);
             ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
             ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             baseGrid.Width = (ActualWidth / ZoomLevel);
             baseGrid.Height = (ActualHeight / ZoomLevel);
             ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             ScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            //ScrollView.ScrollToHorizontalOffset((baseGrid.Width * ZoomLevel) / 2 - ScrollView.ViewportWidth / 2);
-            //ScrollView.ScrollToVerticalOffset((baseGrid.Height * ZoomLevel) / 2 - ScrollView.ViewportHeight / 2);
             currentLayoutFile = "";
             ResetMultipleBlockCounter();
-            firstInit = false;
         }
 
         protected override void OnDragEnter(DragEventArgs e)
@@ -294,6 +373,9 @@ namespace SplayCode
             base.OnDragEnter(e);
         }
 
+        /// <summary>
+        /// Event handler for the drag-over of the drag-n-drop operations.
+        /// </summary>
         protected override void OnDragOver(DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
@@ -311,6 +393,9 @@ namespace SplayCode
             base.OnDragOver(e);
         }
 
+        /// <summary>
+        /// Event handler for the drop of the drag-n-drop operations.
+        /// </summary>
         protected override void OnDrop(DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
@@ -318,17 +403,23 @@ namespace SplayCode
                 e.Handled = true;
                 string filePath = (string)e.Data.GetData(DataFormats.StringFormat);
                 Point cursorPosition = e.GetPosition(dragThumb);
-                ImportManager.Instance.AddSingleOrMultipleFiles(filePath, cursorPosition);
+                ImportManager.Instance.AddSingleOrMultipleFiles(filePath, cursorPosition, false);
             }
             else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Handled = true;
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                bool doNotResetBlockCounter = false;
+                if (files.Length > 1)
+                {
+                    doNotResetBlockCounter = true;
+                }
                 Point cursorPosition = e.GetPosition(dragThumb);
                 foreach (string s in files)
                 {
-                    ImportManager.Instance.AddSingleOrMultipleFiles(s, cursorPosition);
-                }                
+                    ImportManager.Instance.AddSingleOrMultipleFiles(s, cursorPosition, doNotResetBlockCounter);
+                }
+                ResetMultipleBlockCounter();                
             }
             base.OnDrop(e);
         }
@@ -336,7 +427,7 @@ namespace SplayCode
         /// <summary>
         /// Find the next best place to put a block, considering the scenario of adding
         /// multiple blocks. If the preferred position is null, calculations begin at the
-        /// top left space of the viewport. Otherwise it start at the preferred position.
+        /// top left space of the viewport. Otherwise it starts at the preferred position.
         /// </summary>
         public Point GetNextBlockPosition(Point? preferredPosition)
         {
@@ -372,23 +463,32 @@ namespace SplayCode
         /// </summary>
         public void CenterViewOn(BlockControl block)
         {
-            zoomSlider.Value = 1.0;
+            SetVirtualSpaceZoomLevel(1.0, true, true);
             ScrollView.ScrollToHorizontalOffset(block.Margin.Left - (ScrollView.ViewportWidth / 10));
             ScrollView.ScrollToVerticalOffset(block.Margin.Top - (ScrollView.ViewportHeight / 10));
         }
 
+        /// <summary>
+        /// Temporarily records the current scroll offsets.
+        /// </summary>
         public void SaveScrollOffsets()
         {
             horizontalScrollPos = ScrollView.HorizontalOffset;
             verticalScrollPos = ScrollView.VerticalOffset;
         }
 
+        /// <summary>
+        /// Load the recorded scroll offsets.
+        /// </summary>
         public void LoadScrollOffsets()
         {
             ScrollView.ScrollToHorizontalOffset(horizontalScrollPos);
             ScrollView.ScrollToVerticalOffset(verticalScrollPos);
         }
 
+        /// <summary>
+        /// Switch to the full-window editor view for the given editor block.
+        /// </summary>
         public void EnterEditorView(BlockControl block)
         {
             SaveScrollOffsets();
@@ -397,6 +497,9 @@ namespace SplayCode
             SplayCodeToolWindow.SetEditorViewMode(true);
         }
 
+        /// <summary>
+        /// Switch back to the virtual space from the full-window editor view.
+        /// </summary>
         public void ExitEditorView()
         {
             SplayCodeToolWindow.SetEditorViewMode(false);
@@ -404,6 +507,9 @@ namespace SplayCode
             LoadScrollOffsets();           
         }
 
+        /// <summary>
+        /// Event handler for double-clicking on empty spots in the virtual space.
+        /// </summary>
         private void dragThumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             BlockManager.Instance.RemoveAllSelections();

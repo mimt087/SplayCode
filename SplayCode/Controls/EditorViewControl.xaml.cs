@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace SplayCode.Controls
 {
     /// <summary>
-    /// Interaction logic for EditorViewControl.xaml
+    /// Control for the maximized editor view.
     /// </summary>
     public partial class EditorViewControl : UserControl
     {

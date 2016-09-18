@@ -289,16 +289,25 @@ namespace SplayCode.Data
             }
         }
 
+        /// <summary>
+        /// Add the given block into multiple selection.
+        /// </summary>
         public void RegisterBlockSelection(BlockControl block)
         {
             selectedBlocks.Add(block);
         }
 
+        /// <summary>
+        /// Remove the given block from multiple selection.
+        /// </summary>
         public void RemoveBlockSelection(BlockControl block)
         {
             selectedBlocks.Remove(block);
         }
 
+        /// <summary>
+        /// Remove all blocks from multiple selection.
+        /// </summary>
         public void RemoveAllSelections()
         {
             foreach(BlockControl block in blockList)

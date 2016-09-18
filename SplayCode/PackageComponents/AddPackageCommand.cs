@@ -107,7 +107,7 @@ namespace SplayCode
             {
                 Uri folderPath = new Uri(folderBrowserDialog1.SelectedPath);
 
-                ImportManager.Instance.AddSingleOrMultipleFiles(folderBrowserDialog1.SelectedPath, null);
+                ImportManager.Instance.AddSingleOrMultipleFiles(folderBrowserDialog1.SelectedPath, null, true);
             }
         }
     }

@@ -122,6 +122,10 @@ namespace SplayCode
             }
         }
 
+        /// <summary>
+        /// Function for redirecting commands to the editors. Acquired from
+        /// https://joshvarty.wordpress.com/2014/08/01/ripping-the-visual-studio-editor-apart-with-projection-buffers/
+        /// </summary>
         protected override bool PreProcessMessage(ref Message m)
         {
             if (isInEditorViewMode)
@@ -154,6 +158,10 @@ namespace SplayCode
             }
         }
 
+        /// <summary>
+        /// Function for redirecting commands to the editors. Acquired from
+        /// https://joshvarty.wordpress.com/2014/08/01/ripping-the-visual-studio-editor-apart-with-projection-buffers/
+        /// </summary>
         int IOleCommandTarget.Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
       IntPtr pvaIn, IntPtr pvaOut)
         {
@@ -178,6 +186,10 @@ namespace SplayCode
             }
         }
 
+        /// <summary>
+        /// Function for redirecting commands to the editors. Acquired from
+        /// https://joshvarty.wordpress.com/2014/08/01/ripping-the-visual-studio-editor-apart-with-projection-buffers/
+        /// </summary>
         int IOleCommandTarget.QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[]
           prgCmds, IntPtr pCmdText)
         {
@@ -201,6 +213,9 @@ namespace SplayCode
             }
         }
 
+        /// <summary>
+        /// Call this function to toggle whether to redirect commands to the maximized editor view.
+        /// </summary>
         public static void SetEditorViewMode(bool isInEditorView)
         {
             isInEditorViewMode = isInEditorView;
@@ -266,6 +281,9 @@ namespace SplayCode
             return VSConstants.S_OK;
         }
         
+        /// <summary>
+        /// Make this the active tool window within Visual Studio.
+        /// </summary>
         public void Activate()
         {
             VirtualSpaceControl.Instance.SaveScrollOffsets();
